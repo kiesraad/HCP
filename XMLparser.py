@@ -1,6 +1,7 @@
 from defusedxml.ElementTree import parse
 from os import listdir
 tagPrefix = "{urn:oasis:names:tc:evs:schema:eml}"
+krPrefix = "{http://www.kiesraad.nl/extensions}"
 
 global_xml = ""
 current_file = ""
@@ -41,6 +42,7 @@ def get_vote_info(reporting_units):
         # these ranges map to the required info
         for z in range(14, 15):
             reporting_unit_dict[reporting_unit[-z].tag.replace(tagPrefix, "")] = reporting_unit[-z].text
+
         party_vote_count = {}
         for selection in reporting_unit.findall(tagPrefix+"Selection"):
             party_identifier = selection.find(tagPrefix+"AffiliationIdentifier")
@@ -49,7 +51,7 @@ def get_vote_info(reporting_units):
                 party_vote_count[party_name] = int(selection.find(tagPrefix+"ValidVotes").text)
 
         reporting_unit_dict["party_vote_count"] = party_vote_count
-        if reporting_unit.find(tagPrefix+"ReportingUnitIdentifier"):
+        if reporting_unit.find(tagPrefix+"ReportingUnitIdentifier") is not None:
             reporting_unit_dict["name"] = reporting_unit.find(tagPrefix+"ReportingUnitIdentifier").text
         info_dict[reporting_unit[0].attrib.get("Id")] = reporting_unit_dict
 
@@ -63,3 +65,16 @@ def find_eml_files():
         if ".xml" not in item:
             file_list.remove(item)
     return file_list
+
+
+def get_meta_data(xml):
+    election_identification = xml.find(tagPrefix + "Count").find(tagPrefix + "Election")\
+        .find(tagPrefix+"ElectionIdentifier")
+    meta_data = {
+        "id": xml.find(tagPrefix + "ManagingAuthority").find(tagPrefix + "AuthorityIdentifier").attrib.get("Id"),
+        "eml_date": xml.find(krPrefix + "CreationDateTime").text,
+        "name": election_identification.find(tagPrefix + "ElectionName").text,
+        "gebied": election_identification.find(krPrefix + "ElectionDomain").text,
+        "date": election_identification.find(krPrefix + "ElectionDate").text}
+
+    return meta_data
