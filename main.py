@@ -14,9 +14,9 @@ def main():
     reporting_units = XMLparser.get_separate_entities_from_xml(xml)
     total_vote_structure = [XMLparser.get_contest(xml).find(tagPrefix + "TotalVotes")]
 
-    # total_raw_info is alle stemmen per partij opgeteld
+    # total_raw_info is alle benodigde stem informatie per partij opgeteld
     total_raw_info = XMLparser.get_vote_info(total_vote_structure).get(None)
-    # raw_info is alle stemmen per partij per lokaal stembureau opgeteld
+    # raw_info is alle benodigde stem informatie per lokaal stembureau opgeteld
     raw_info = XMLparser.get_vote_info(reporting_units)
 
     pp.pprint(total_raw_info)

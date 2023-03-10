@@ -41,11 +41,14 @@ def get_vote_info(reporting_units):
         # these ranges map to the required info
         for z in range(14, 15):
             reporting_unit_dict[reporting_unit[-z].tag.replace(tagPrefix, "")] = reporting_unit[-z].text
+        party_vote_count = {}
         for selection in reporting_unit.findall(tagPrefix+"Selection"):
             party_identifier = selection.find(tagPrefix+"AffiliationIdentifier")
             if party_identifier:
                 party_name = party_identifier.find(tagPrefix + "RegisteredName").text
-                reporting_unit_dict[party_name] = int(selection.find(tagPrefix+"ValidVotes").text)
+                party_vote_count[party_name] = int(selection.find(tagPrefix+"ValidVotes").text)
+
+        reporting_unit_dict["party_vote_count"] = party_vote_count
         if reporting_unit.find(tagPrefix+"ReportingUnitIdentifier"):
             reporting_unit_dict["name"] = reporting_unit.find(tagPrefix+"ReportingUnitIdentifier").text
         info_dict[reporting_unit[0].attrib.get("Id")] = reporting_unit_dict

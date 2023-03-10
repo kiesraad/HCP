@@ -13,4 +13,4 @@ def create_info(reporting_unit):
 
 
 def is_larger_than_3_percentage(total, part):
-    return int(part)*100/int(total)
+    return int(part)/int(total)*100 >= 3
