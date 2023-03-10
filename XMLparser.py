@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as Et
+from defusedxml.ElementTree import parse
 from os import listdir
 tagPrefix = "{urn:oasis:names:tc:evs:schema:eml}"
 
@@ -17,7 +17,7 @@ def get_xml(file_name):
 
     if global_xml == "" and current_file != file_name:
         current_file = file_name
-        tree = Et.parse("./data/" + file_name)
+        tree = parse("./data/" + file_name)
         global_xml = tree.getroot()
         return get_xml(file_name)
     else:
