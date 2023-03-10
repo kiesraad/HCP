@@ -53,6 +53,7 @@ def get_vote_info(reporting_units):
     return info_dict
 
 
+# todo, for eventual deployment the ./data path specifier must be removed
 def find_eml_files():
     file_list = listdir("./data")
     for item in file_list:
