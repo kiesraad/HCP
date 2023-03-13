@@ -2,6 +2,7 @@ import sys
 import XMLparser
 import process_info
 import pprint
+import csvWriter
 
 tagPrefix = "{urn:oasis:names:tc:evs:schema:eml}"
 
@@ -11,6 +12,7 @@ pp = pprint
 def main():
     items = XMLparser.find_eml_files()
     xml = XMLparser.get_xml(items[0])
+    meta_data = XMLparser.get_meta_data(xml)
     reporting_units = XMLparser.get_separate_entities_from_xml(xml)
     total_vote_structure = [XMLparser.get_contest(xml).find(tagPrefix + "TotalVotes")]
 
@@ -19,16 +21,16 @@ def main():
     # raw_info is alle benodigde stem informatie per lokaal stembureau opgeteld
     raw_info = XMLparser.get_vote_info(reporting_units)
 
-    pp.pprint(total_raw_info)
-    pp.pprint(raw_info)
-
     processed_info = {}
     for key in raw_info.keys():
         processed_info[key] = process_info.create_info(raw_info.get(key))
 
-    pp.pprint(processed_info)
+    # pp.pprint(total_raw_info)
+    # pp.pprint(raw_info)
+    # pp.pprint(processed_info)
+    # pp.pprint(meta_data)
 
-    # todo put all info into csv
+    csvWriter.write_csv(raw_info, processed_info, meta_data)
 
 
 if __name__ == '__main__':
