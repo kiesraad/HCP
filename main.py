@@ -30,7 +30,6 @@ def main():
         afwijkening = process_info.process_50_afwijking(total_raw_info, reporting_units_info)
         processed_info = process_info.create_info_array(reporting_units_info, afwijkening)
 
-        # output info
         # print("----------------------------------------")
         # pp.pprint(total_raw_info)
         # pp.pprint(reporting_units_info)
