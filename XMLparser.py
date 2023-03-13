@@ -3,20 +3,20 @@ from os import listdir
 tagPrefix = "{urn:oasis:names:tc:evs:schema:eml}"
 krPrefix = "{http://www.kiesraad.nl/extensions}"
 
-global_xml = ""
 current_file = ""
+global_xml = ""
 
 
 def get_separate_entities_from_xml(xml):
-    contest = get_contest(xml)
+    path = ["Count", "Election", "Contests", "Contest"]
+    contest = walk_xml_tree(xml, path)
     return contest.findall(tagPrefix + "ReportingUnitVotes")
 
 
 def get_xml(file_name):
     global global_xml
     global current_file
-
-    if global_xml == "" and current_file != file_name:
+    if global_xml == "" or current_file != file_name:
         current_file = file_name
         tree = parse("./data/" + file_name)
         global_xml = tree.getroot()
@@ -25,37 +25,53 @@ def get_xml(file_name):
         return global_xml
 
 
-def get_contest(xml):
-    count = xml.find(tagPrefix + "Count")
-    election = count.find(tagPrefix + "Election")
-    contests = election.find(tagPrefix + "Contests")
-    return contests.find(tagPrefix + "Contest")
+def walk_xml_tree(xml_root, path):
+    xml = xml_root
+    if len(path) > 0:
+        for leave in path:
+            xml = xml.find(tagPrefix + leave)
+    return xml
 
 
-def get_vote_info(reporting_units):
+def get_vote_info_reporting_unit_array(reporting_units):
     info_dict = {}
     for reporting_unit in reporting_units:
-        reporting_unit_dict = {}
-        # these ranges map to the required info
-        for z in range(12, 14):
-            reporting_unit_dict[reporting_unit[-z].attrib.get("ReasonCode")] = reporting_unit[-z].text
-        # these ranges map to the required info
-        for z in range(14, 15):
-            reporting_unit_dict[reporting_unit[-z].tag.replace(tagPrefix, "")] = reporting_unit[-z].text
-
-        party_vote_count = {}
-        for selection in reporting_unit.findall(tagPrefix+"Selection"):
-            party_identifier = selection.find(tagPrefix+"AffiliationIdentifier")
-            if party_identifier:
-                party_name = party_identifier.find(tagPrefix + "RegisteredName").text
-                party_vote_count[party_name] = int(selection.find(tagPrefix+"ValidVotes").text)
-
-        reporting_unit_dict["party_vote_count"] = party_vote_count
-        if reporting_unit.find(tagPrefix+"ReportingUnitIdentifier") is not None:
-            reporting_unit_dict["name"] = reporting_unit.find(tagPrefix+"ReportingUnitIdentifier").text
-        info_dict[reporting_unit[0].attrib.get("Id")] = reporting_unit_dict
-
+        info_dict[reporting_unit[0].attrib.get("Id")] = get_vote_info(reporting_unit)
     return info_dict
+
+
+def get_vote_info(unit):
+    reporting_unit_dict = {}
+
+    reporting_unit_dict["uncounted_votes"] = get_rejected_and_uncounted_votes(unit)
+    reporting_unit_dict["party_vote_count"] = get_vote_count_per_party(unit)
+    reporting_unit_dict["TotalCounted"] = walk_xml_tree(unit, ["TotalCounted"]).text
+
+    if unit.find(tagPrefix + "ReportingUnitIdentifier") is not None:
+        reporting_unit_dict["name"] = unit.find(tagPrefix + "ReportingUnitIdentifier").text
+    return reporting_unit_dict
+
+
+def get_rejected_and_uncounted_votes(reporting_unit):
+    rejected_and_uncounted_votes = {}
+    for RejectedVotes_and_UncountedVotes in reporting_unit:
+        reason = RejectedVotes_and_UncountedVotes.get("ReasonCode")
+        amount = RejectedVotes_and_UncountedVotes.text
+        if reason:
+            rejected_and_uncounted_votes[reason] = amount
+    return rejected_and_uncounted_votes
+
+
+def get_vote_count_per_party(reporting_unit):
+    party_vote_count = {}
+    for selection in reporting_unit.findall(tagPrefix + "Selection"):
+        party_identifier = selection.find(tagPrefix + "AffiliationIdentifier")
+        if party_identifier:
+            party_name = party_identifier.find(tagPrefix + "RegisteredName").text
+            vote_count = int(selection.find(tagPrefix + "ValidVotes").text)
+            party_vote_count[party_name] = vote_count
+
+    return party_vote_count
 
 
 # todo, for eventual deployment the ./data path specifier must be removed
@@ -68,8 +84,8 @@ def find_eml_files():
 
 
 def get_meta_data(xml):
-    election_identification = xml.find(tagPrefix + "Count").find(tagPrefix + "Election")\
-        .find(tagPrefix+"ElectionIdentifier")
+    path = ["Count", "Election", "ElectionIdentifier"]
+    election_identification = walk_xml_tree(xml, path)
     meta_data = {
         "id": xml.find(tagPrefix + "ManagingAuthority").find(tagPrefix + "AuthorityIdentifier").attrib.get("Id"),
         "eml_date": xml.find(krPrefix + "CreationDateTime").text,

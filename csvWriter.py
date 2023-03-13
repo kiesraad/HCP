@@ -20,5 +20,4 @@ def write_csv(raw_info, processed_info, meta_data):
                          'stembureau >3 % blanco', 'stembureau met lijst > 50% afwijjking'])
         for key in processed_info.keys():
             info = processed_info.get(key)
-            print(info)
             writer.writerow([raw_info[key]["name"], key.split("::SB")[1], info[0], info[1], info[2], info[3]])
