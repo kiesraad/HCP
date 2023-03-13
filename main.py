@@ -34,7 +34,7 @@ def main():
         # print("----------------------------------------")
         # pp.pprint(total_raw_info)
         # pp.pprint(reporting_units_info)
-        pp.pprint(processed_info)
+        # pp.pprint(processed_info)
         # pp.pprint(meta_data)
 
         csvWriter.write_csv(reporting_units_info, processed_info, meta_data)

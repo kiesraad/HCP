@@ -51,7 +51,6 @@ def create_info_array(reporting_units_info, afwijkening):
 
 def partij_afwijking_check(info_dict):
     for key in info_dict.keys():
-        print(info_dict[key])
         if info_dict[key] > 50 or info_dict[key] < -50:
             return key
     return False
