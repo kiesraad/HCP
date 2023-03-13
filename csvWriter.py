@@ -2,14 +2,12 @@ import csv
 
 
 def write_csv(raw_info, processed_info, meta_data, afwijkeningen):
-
-    with open('test.csv', 'w', newline='') as csvfile:
+    with open(meta_data.get("gebied")+"-"+meta_data.get("date")+'.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["sep=,"])
         writer.writerow(["Versie controleprotocol"])
         writer.writerow(["Beschrijving", "spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
                                          "stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%"])
-
         writer.writerow([""])
         writer.writerow(["EML datum/tijd", meta_data["eml_date"]])
         writer.writerow(["Verkiezing", meta_data["name"]])
