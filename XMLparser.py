@@ -7,10 +7,13 @@ current_file = ""
 global_xml = ""
 
 
-def get_separate_entities_from_xml(xml):
-    path = ["Count", "Election", "Contests", "Contest"]
-    contest = walk_xml_tree(xml, path)
-    return contest.findall(tagPrefix + "ReportingUnitVotes")
+# todo, for eventual deployment the ./data path specifier must be removed
+def find_eml_files():
+    file_list = listdir("./data")
+    for item in file_list:
+        if ".xml" not in item:
+            file_list.remove(item)
+    return file_list
 
 
 def get_xml(file_name):
@@ -23,6 +26,12 @@ def get_xml(file_name):
         return get_xml(file_name)
     else:
         return global_xml
+
+
+def get_separate_entities_from_xml(xml):
+    path = ["Count", "Election", "Contests", "Contest"]
+    contest = walk_xml_tree(xml, path)
+    return contest.findall(tagPrefix + "ReportingUnitVotes")
 
 
 def walk_xml_tree(xml_root, path):
@@ -72,15 +81,6 @@ def get_vote_count_per_party(reporting_unit):
             party_vote_count[party_name] = vote_count
 
     return party_vote_count
-
-
-# todo, for eventual deployment the ./data path specifier must be removed
-def find_eml_files():
-    file_list = listdir("./data")
-    for item in file_list:
-        if ".xml" not in item:
-            file_list.remove(item)
-    return file_list
 
 
 def get_meta_data(xml):
