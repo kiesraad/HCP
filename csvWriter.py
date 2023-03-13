@@ -2,12 +2,14 @@ import csv
 
 
 def write_csv(raw_info, processed_info, meta_data):
-    with open('names.csv', 'w', newline='') as csvfile:
+
+    with open('test.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["sep=,"])
         writer.writerow(["Versie controleprotocol"])
         writer.writerow(["Beschrijving", "spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
                                          "stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%"])
+
         writer.writerow([""])
         writer.writerow(["EML datum/tijd", meta_data["eml_date"]])
         writer.writerow(["Verkiezing", meta_data["name"]])
@@ -17,7 +19,31 @@ def write_csv(raw_info, processed_info, meta_data):
 
         writer.writerow([""])
         writer.writerow(['stembureau', 'nr stembureau', 'stembureau met nul stemmen', 'stembureau >3% ongeldig',
-                         'stembureau >3 % blanco', 'stembureau met lijst > 50% afwijjking'])
+                         'stembureau >3 % blanco', 'stembureau met lijst > 50% afwijking'])
         for key in processed_info.keys():
-            info = processed_info.get(key)
-            writer.writerow([raw_info[key]["name"], key.split("::SB")[1], info[0], info[1], info[2], info[3]])
+            if check_any_true(processed_info[key]):
+                result_row = create_result_row(raw_info[key], processed_info[key], key.split("::SB")[1])
+                writer.writerow(result_row)
+
+
+def create_result_row(raw_info, info, nr):
+    write_row = [""]*6
+    write_row[0] = raw_info["name"]
+    write_row[1] = nr
+    if info[0]:
+        write_row[2] = "x of ja"
+    if info[1]:
+        write_row[3] = "x of ja"
+    if info[2]:
+        write_row[4] = "x of ja"
+    if info[3]:
+        write_row[5] = info[3]
+
+    return write_row
+
+
+def check_any_true(info):
+    for i in info:
+        if i:
+            return True
+    return False

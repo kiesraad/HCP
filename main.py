@@ -25,17 +25,17 @@ def main():
         reporting_units = XMLparser.get_separate_entities_from_xml(xml)
         reporting_units_info = XMLparser.get_vote_info_reporting_unit_array(reporting_units)
 
+
         # process info
-        processed_info = {}
-        for key in reporting_units_info.keys():
-            processed_info[key] = process_info.create_info(reporting_units_info.get(key))
-        
+        afwijkening = process_info.process_50_afwijking(total_raw_info, reporting_units_info)
+        processed_info = process_info.create_info_array(reporting_units_info, afwijkening)
+
         # output info
-        print("----------------------------------------")
-        pp.pprint(total_raw_info)
-        pp.pprint(reporting_units_info)
-        pp.pprint(processed_info)
-        pp.pprint(meta_data)
+        # print("----------------------------------------")
+        # pp.pprint(total_raw_info)
+        # pp.pprint(reporting_units_info)
+        # pp.pprint(processed_info)
+        # pp.pprint(meta_data)
 
         csvWriter.write_csv(reporting_units_info, processed_info, meta_data)
 
