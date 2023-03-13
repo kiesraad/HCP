@@ -10,10 +10,11 @@ global_xml = ""
 # todo, for eventual deployment the ./data path specifier must be removed
 def find_eml_files():
     file_list = listdir("./data")
+    eml_list = []
     for item in file_list:
-        if ".xml" not in item:
-            file_list.remove(item)
-    return file_list
+        if ".xml" in item:
+            eml_list.append(item)
+    return eml_list
 
 
 def get_xml(file_name):

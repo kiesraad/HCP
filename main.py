@@ -14,7 +14,6 @@ def main():
     items = XMLparser.find_eml_files()
     for item in items:
         xml = XMLparser.get_xml(item)
-
         # data on GSB niveau
         meta_data = XMLparser.get_meta_data(xml)
         total_vote_path = ["Count", "Election", "Contests", "Contest", "TotalVotes"]
@@ -27,16 +26,15 @@ def main():
 
 
         # process info
-        afwijkening = process_info.process_50_afwijking(total_raw_info, reporting_units_info)
-        processed_info = process_info.create_info_array(reporting_units_info, afwijkening)
-
+        afwijkingen = process_info.process_50_afwijking(total_raw_info, reporting_units_info)
+        processed_info = process_info.create_info_array(reporting_units_info, afwijkingen)
         # print("----------------------------------------")
         # pp.pprint(total_raw_info)
         # pp.pprint(reporting_units_info)
         # pp.pprint(processed_info)
         # pp.pprint(meta_data)
 
-        csvWriter.write_csv(reporting_units_info, processed_info, meta_data, afwijkening)
+        csvWriter.write_csv(reporting_units_info, processed_info, meta_data, afwijkingen)
 
 
 if __name__ == '__main__':
