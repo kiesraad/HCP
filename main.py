@@ -28,13 +28,15 @@ def main():
         # process info
         afwijkingen = process_info.process_50_afwijking(total_raw_info, reporting_units_info)
         processed_info = process_info.create_info_array(reporting_units_info, afwijkingen)
+
         # print("----------------------------------------")
         # pp.pprint(total_raw_info)
         # pp.pprint(reporting_units_info)
         # pp.pprint(processed_info)
         # pp.pprint(meta_data)
 
-        csvWriter.write_csv(reporting_units_info, processed_info, meta_data, afwijkingen)
+        csvWriter.write_csv(reporting_units_info, processed_info, meta_data)
+        csvWriter.write_afwijkeningen(meta_data, afwijkingen, reporting_units_info)
 
 
 if __name__ == '__main__':
