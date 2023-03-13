@@ -37,7 +37,7 @@ def main():
         # pp.pprint(processed_info)
         # pp.pprint(meta_data)
 
-        csvWriter.write_csv(reporting_units_info, processed_info, meta_data)
+        csvWriter.write_csv(reporting_units_info, processed_info, meta_data, afwijkening)
 
 
 if __name__ == '__main__':
