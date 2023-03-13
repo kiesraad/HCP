@@ -54,7 +54,7 @@ def get_vote_info(unit):
 
     reporting_unit_dict["uncounted_votes"] = get_rejected_and_uncounted_votes(unit)
     reporting_unit_dict["party_vote_count"] = get_vote_count_per_party(unit)
-    reporting_unit_dict["TotalCounted"] = walk_xml_tree(unit, ["TotalCounted"]).text
+    reporting_unit_dict["TotalCounted"] = int(walk_xml_tree(unit, ["TotalCounted"]).text)
 
     if unit.find(tagPrefix + "ReportingUnitIdentifier") is not None:
         reporting_unit_dict["name"] = unit.find(tagPrefix + "ReportingUnitIdentifier").text
