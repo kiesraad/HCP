@@ -6,8 +6,7 @@ def write_csv(raw_info, processed_info, meta_data):
         writer = csv.writer(csvfile)
         writer.writerow(["sep=,"])
         writer.writerow(["Versie controleprotocol"])
-        writer.writerow(["Beschrijving", "spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
-                                         "stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%"])
+        writer.writerow(["Beschrijving", "afwijking per stembureau per partij"])
         writer.writerow([""])
         writer.writerow(["EML datum/tijd", meta_data["eml_date"]])
         writer.writerow(["Verkiezing", meta_data["name"]])
@@ -49,7 +48,7 @@ def write_afwijkeningen(meta_data, afwijkingen, raw_info):
         for key in afwijkingen.keys():
             arr = [raw_info[key]["name"]]
             for key2 in afwijkingen[key].keys():
-                arr.append(int(afwijkingen[key][key2]))
+                arr.append(str(int(afwijkingen[key][key2]))+"%")
             writer.writerow(arr)
 
 def create_result_row(raw_info, info, nr):
