@@ -7,21 +7,12 @@ current_file = ""
 global_xml = ""
 
 
-# todo, for eventual deployment the ./data path specifier must be removed
-def find_eml_files():
-    file_list = listdir("./data")
-    for item in file_list:
-        if ".xml" not in item:
-            file_list.remove(item)
-    return file_list
-
-
 def get_xml(file_name):
     global global_xml
     global current_file
     if global_xml == "" or current_file != file_name:
         current_file = file_name
-        tree = parse("./data/" + file_name)
+        tree = parse(file_name)
         global_xml = tree.getroot()
         return get_xml(file_name)
     else:
@@ -54,7 +45,7 @@ def get_vote_info(unit):
 
     reporting_unit_dict["uncounted_votes"] = get_rejected_and_uncounted_votes(unit)
     reporting_unit_dict["party_vote_count"] = get_vote_count_per_party(unit)
-    reporting_unit_dict["TotalCounted"] = walk_xml_tree(unit, ["TotalCounted"]).text
+    reporting_unit_dict["TotalCounted"] = int(walk_xml_tree(unit, ["TotalCounted"]).text)
 
     if unit.find(tagPrefix + "ReportingUnitIdentifier") is not None:
         reporting_unit_dict["name"] = unit.find(tagPrefix + "ReportingUnitIdentifier").text
