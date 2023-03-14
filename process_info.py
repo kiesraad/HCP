@@ -20,7 +20,7 @@ def process_afwijking(total_votes, reporting_unit):
     global_party = subtract_part_dictionary(total_votes.get("party_vote_count"), reporting_unit.get("party_vote_count"))
     global_percentages = get_percentages(global_party, global_total)
     local_percentages = get_percentages(reporting_unit["party_vote_count"], reporting_unit["TotalCounted"])
-    difference = subtract_part_dictionary(global_percentages, local_percentages)
+    difference = subtract_part_dictionary(local_percentages, global_percentages)
 
     return difference
 
