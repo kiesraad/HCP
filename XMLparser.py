@@ -7,22 +7,12 @@ current_file = ""
 global_xml = ""
 
 
-# todo, for eventual deployment the ./data path specifier must be removed
-def find_eml_files():
-    file_list = listdir("./data")
-    eml_list = []
-    for item in file_list:
-        if ".xml" in item:
-            eml_list.append(item)
-    return eml_list
-
-
 def get_xml(file_name):
     global global_xml
     global current_file
     if global_xml == "" or current_file != file_name:
         current_file = file_name
-        tree = parse("./data/" + file_name)
+        tree = parse(file_name)
         global_xml = tree.getroot()
         return get_xml(file_name)
     else:
