@@ -34,7 +34,7 @@ def main():
     # pp.pprint(meta_data)
 
     csvWriter.write_csv(reporting_units_info, processed_info, meta_data)
-    csvWriter.write_afwijkeningen(meta_data, afwijkingen, reporting_units_info)
+    csvWriter.write_afwijkingen(meta_data, afwijkingen, reporting_units_info)
 
 
 if __name__ == '__main__':

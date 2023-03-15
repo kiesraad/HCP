@@ -2,7 +2,7 @@ import csv
 
 
 def write_csv(raw_info, processed_info, meta_data):
-    with open(meta_data.get("gebied")+"-"+meta_data.get("date")+'.csv', 'w', newline='') as csvfile:
+    with open(meta_data.get("gebied") + "-" + meta_data.get("date") + '.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["sep=,"])
         writer.writerow(["Versie controleprotocol"])
@@ -17,7 +17,7 @@ def write_csv(raw_info, processed_info, meta_data):
 
         writer.writerow([""])
         arr = ['stembureau', 'nr stembureau', 'stembureau met nul stemmen', 'stembureau >3% ongeldig',
-                'stembureau >3 % blanco', 'stembureau met lijst > 50% afwijking']
+               'stembureau >3 % blanco', 'stembureau met lijst > 50% afwijking']
 
         writer.writerow(arr)
         for key in processed_info.keys():
@@ -26,8 +26,8 @@ def write_csv(raw_info, processed_info, meta_data):
                 writer.writerow(result_row)
 
 
-def write_afwijkeningen(meta_data, afwijkingen, raw_info):
-    with open(meta_data.get("gebied")+"-"+meta_data.get("date")+'-afwijkingen.csv', 'w', newline='') as csvfile:
+def write_afwijkingen(meta_data, afwijkingen, raw_info):
+    with open(meta_data.get("gebied") + "-" + meta_data.get("date") + '-afwijkingen.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["sep=,"])
         writer.writerow(["Versie controleprotocol"])
@@ -48,11 +48,12 @@ def write_afwijkeningen(meta_data, afwijkingen, raw_info):
         for key in afwijkingen.keys():
             arr = [raw_info[key]["name"]]
             for key2 in afwijkingen[key].keys():
-                arr.append(str(int(afwijkingen[key][key2]))+"%")
+                arr.append(str(int(afwijkingen[key][key2])) + "%")
             writer.writerow(arr)
 
+
 def create_result_row(raw_info, info, nr):
-    write_row = [""]*6
+    write_row = [""] * 6
     write_row[0] = raw_info["name"]
     write_row[1] = nr
     if info[0]:
@@ -70,7 +71,7 @@ def create_result_row(raw_info, info, nr):
 def create_afwijking_row(afwijking):
     return_arr = []
     for idx, key in enumerate(afwijking.keys()):
-        return_arr[idx] = str(int(afwijking[key]))+"%"
+        return_arr[idx] = str(int(afwijking[key])) + "%"
     return return_arr
 
 

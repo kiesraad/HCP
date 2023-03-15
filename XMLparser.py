@@ -1,5 +1,4 @@
 from defusedxml.ElementTree import parse
-from os import listdir
 tagPrefix = "{urn:oasis:names:tc:evs:schema:eml}"
 krPrefix = "{http://www.kiesraad.nl/extensions}"
 
@@ -28,8 +27,8 @@ def get_separate_entities_from_xml(xml):
 def walk_xml_tree(xml_root, path):
     xml = xml_root
     if len(path) > 0:
-        for leave in path:
-            xml = xml.find(tagPrefix + leave)
+        for nodes in path:
+            xml = xml.find(tagPrefix + nodes)
     return xml
 
 
@@ -54,9 +53,9 @@ def get_vote_info(unit):
 
 def get_rejected_and_uncounted_votes(reporting_unit):
     rejected_and_uncounted_votes = {}
-    for RejectedVotes_and_UncountedVotes in reporting_unit:
-        reason = RejectedVotes_and_UncountedVotes.get("ReasonCode")
-        amount = RejectedVotes_and_UncountedVotes.text
+    for item in reporting_unit:
+        reason = item.get("ReasonCode")
+        amount = item.text
         if reason:
             rejected_and_uncounted_votes[reason] = amount
     return rejected_and_uncounted_votes
