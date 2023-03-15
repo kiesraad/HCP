@@ -57,7 +57,7 @@ def get_rejected_and_uncounted_votes(reporting_unit):
         reason = item.get("ReasonCode")
         amount = item.text
         if reason:
-            rejected_and_uncounted_votes[reason] = amount
+            rejected_and_uncounted_votes[reason] = int(amount)
     return rejected_and_uncounted_votes
 
 

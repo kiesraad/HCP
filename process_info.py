@@ -19,14 +19,14 @@ def process_50_afwijking(total_votes, reporting_units):
 def process_afwijking(total_votes, reporting_unit):
     global_total = total_votes["TotalCounted"] - reporting_unit["TotalCounted"]
     global_party = subtract_dictionary(total_votes.get("party_vote_count"), reporting_unit.get("party_vote_count"))
-    global_percentages = get_percentages(global_party, global_total)
-    local_percentages = get_percentages(reporting_unit["party_vote_count"], reporting_unit["TotalCounted"])
+    global_percentages = get_percentages_dict(global_party, global_total)
+    local_percentages = get_percentages_dict(reporting_unit["party_vote_count"], reporting_unit["TotalCounted"])
     difference = subtract_dictionary(local_percentages, global_percentages)
 
     return difference
 
 
-def get_percentages(dictionary, total):
+def get_percentages_dict(dictionary, total):
     return_dict = {}
     for key in dictionary.keys():
         return_dict[key] = dictionary[key]/total*100
@@ -71,4 +71,4 @@ def create_info(reporting_unit):
 
 
 def is_larger_than_percentage(total, part, percentage):
-    return int(part)/int(total)*100 >= percentage
+    return part/total*100 >= percentage
