@@ -1,8 +1,9 @@
 import xml_parser
 import re
+from process_info import differences_per_party, get_checks_array
 
 
-class Eml510:
+class EML:
     def __init__(self, file_path):
         """
         Create an eml object by specifying a file path to an EML_NL count file (510)
@@ -40,3 +41,11 @@ class Eml510:
             reporting_unit_info.get("reporting_unit_id"): reporting_unit_info
             for reporting_unit_info in reporing_units_info_list
         }
+
+    def percentual_party_differences(self):
+        return differences_per_party(self.main_unit_info, self.reporting_units_info)
+
+    def run_checks(self):
+        return get_checks_array(
+            self.reporting_units_info, self.percentual_party_differences()
+        )
