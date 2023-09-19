@@ -1,5 +1,3 @@
-import zipfile, xml_parser
-
 PERCENTAGE_REJECTED_THRESHOLDS = {"blanco": float(3), "ongeldig": float(3)}
 PERCENTAGE_PARTY_DIFF_THRESHOLD = float(50)
 
@@ -10,8 +8,8 @@ def check_zero_votes(reporting_unit) -> bool:
     return _get_total_votes(reporting_unit) == 0
 
 
-def check_inexplicable_difference(reporting_unit) -> bool:
-    return reporting_unit.get("uncounted_votes").get("geen verklaring") > 0
+def check_inexplicable_difference(reporting_unit) -> int:
+    return reporting_unit.get("uncounted_votes").get("geen verklaring")
 
 
 def check_too_many_rejected_votes(reporting_unit, kind: str) -> bool:
@@ -47,13 +45,6 @@ def check_parties_with_large_percentage_difference(
         for (name, difference) in differences.items()
         if abs(difference) >= PERCENTAGE_PARTY_DIFF_THRESHOLD
     ]
-
-
-def get_na31_1_recounts(odt_path):
-    with zipfile.ZipFile(odt_path) as odt_zip:
-        with odt_zip.open("content.xml") as odt_xml:
-            odt_root = xml_parser.parse_xml(odt_xml)
-            return xml_parser.get_polling_stations_with_recounts(odt_root)
 
 
 #### Helper functions
