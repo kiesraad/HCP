@@ -1,28 +1,31 @@
 import xml_parser
 import re
-from process_info import differences_per_party, get_checks_array
+import protocol_checks
+from pprint import pprint
 
 
 class EML:
-    def __init__(self, file_path):
-        """
-        Create an eml object by specifying a file path to an EML_NL count file (510)
+    def __init__(
+        self, eml_file_id, main_unit_info, reporting_units_info, metadata=None
+    ):
+        self.eml_file_id = eml_file_id
+        self.main_unit_info = main_unit_info
+        self.reporting_units_info = reporting_units_info
+        self.metadata = metadata
 
-        Arguments:
-            file_path -- path to the eml.xml file to load
-        """
+    @classmethod
+    def from_xml(cls, file_path):
         # Root element of the XML file
         xml_root = xml_parser.parse_xml(file_path)
 
         # EML id
-        self.eml_file_id = xml_parser.get_eml_type(xml_root)
+        eml_file_id = xml_parser.get_eml_type(xml_root)
         # Check if EML is of type 510
-        if not self.eml_file_id or not re.match("510[a-dqrs]", self.eml_file_id):
+        if not eml_file_id or not re.match("510[a-dqrs]", eml_file_id):
             raise ValueError(
-                f"Tried to load EML with id {self.eml_file_id}, expected 510[a-dqrs]"
+                f"Tried to load EML with id {eml_file_id}, expected 510[a-dqrs]"
             )
-
-        print(f"Loaded EML file {self.eml_file_id}")
+        print(f"Loaded EML file {eml_file_id}")
 
         # XML elements with votes of the main unit (the unit itself) and
         # the reporting_units (subunits, so for GSB these are SBs, for HSB GSBs etc..)
@@ -30,22 +33,40 @@ class EML:
         reporting_units = xml_parser.get_reporting_units(xml_root)
 
         # Fetch vote information for main unit
-        self.main_unit_info = xml_parser.get_reporting_unit_info(main_unit)
+        main_unit_info = xml_parser.get_reporting_unit_info(main_unit)
 
         # Fetch vote information for each individual subunit and index by reporting unit id
         reporing_units_info_list = [
             xml_parser.get_reporting_unit_info(reporting_unit)
             for reporting_unit in reporting_units
         ]
-        self.reporting_units_info = {
+        reporting_units_info = {
             reporting_unit_info.get("reporting_unit_id"): reporting_unit_info
             for reporting_unit_info in reporing_units_info_list
         }
 
-    def percentual_party_differences(self):
-        return differences_per_party(self.main_unit_info, self.reporting_units_info)
+        return EML(eml_file_id, main_unit_info, reporting_units_info)
 
-    def run_checks(self):
-        return get_checks_array(
-            self.reporting_units_info, self.percentual_party_differences()
-        )
+    def run_protocol(self):
+        protocol_results = {}
+
+        for polling_station_id, polling_station in self.reporting_units_info.items():
+            result = {
+                "zero_votes": protocol_checks.check_zero_votes(polling_station),
+                "inexplicable_difference": protocol_checks.check_inexplicable_difference(
+                    polling_station
+                ),
+                "high_invalid_vote_percentage": protocol_checks.check_too_many_rejected_votes(
+                    polling_station, "ongeldig"
+                ),
+                "high_blank_vote_percentage": protocol_checks.check_too_many_rejected_votes(
+                    polling_station, "blanco"
+                ),
+                "parties_with_high_difference_percentage": protocol_checks.check_parties_with_large_percentage_difference(
+                    self.main_unit_info, polling_station
+                ),
+            }
+
+            protocol_results[polling_station_id] = result
+
+        return protocol_results

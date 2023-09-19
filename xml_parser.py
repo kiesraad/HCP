@@ -6,6 +6,9 @@ NAMESPACE = {
     "kr": "http://www.kiesraad.nl/extensions",
     "xal": "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0",
     "xnl": "urn:oasis:names:tc:ciq:xsdschema:xNL:2.0",
+    "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",
+    "table": "urn:oasis:names:tc:opendocument:xmlns:table:1.0",
+    "text": "urn:oasis:names:tc:opendocument:xmlns:text:1.0",
 }
 
 
@@ -33,6 +36,47 @@ def get_eml_type(root):
         return get_attrib(root_element, "Id")
 
     return None
+
+
+def get_metadata(root):
+    creation_date_time = get_text(root.find("./kr:CreationDateTime", NAMESPACE))
+    authority_id = get_attrib(
+        root.find(
+            "./eml:ManagingAuthority/eml:AuthorityIdentifier",
+            NAMESPACE,
+        ),
+        "Id",
+    )
+    election_id = get_attrib(
+        root.find("./eml:Count/eml:Election/eml:ElectionIdentifier", NAMESPACE), "Id"
+    )
+    election_name = get_text(
+        root.find(
+            "./eml:Count/eml:Election/eml:ElectionIdentifier/eml:ElectionName",
+            NAMESPACE,
+        )
+    )
+    election_domain = get_text(
+        root.find(
+            "./eml:Count/eml:Election/eml:ElectionIdentifier/kr:ElectionDomain",
+            NAMESPACE,
+        ),
+    )
+    election_date = get_text(
+        root.find(
+            "./eml:Count/eml:Election/eml:ElectionIdentifier/kr:ElectionDate",
+            NAMESPACE,
+        )
+    )
+
+    return {
+        "creation_date_time": creation_date_time,
+        "authority_id": authority_id,
+        "election_id": election_id,
+        "election_name": election_name,
+        "election_domain": election_domain,
+        "election_date": election_date,
+    }
 
 
 def get_reporting_units(xml):
@@ -121,3 +165,38 @@ def get_votes_per_party(reporting_unit):
             "./eml:Selection[eml:AffiliationIdentifier]", NAMESPACE
         )
     }
+
+
+## PV code
+def get_polling_stations_with_recounts(odt_root):
+    recounts = []
+
+    polling_stations = odt_root.findall(
+        "./office:body/office:text/table:table[@table:name='NieuweTelling']/table:table-row",
+        NAMESPACE,
+    )
+
+    for polling_station in polling_stations:
+        # Get three different span elements which describe the polling station
+        # the first contains the id, the second the name and the third optionally
+        # the zip code
+        polling_station_descriptors = polling_station.findall(
+            ".//text:span[@text:description]", NAMESPACE
+        )
+
+        polling_station_id = get_text(polling_station_descriptors[0])
+        polling_station_name = get_text(polling_station_descriptors[1])
+        polling_station_zip = get_text(polling_station_descriptors[2])
+
+        recounts.append(
+            {
+                "polling_station_id": polling_station_id,
+                "polling_station_name": polling_station_name,
+                "polling_station_zip": polling_station_zip,
+                "polling_station_name_joined": f"{polling_station_name} {polling_station_zip}"
+                if polling_station_zip
+                else polling_station_name,
+            }
+        )
+
+    return recounts

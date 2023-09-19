@@ -1,6 +1,9 @@
 ## TODO mainly old code, should probably be rewritten but works in combination with the
 ## current EML class
 
+import zipfile
+import xml_parser
+
 percentage_blanco = 3
 percentage_not_counted = 3
 
@@ -81,3 +84,10 @@ def is_larger_than_percentage(total, part, percentage):
         return int(part) / int(total) * 100 >= percentage
     except ZeroDivisionError:
         return False
+
+
+def get_na31_1_recounts(odt_path):
+    with zipfile.ZipFile(odt_path) as odt_zip:
+        with odt_zip.open("content.xml") as odt_xml:
+            odt_root = xml_parser.parse_xml(odt_xml)
+            return xml_parser.get_polling_stations_with_recounts(odt_root)
