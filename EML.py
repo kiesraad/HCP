@@ -29,6 +29,9 @@ class EML:
                 "high_blank_vote_percentage": protocol_checks.check_too_many_rejected_votes(
                     polling_station, "blanco"
                 ),
+                "high_explained_difference_percentage": protocol_checks.check_too_many_explained_differences(
+                    polling_station
+                ),
                 "parties_with_high_difference_percentage": protocol_checks.check_parties_with_large_percentage_difference(
                     self.main_unit_info, polling_station
                 ),

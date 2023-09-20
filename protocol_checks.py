@@ -1,4 +1,5 @@
 PERCENTAGE_REJECTED_THRESHOLDS = {"blanco": float(3), "ongeldig": float(3)}
+PERCENTAGE_EXPLAINED_THRESHOLD = float(2)
 PERCENTAGE_PARTY_DIFF_THRESHOLD = float(50)
 
 #### Check functions
@@ -20,6 +21,15 @@ def check_too_many_rejected_votes(reporting_unit, kind: str) -> bool:
     threshold = PERCENTAGE_REJECTED_THRESHOLDS.get(kind)
     total_votes = _get_total_votes(reporting_unit)
     return _is_larger_than_percentage(rejected_votes, total_votes, threshold)
+
+
+def check_too_many_explained_differences(reporting_unit) -> bool:
+    explained_differences = _get_explained_differences(reporting_unit)
+    total_votes = _get_total_votes(reporting_unit)
+
+    return _is_larger_than_percentage(
+        explained_differences, total_votes, PERCENTAGE_EXPLAINED_THRESHOLD
+    )
 
 
 def get_party_difference_percentages(main_unit, reporting_unit):
@@ -56,6 +66,17 @@ def _get_total_votes(reporting_unit) -> int:
         reporting_unit.get("total_counted")
         + rejected_votes.get("ongeldig")
         + rejected_votes.get("blanco")
+    )
+
+
+def _get_explained_differences(reporting_unit) -> int:
+    # Metadata fields
+    uncounted_votes = reporting_unit.get("uncounted_votes")
+    return (
+        (uncounted_votes.get("meegenomen stembiljetten") or 0)
+        + (uncounted_votes.get("te weinig uitgereikte stembiljetten") or 0)
+        + (uncounted_votes.get("te veel uitgereikte stembiljetten") or 0)
+        + (uncounted_votes.get("andere verklaring") or 0)
     )
 
 
