@@ -1,12 +1,23 @@
 from eml import EML
+from odt import ODT
 import csv_write
 
 
-def create_csv_file_a_b_c(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
+def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
+    # Parse the eml from the path and run all checks in the protocol
     eml = EML.from_xml(path_to_xml)
-
     check_results = eml.run_protocol()
     eml_metadata = eml.metadata
+
+    # If odt_path is specified we try to read the file and extract the relevant
+    # parts, as a precaution we will not fail if anything goes wrong here, but
+    # simply return 'None' for the odt object and then the empty list for the
+    # already recounted variable
+    odt = ODT.from_path(path_to_odt)
+    already_recounted = odt.get_already_recounted_polling_stations() if odt else []
+
+    # TODO implement logic to add already recounted polling stations to result
+    # by matching by id (and name?)
 
     csv_write.write_csv_a(check_results, eml_metadata, dest_a)
     csv_write.write_csv_b(check_results, eml_metadata, dest_b)
@@ -32,16 +43,16 @@ def _create_csv_file_a_b_c(self):
         # het liefst een `None` terugkrijgen zodat ik die logica in onze code
         # mee kan nemen.
         # Dus bijvoorbeeld:
-        ## odt_file = self.__get_path_odt_file()
+        ## odt_file = self._get_path_odt_file()
         #
         odt_file = None
 
-        create_csv_file_a_b_c(
-            xml_file,
-            self._filename_csv("a"),
-            self._filename_csv("b"),
-            self._filename_csv("c"),
-            odt_file,
+        create_csv_files(
+            path_to_xml=xml_file,
+            dest_a=self._filename_csv("a"),
+            dest_b=self._filename_csv("b"),
+            dest_c=self._filename_csv("c"),
+            path_to_odt=odt_file,
         )
 
     except Exception:
@@ -54,9 +65,3 @@ def _create_csv_file_a_b_c(self):
             executed_method="",
             message=f"csv types a, b and c could not be created for {xml_file}",
         ).save()
-
-
-if __name__ == "__main__":
-    create_csv_file_a_b_c(
-        "./eml/Telling_TK2021_gemeente_Eemsdelta.eml.xml", "a.csv", "b.csv", "c.csv"
-    )

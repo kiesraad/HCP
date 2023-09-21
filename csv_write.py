@@ -22,12 +22,16 @@ def _write_header(writer, metadata, description):
     writer.writerow([])
 
 
+def _format_id(id: str):
+    return id[8:]
+
+
 def _id_cols(metadata, id):
     return [
         metadata.get("contest_identifier"),
         metadata.get("authority_id"),
         metadata.get("authority_name"),
-        id,
+        _format_id(id),
         metadata.get("reporting_unit_names").get(id),
     ]
 
