@@ -47,6 +47,12 @@ def get_metadata(root):
         ),
         "Id",
     )
+    authority_name = get_text(
+        root.find(
+            "./eml:ManagingAuthority/eml:AuthorityIdentifier",
+            NAMESPACE,
+        )
+    )
     election_id = get_attrib(
         root.find("./eml:Count/eml:Election/eml:ElectionIdentifier", NAMESPACE), "Id"
     )
@@ -68,14 +74,29 @@ def get_metadata(root):
             NAMESPACE,
         )
     )
+    contest_identifier = get_attrib(
+        root.find(
+            "./eml:Count/eml:Election/eml:Contests/eml:Contest/eml:ContestIdentifier",
+            NAMESPACE,
+        ),
+        "Id",
+    )
+
+    reporting_units = root.findall(".//eml:ReportingUnitIdentifier", NAMESPACE)
+    reporting_unit_names = {
+        get_attrib(elem, "Id"): get_text(elem) for elem in reporting_units
+    }
 
     return {
         "creation_date_time": creation_date_time,
         "authority_id": authority_id,
+        "authority_name": authority_name,
         "election_id": election_id,
         "election_name": election_name,
         "election_domain": election_domain,
         "election_date": election_date,
+        "contest_identifier": contest_identifier,
+        "reporting_unit_names": reporting_unit_names,
     }
 
 

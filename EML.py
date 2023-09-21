@@ -76,7 +76,10 @@ class EML:
             for reporting_unit_info in reporing_units_info_list
         }
 
-        return EML(eml_file_id, main_unit_info, reporting_units_info)
+        # Fetch metadata of main EML
+        metadata = xml_parser.get_metadata(xml_root)
+
+        return EML(eml_file_id, main_unit_info, reporting_units_info, metadata)
 
 
 class EMLZip:

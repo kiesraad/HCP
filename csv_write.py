@@ -1,63 +1,64 @@
 import csv
 
+HEADER_COLS = [
+    "Kieskringnummer",
+    "Gemeentenummer",
+    "Gemeentenaam",
+    "Stembureaunummer",
+    "Stembureaunaam",
+]
 
-def write_csv_a(check_results, csv_destination):
+
+def _write_header(writer, metadata, description):
+    writer.writerow(["Versie controleprotocol", "VERSION_NO"])
+    writer.writerow(["Beschrijving", description])
+
+    writer.writerow([])
+    writer.writerow(["EML datum/tijd", metadata.get("creation_date_time")])
+    writer.writerow(["Verkiezing", metadata.get("election_name")])
+    writer.writerow(["Datum", metadata.get("election_date")])
+    writer.writerow(["Kieskringnummer", metadata.get("contest_identifier")])
+    writer.writerow(["Gemeentenummer", metadata.get("authority_id")])
+    writer.writerow([])
+
+
+def _id_cols(metadata, id):
+    return [
+        metadata.get("contest_identifier"),
+        metadata.get("authority_id"),
+        metadata.get("authority_name"),
+        id,
+        metadata.get("reporting_unit_names").get(id),
+    ]
+
+
+def write_csv_a(check_results, eml_metadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
-        writer.writerow(["Versie controleprotocol", "VERSION_NO"])
-        writer.writerow(
-            ["Beschrijving", "Stembureaus met geen verklaring voor telverschillen"]
+        _write_header(
+            writer, eml_metadata, "Stembureaus met geen verklaring voor telverschillen"
         )
 
-        writer.writerow([])
-        writer.writerow(["EML datum/tijd", "TODO"])
-        writer.writerow(["Verkiezing", "TODO"])
-        writer.writerow(["Datum", "TODO"])
-        writer.writerow(["Gebied", "TODO"])
-        writer.writerow(["Gemeentenummer", "TODO"])
-        writer.writerow([])
-
-        writer.writerow(
-            [
-                "Gemeentenummer",
-                "Naam",
-                "Stembureaunummer",
-                "Stembureaunaam",
-                "Aantal geen verklaring",
-            ]
-        )
+        writer.writerow(HEADER_COLS + ["Aantal geen verklaring"])
 
         for id, results in check_results.items():
             inexplicable_difference = results.get("inexplicable_difference")
             if inexplicable_difference:
-                writer.writerow(["TODO", "TODO", id, "TODO", inexplicable_difference])
+                writer.writerow(_id_cols(eml_metadata, id) + [inexplicable_difference])
 
 
-def write_csv_b(check_results, csv_destination):
+def write_csv_b(check_results, eml_metadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
-        writer.writerow(["Versie controleprotocol", "VERSION_NO"])
-        writer.writerow(
-            [
-                "Beschrijving",
-                "Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%",
-            ]
+        _write_header(
+            writer,
+            eml_metadata,
+            "Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%",
         )
 
-        writer.writerow([])
-        writer.writerow(["EML datum/tijd", "TODO"])
-        writer.writerow(["Verkiezing", "TODO"])
-        writer.writerow(["Datum", "TODO"])
-        writer.writerow(["Gebied", "TODO"])
-        writer.writerow(["Gemeentenummer", "TODO"])
-        writer.writerow([])
-
         writer.writerow(
-            [
-                "Gemeentenummer",
-                "Naam",
-                "Stembureaunummer",
-                "Stembureaunaam",
+            HEADER_COLS
+            + [
                 "Stembureau met nul stemmen",
                 "Stembureau >=3% ongeldig",
                 "Stembureau >=3% blanco",
@@ -89,11 +90,8 @@ def write_csv_b(check_results, csv_destination):
                 or parties_with_high_difference_percentage
             ):
                 writer.writerow(
-                    [
-                        "TODO",
-                        "TODO",
-                        id,
-                        "TODO",
+                    _id_cols(eml_metadata, id)
+                    + [
                         zero_votes,
                         high_invalid_vote_percentage,
                         high_blank_vote_percentage,
@@ -103,26 +101,10 @@ def write_csv_b(check_results, csv_destination):
                 )
 
 
-def write_csv_c(check_results, csv_destination):
+def write_csv_c(check_results, eml_metadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
-        writer.writerow(["Versie controleprotocol", "VERSION_NO"])
-        writer.writerow(
-            [
-                "Beschrijving",
-                "Afwijking per stembureau per partij",
-            ]
-        )
-
-        writer.writerow([])
-        writer.writerow(["EML datum/tijd", "TODO"])
-        writer.writerow(["Verkiezing", "TODO"])
-        writer.writerow(["Datum", "TODO"])
-        writer.writerow(["Gebied", "TODO"])
-        writer.writerow(["Gemeentenummer", "TODO"])
-        writer.writerow([])
-
-        header = ["Stembureaunummer", "Stembureaunaam"]
+        _write_header(writer, eml_metadata, "Afwijking per stembureau per partij")
 
         # Assuming all parties are the same
         parties = sorted(
@@ -132,8 +114,7 @@ def write_csv_c(check_results, csv_destination):
                 .keys()
             )
         )
-        header += parties
-        writer.writerow(header)
+        writer.writerow(HEADER_COLS + parties)
 
         for id, results in check_results.items():
             towrite = []
@@ -141,4 +122,4 @@ def write_csv_c(check_results, csv_destination):
             for _, difference in differences:
                 towrite.append(f"{int(difference)}%")
 
-            writer.writerow([id, "TODO"] + towrite)
+            writer.writerow(_id_cols(eml_metadata, id) + towrite)
