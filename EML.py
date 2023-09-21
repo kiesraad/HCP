@@ -56,7 +56,6 @@ class EML:
             raise ValueError(
                 f"Tried to load EML with id {eml_file_id}, expected 510[a-dqrs]"
             )
-        print(f"Loaded EML file {eml_file_id}")
 
         # XML elements with votes of the main unit (the unit itself) and
         # the reporting_units (subunits, so for GSB these are SBs, for HSB GSBs etc..)

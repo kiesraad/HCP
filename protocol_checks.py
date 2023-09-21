@@ -48,13 +48,15 @@ def get_party_difference_percentages(main_unit, reporting_unit):
 
 def check_parties_with_large_percentage_difference(
     main_unit, reporting_unit
-) -> list[dict]:
+) -> list[str]:
     differences = get_party_difference_percentages(main_unit, reporting_unit)
-    return [
-        {"party_name": name, "difference": difference}
-        for (name, difference) in differences.items()
-        if abs(difference) >= PERCENTAGE_PARTY_DIFF_THRESHOLD
-    ]
+    return sorted(
+        [
+            name
+            for (name, difference) in differences.items()
+            if abs(difference) >= PERCENTAGE_PARTY_DIFF_THRESHOLD
+        ]
+    )
 
 
 #### Helper functions

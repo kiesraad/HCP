@@ -63,7 +63,7 @@ def write_csv_b(check_results, eml_metadata, csv_destination):
                 "Stembureau >=3% ongeldig",
                 "Stembureau >=3% blanco",
                 "Stembureau >=2% verklaarde verschillen",
-                "Stembureau met lijst >50% afwijking",
+                "Stembureau met lijst >=50% afwijking",
             ]
         )
 
