@@ -1,6 +1,6 @@
 from zipfile import ZipFile
 from enum import Enum, auto
-from typing import List
+from typing import Any, List, Dict
 import xml_parser
 
 
@@ -29,16 +29,15 @@ class ODT:
         except Exception:
             return None
 
-    def get_already_recounted_polling_stations(self) -> List[str]:
+    def get_already_recounted_polling_stations(self) -> List[Dict[str, Any]]:
         try:
-            match self.type:
-                case ODT_TYPE.na31_1:
-                    return xml_parser.get_polling_stations_with_recounts(self.odt_xml)
-                case ODT_TYPE.na31_2:
-                    # TODO Not implemented
-                    return []
-                case _:
-                    return []
+            if self.type == ODT_TYPE.na31_1:
+                return xml_parser.get_polling_stations_with_recounts(self.odt_xml)
+            elif self.type == ODT_TYPE.na31_2:
+                # TODO Not implemented
+                return []
+            else:
+                return []
         except Exception:
             return []
 

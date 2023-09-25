@@ -1,4 +1,6 @@
 import csv
+from eml_types import EmlMetadata
+from typing import List, Union
 
 HEADER_COLS = [
     "Kieskringnummer",
@@ -9,34 +11,34 @@ HEADER_COLS = [
 ]
 
 
-def _write_header(writer, metadata, description):
+def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
     writer.writerow(["Versie controleprotocol", "VERSION_NO"])
     writer.writerow(["Beschrijving", description])
 
     writer.writerow([])
-    writer.writerow(["EML datum/tijd", metadata.get("creation_date_time")])
-    writer.writerow(["Verkiezing", metadata.get("election_name")])
-    writer.writerow(["Datum", metadata.get("election_date")])
-    writer.writerow(["Kieskringnummer", metadata.get("contest_identifier")])
-    writer.writerow(["Gemeentenummer", metadata.get("authority_id")])
+    writer.writerow(["EML datum/tijd", metadata.creation_date_time])
+    writer.writerow(["Verkiezing", metadata.election_name])
+    writer.writerow(["Datum", metadata.election_date])
+    writer.writerow(["Kieskringnummer", metadata.contest_identifier])
+    writer.writerow(["Gemeentenummer", metadata.authority_id])
     writer.writerow([])
 
 
-def _format_id(id: str):
+def _format_id(id: str) -> str:
     return id[8:]
 
 
-def _id_cols(metadata, id):
+def _id_cols(metadata: EmlMetadata, id: str) -> List[Union[str, None]]:
     return [
-        metadata.get("contest_identifier"),
-        metadata.get("authority_id"),
-        metadata.get("authority_name"),
+        metadata.contest_identifier,
+        metadata.authority_id,
+        metadata.authority_name,
         _format_id(id),
-        metadata.get("reporting_unit_names").get(id),
+        metadata.reporting_unit_names.get(id),
     ]
 
 
-def write_csv_a(check_results, eml_metadata, csv_destination):
+def write_csv_a(check_results, eml_metadata: EmlMetadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(
@@ -51,7 +53,7 @@ def write_csv_a(check_results, eml_metadata, csv_destination):
                 writer.writerow(_id_cols(eml_metadata, id) + [inexplicable_difference])
 
 
-def write_csv_b(check_results, eml_metadata, csv_destination):
+def write_csv_b(check_results, eml_metadata: EmlMetadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(
@@ -105,7 +107,7 @@ def write_csv_b(check_results, eml_metadata, csv_destination):
                 )
 
 
-def write_csv_c(check_results, eml_metadata, csv_destination):
+def write_csv_c(check_results, eml_metadata: EmlMetadata, csv_destination):
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(writer, eml_metadata, "Afwijking per stembureau per partij")

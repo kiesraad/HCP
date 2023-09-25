@@ -1,4 +1,7 @@
 from defusedxml import ElementTree as ET
+from typing import Optional, IO, Union, Any, List, Dict
+from xml.etree.ElementTree import Element as XmlElement
+from eml_types import EmlMetadata, ReportingUnitInfo
 
 NAMESPACE = {
     "eml": "urn:oasis:names:tc:evs:schema:eml",
@@ -12,15 +15,21 @@ NAMESPACE = {
 }
 
 
-def get_text(xml_element):
+def get_text(xml_element: Optional[XmlElement]) -> Optional[str]:
     return xml_element.text if xml_element is not None else None
 
 
-def get_attrib(xml_element, attrib_name):
+def get_attrib(xml_element: Optional[XmlElement], attrib_name: str) -> Optional[str]:
     return xml_element.attrib.get(attrib_name) if xml_element is not None else None
 
 
-def parse_xml(file_name):
+def as_int(input: Optional[str]) -> int:
+    if input is not None:
+        return int(input)
+    return 0
+
+
+def parse_xml(file_name: Union[str, IO[bytes]]) -> XmlElement:
     # EML should be checked so that it validates using the XSD
 
     tree = ET.parse(file_name)
@@ -30,7 +39,7 @@ def parse_xml(file_name):
     return tree_root
 
 
-def get_eml_type(root):
+def get_eml_type(root: XmlElement) -> Optional[str]:
     root_element = root.find(".")
     if root_element and root_element.tag == f"{{{NAMESPACE.get('eml')}}}EML":
         return get_attrib(root_element, "Id")
@@ -38,7 +47,7 @@ def get_eml_type(root):
     return None
 
 
-def get_metadata(root):
+def get_metadata(root: XmlElement) -> EmlMetadata:
     creation_date_time = get_text(root.find("./kr:CreationDateTime", NAMESPACE))
     authority_id = get_attrib(
         root.find(
@@ -87,20 +96,20 @@ def get_metadata(root):
         get_attrib(elem, "Id"): get_text(elem) for elem in reporting_units
     }
 
-    return {
-        "creation_date_time": creation_date_time,
-        "authority_id": authority_id,
-        "authority_name": authority_name,
-        "election_id": election_id,
-        "election_name": election_name,
-        "election_domain": election_domain,
-        "election_date": election_date,
-        "contest_identifier": contest_identifier,
-        "reporting_unit_names": reporting_unit_names,
-    }
+    return EmlMetadata(
+        creation_date_time=creation_date_time,
+        authority_id=authority_id,
+        authority_name=authority_name,
+        election_id=election_id,
+        election_name=election_name,
+        election_domain=election_domain,
+        election_date=election_date,
+        contest_identifier=contest_identifier,
+        reporting_unit_names=reporting_unit_names,
+    )
 
 
-def get_reporting_units(xml):
+def get_reporting_units(xml: XmlElement) -> List[XmlElement]:
     reporting_units = xml.findall(
         "./eml:Count/eml:Election/eml:Contests/eml:Contest/eml:ReportingUnitVotes",
         NAMESPACE,
@@ -113,38 +122,33 @@ def get_reporting_units(xml):
     return reporting_units
 
 
-def get_main_unit(xml):
+def get_main_unit(xml: XmlElement) -> XmlElement:
     main_unit = xml.find(
         "./eml:Count/eml:Election/eml:Contests/eml:Contest/eml:TotalVotes", NAMESPACE
     )
 
+    if main_unit is None:
+        raise AttributeError("EML had no main reporting unit!")
+
     return main_unit
 
 
-def get_reporting_unit_info(reporting_unit):
+def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
     # Reporing unit element, which is present for the individual polling stations but
     # not for the 'total' count of the GSB
     reporting_unit_id_element = reporting_unit.find(
         "./eml:ReportingUnitIdentifier", NAMESPACE
     )
-
-    reporting_unit_id = (
-        reporting_unit_id_element.attrib.get("Id")
-        if reporting_unit_id_element is not None
-        else None
-    )
-
-    reporting_unit_name = (
-        reporting_unit_id_element.text
-        if reporting_unit_id_element is not None
-        else None
-    )
+    reporting_unit_id = get_attrib(reporting_unit_id_element, "Id")
+    reporting_unit_name = get_text(reporting_unit_id_element)
 
     # Get amount of eligible voters
-    cast = int(reporting_unit.find("./eml:Cast", NAMESPACE).text)
+    cast = as_int(get_text(reporting_unit.find("./eml:Cast", NAMESPACE)))
 
     # Get total cast/counted votes
-    total_counted = int(reporting_unit.find("./eml:TotalCounted", NAMESPACE).text)
+    total_counted = as_int(
+        get_text(reporting_unit.find("./eml:TotalCounted", NAMESPACE))
+    )
 
     # Fetch invalid votes, the two types are mandatory
     # which are 'blanco' (blank) and 'ongeldig' (invalid)
@@ -156,40 +160,53 @@ def get_reporting_unit_info(reporting_unit):
     # Fetch amount of votes per party
     votes_per_party = get_votes_per_party(reporting_unit)
 
-    # Return dict of results
-    return {
-        "reporting_unit_id": reporting_unit_id,
-        "reporting_unit_name": reporting_unit_name,
-        "cast": cast,
-        "total_counted": total_counted,
-        "rejected_votes": rejected_votes,
-        "uncounted_votes": uncounted_votes,
-        "votes_per_party": votes_per_party,
-    }
+    return ReportingUnitInfo(
+        reporting_unit_id=reporting_unit_id,
+        reporting_unit_name=reporting_unit_name,
+        cast=cast,
+        total_counted=total_counted,
+        rejected_votes=rejected_votes,
+        uncounted_votes=uncounted_votes,
+        votes_per_party=votes_per_party,
+    )
 
 
-def get_vote_metadata_dict(reporting_unit, path):
+def get_vote_metadata_dict(reporting_unit: XmlElement, path: str) -> Dict[str, int]:
     return {
-        elem.attrib.get("ReasonCode"): int(elem.text)
+        elem.attrib["ReasonCode"]: as_int(elem.text)
         for elem in reporting_unit.findall(path, NAMESPACE)
     }
 
 
-def get_votes_per_party(reporting_unit):
+def get_votes_per_party(reporting_unit: XmlElement) -> Dict[str, int]:
     # Total votes for a party are the selection elements which have an AffiliationIdentifier as
     # a direct child element
-    return {
-        party_result.find(
+    result = {}
+
+    party_results = reporting_unit.findall(
+        "./eml:Selection[eml:AffiliationIdentifier]", NAMESPACE
+    )
+
+    for party in party_results:
+        party_name = party.find(
             "./eml:AffiliationIdentifier/eml:RegisteredName", NAMESPACE
-        ).text: int(party_result.find("eml:ValidVotes", NAMESPACE).text)
-        for party_result in reporting_unit.findall(
-            "./eml:Selection[eml:AffiliationIdentifier]", NAMESPACE
         )
-    }
+        if party_name is None or party_name.text is None:
+            raise AttributeError(f"Party {party} had no registered name!")
+        party_name = party_name.text
+
+        party_result = party.find("eml:ValidVotes", NAMESPACE)
+        if party_result is None or party_result.text is None:
+            raise AttributeError(f"Party {party} had no associated votes!")
+        party_result = int(party_result.text)
+
+        result[party_name] = party_result
+
+    return result
 
 
 ## PV code
-def get_polling_stations_with_recounts(odt_root):
+def get_polling_stations_with_recounts(odt_root: XmlElement) -> List[Dict[str, Any]]:
     recounts = []
 
     polling_stations = odt_root.findall(

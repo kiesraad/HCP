@@ -1,18 +1,18 @@
 import xml_parser
 import re
 import protocol_checks
-from zipfile import ZipFile
+from dataclasses import dataclass
+from typing import Dict
+from eml_types import EmlMetadata, ReportingUnitInfo
 import re
 
 
+@dataclass
 class EML:
-    def __init__(
-        self, eml_file_id, main_unit_info, reporting_units_info, metadata=None
-    ):
-        self.eml_file_id = eml_file_id
-        self.main_unit_info = main_unit_info
-        self.reporting_units_info = reporting_units_info
-        self.metadata = metadata
+    eml_file_id: str
+    main_unit_info: ReportingUnitInfo
+    reporting_units_info: Dict[str, ReportingUnitInfo]
+    metadata: EmlMetadata
 
     def run_protocol(self):
         protocol_results = {}
@@ -66,71 +66,16 @@ class EML:
         main_unit_info = xml_parser.get_reporting_unit_info(main_unit)
 
         # Fetch vote information for each individual subunit and index by reporting unit id
-        reporing_units_info_list = [
-            xml_parser.get_reporting_unit_info(reporting_unit)
-            for reporting_unit in reporting_units
-        ]
-        reporting_units_info = {
-            reporting_unit_info.get("reporting_unit_id"): reporting_unit_info
-            for reporting_unit_info in reporing_units_info_list
-        }
+        reporting_units_info = {}
+        for reporting_unit in reporting_units:
+            info = xml_parser.get_reporting_unit_info(reporting_unit)
+            if info.reporting_unit_id is None:
+                raise AttributeError(
+                    f"Tried to add reporting unit {reporting_unit} without ID!"
+                )
+            reporting_units_info[info.reporting_unit_id] = info
 
         # Fetch metadata of main EML
         metadata = xml_parser.get_metadata(xml_root)
 
         return EML(eml_file_id, main_unit_info, reporting_units_info, metadata)
-
-
-class EMLZip:
-    def __init__(self, eml: EML, odt):
-        self.eml = eml
-        self.odt = odt
-
-    @staticmethod
-    def from_zip(zip_path):
-        with ZipFile(zip_path) as count_zip:
-            eml = _find_and_parse_eml(count_zip)
-            odt = _find_odt_content(count_zip)
-            return EMLZip(eml=eml, odt=odt)
-
-    def run_protocol(self):
-        return {
-            "eml_checks": self.eml.run_protocol(),
-            "already_recounted": xml_parser.get_polling_stations_with_recounts(self.odt)
-            if self.odt
-            else [],
-        }
-
-
-def _find_and_parse_eml(zip: ZipFile):
-    filelist = zip.namelist()
-    telling_zip_pattern = re.compile(r"^Telling_.+\.zip$")
-    eml_pattern = re.compile(r"^Telling_.+\.eml\.xml$")
-
-    for filename in filelist:
-        if telling_zip_pattern.match(filename):
-            with zip.open(filename) as internal_zip_file:
-                with ZipFile(internal_zip_file) as internal_zip:
-                    internal_filelist = internal_zip.namelist()
-                    for internal_file in internal_filelist:
-                        if eml_pattern.match(internal_file):
-                            eml_file = internal_zip.open(internal_file)
-                            return EML.from_xml(eml_file)
-
-    raise RuntimeError("No eml found in zipfile!")
-
-
-def _find_odt_content(zip: ZipFile):
-    filelist = zip.namelist()
-
-    if "Model_Na31-1.odt" in filelist:
-        with zip.open("Model_Na31-1.odt") as odt_file:
-            return _extract_odt_xml_root(odt_file)
-
-    return None
-
-
-def _extract_odt_xml_root(odt_file):
-    with ZipFile(odt_file) as odt_zip:
-        with odt_zip.open("content.xml") as odt_xml:
-            return xml_parser.parse_xml(odt_xml)
