@@ -19,14 +19,21 @@ def get_text(xml_element: Optional[XmlElement]) -> Optional[str]:
     return xml_element.text if xml_element is not None else None
 
 
+def get_mandatory_text(xml_element: Optional[XmlElement]) -> str:
+    if xml_element is None:
+        raise ValueError("Could not find specified XML element")
+
+    text = xml_element.text
+    if text is None:
+        raise AttributeError(
+            f"Element {xml_element} did not have text but was mandatory"
+        )
+
+    return text
+
+
 def get_attrib(xml_element: Optional[XmlElement], attrib_name: str) -> Optional[str]:
     return xml_element.attrib.get(attrib_name) if xml_element is not None else None
-
-
-def as_int(input: Optional[str]) -> int:
-    if input is not None:
-        return int(input)
-    return 0
 
 
 def parse_xml(file_name: Union[str, IO[bytes]]) -> XmlElement:
@@ -143,11 +150,11 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
     reporting_unit_name = get_text(reporting_unit_id_element)
 
     # Get amount of eligible voters
-    cast = as_int(get_text(reporting_unit.find("./eml:Cast", NAMESPACE)))
+    cast = int(get_mandatory_text(reporting_unit.find("./eml:Cast", NAMESPACE)))
 
     # Get total cast/counted votes
-    total_counted = as_int(
-        get_text(reporting_unit.find("./eml:TotalCounted", NAMESPACE))
+    total_counted = int(
+        get_mandatory_text(reporting_unit.find("./eml:TotalCounted", NAMESPACE))
     )
 
     # Fetch invalid votes, the two types are mandatory
@@ -172,10 +179,21 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
 
 
 def get_vote_metadata_dict(reporting_unit: XmlElement, path: str) -> Dict[str, int]:
-    return {
-        elem.attrib["ReasonCode"]: as_int(elem.text)
-        for elem in reporting_unit.findall(path, NAMESPACE)
-    }
+    vote_metadata = reporting_unit.findall(path, NAMESPACE)
+    result = {}
+
+    for elem in vote_metadata:
+        reasoncode = elem.attrib["ReasonCode"]
+        value = elem.text
+
+        if value is None:
+            raise ValueError(
+                f"Vote metadata {reasoncode} did not have associated value"
+            )
+
+        result[reasoncode] = int(value)
+
+    return result
 
 
 def get_votes_per_party(reporting_unit: XmlElement) -> Dict[str, int]:
