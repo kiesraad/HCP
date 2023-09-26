@@ -38,7 +38,7 @@ class EML:
                 "party_difference_percentages": protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
                 ),
-                "recounted_polling_stations": [],
+                "already_recounted": False,
             }
 
             protocol_results[polling_station_id] = result

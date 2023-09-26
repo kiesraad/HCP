@@ -45,12 +45,16 @@ def write_csv_a(check_results, eml_metadata: EmlMetadata, csv_destination):
             writer, eml_metadata, "Stembureaus met geen verklaring voor telverschillen"
         )
 
-        writer.writerow(HEADER_COLS + ["Aantal geen verklaring"])
+        writer.writerow(HEADER_COLS + ["Aantal geen verklaring", "Al hergeteld"])
 
         for id, results in check_results.items():
             inexplicable_difference = results.get("inexplicable_difference")
+            already_recounted = "x of ja" if results.get("already_recounted") else None
             if inexplicable_difference:
-                writer.writerow(_id_cols(eml_metadata, id) + [inexplicable_difference])
+                writer.writerow(
+                    _id_cols(eml_metadata, id)
+                    + [inexplicable_difference, already_recounted]
+                )
 
 
 def write_csv_b(check_results, eml_metadata: EmlMetadata, csv_destination):

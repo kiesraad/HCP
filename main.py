@@ -6,6 +6,7 @@ import csv_write
 def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
     # Parse the eml from the path and run all checks in the protocol
     eml = EML.from_xml(path_to_xml)
+
     check_results = eml.run_protocol()
     eml_metadata = eml.metadata
 
@@ -14,10 +15,27 @@ def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
     # simply return 'None' for the odt object and then the empty list for the
     # already recounted variable
     odt = ODT.from_path(path_to_odt)
-    already_recounted = odt.get_already_recounted_polling_stations() if odt else []
+    if odt:
+        recounted_polling_stations = odt.get_already_recounted_polling_stations()
+        for polling_station in recounted_polling_stations:
+            # Reconstruct the full polling station identifier
+            full_id = f"{eml_metadata.authority_id}::SB{polling_station.id}"
 
-    # TODO implement logic to add already recounted polling stations to result
-    # by matching by id (and name?)
+            # Make sure that the name of the polling station matches so that
+            # we are absolutely sure that the polling station in the eml
+            # matches with the one in the odt.
+            polling_station_name_eml = eml_metadata.reporting_unit_names.get(full_id)
+            polling_station_name_odt = (
+                f"Stembureau {polling_station.name} {polling_station.zip}"
+                if polling_station.zip
+                else f"Stembureau {polling_station.name}"
+            )
+
+            if (
+                full_id in check_results.keys()
+                and polling_station_name_eml == polling_station_name_odt
+            ):
+                check_results[full_id]["already_recounted"] = True
 
     csv_write.write_csv_a(check_results, eml_metadata, dest_a)
     csv_write.write_csv_b(check_results, eml_metadata, dest_b)
