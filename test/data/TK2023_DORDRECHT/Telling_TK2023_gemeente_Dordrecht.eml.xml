@@ -1,0 +1,402 @@
+<EML xmlns="urn:oasis:names:tc:evs:schema:eml"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:kr="http://www.kiesraad.nl/extensions"
+    xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"
+    xmlns:xnl="urn:oasis:names:tc:ciq:xsdschema:xNL:2.0" Id="510b" SchemaVersion="5">
+    <TransactionId>1</TransactionId>
+    <ManagingAuthority>
+        <AuthorityIdentifier Id="0505">Dordrecht</AuthorityIdentifier>
+        <AuthorityAddress></AuthorityAddress>
+    </ManagingAuthority>
+    <kr:CreationDateTime>2023-08-28T13:53:27.193</kr:CreationDateTime>
+    <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></ds:CanonicalizationMethod>
+    <Count>
+        <EventIdentifier></EventIdentifier>
+        <Election>
+            <ElectionIdentifier Id="TK2023">
+                <ElectionName>Tweede Kamer der Staten-Generaal 2023</ElectionName>
+                <ElectionCategory>TK</ElectionCategory>
+                <kr:ElectionSubcategory>TK</kr:ElectionSubcategory>
+                <kr:ElectionDate>2023-11-22</kr:ElectionDate>
+            </ElectionIdentifier>
+            <Contests>
+                <Contest>
+                    <ContestIdentifier Id="14">
+                        <ContestName>Dordrecht</ContestName>
+                    </ContestIdentifier>
+                    <TotalVotes>
+                        <Selection>
+                            <AffiliationIdentifier Id="1">
+                                <RegisteredName>Het Verschil</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>25205</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>7080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>6480</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>485</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>240</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="2">
+                                <RegisteredName>Kleurenpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>32460</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3480</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1140</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="3">
+                                <RegisteredName>Prozen en Poëzie</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>9000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="4">
+                                <RegisteredName>Sportpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>5400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Cast>72100</Cast>
+                        <TotalCounted>72065</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">3</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">2</RejectedVotes>
+                        <UncountedVotes ReasonCode="geldige stempassen">72095</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige volmachtbewijzen">3</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige kiezerspassen">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="toegelaten kiezers">72098</UncountedVotes>
+                        <UncountedVotes ReasonCode="meer getelde stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">28</UncountedVotes>
+                        <UncountedVotes ReasonCode="meegenomen stembiljetten">23</UncountedVotes>
+                        <UncountedVotes ReasonCode="te weinig uitgereikte stembiljetten">3</UncountedVotes>
+                        <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="geen verklaring">2</UncountedVotes>
+                        <UncountedVotes ReasonCode="andere verklaring">0</UncountedVotes>
+                    </TotalVotes>
+                    <ReportingUnitVotes>
+                        <ReportingUnitIdentifier Id="0505::SB1">Stembureau Binnenstad (postcode: 3331 DA)</ReportingUnitIdentifier>
+                        <Selection>
+                            <AffiliationIdentifier Id="1">
+                                <RegisteredName>Het Verschil</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>25205</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>7080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>6480</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>485</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>240</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="2">
+                                <RegisteredName>Kleurenpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>32460</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3480</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2880</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2280</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1680</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1080</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1140</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="3">
+                                <RegisteredName>Prozen en Poëzie</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>9000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="4">
+                                <RegisteredName>Sportpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>5400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Cast>72100</Cast>
+                        <TotalCounted>72065</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">3</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">2</RejectedVotes>
+                        <UncountedVotes ReasonCode="geldige stempassen">72095</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige volmachtbewijzen">3</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige kiezerspassen">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="toegelaten kiezers">72098</UncountedVotes>
+                        <UncountedVotes ReasonCode="meer getelde stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">28</UncountedVotes>
+                        <UncountedVotes ReasonCode="meegenomen stembiljetten">23</UncountedVotes>
+                        <UncountedVotes ReasonCode="te weinig uitgereikte stembiljetten">3</UncountedVotes>
+                        <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="geen verklaring">2</UncountedVotes>
+                        <UncountedVotes ReasonCode="andere verklaring">0</UncountedVotes>
+                    </ReportingUnitVotes>
+                </Contest>
+            </Contests>
+        </Election>
+    </Count>
+</EML>
