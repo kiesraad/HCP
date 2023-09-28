@@ -51,7 +51,7 @@ class ODT:
             elif self.type == ODT_TYPE.na31_2:
                 return _get_polling_stations_with_recounts_na31_2(self.odt_xml)
             else:
-                return []
+                raise RuntimeError("Unreachable code path")
         except Exception:
             return []
 
