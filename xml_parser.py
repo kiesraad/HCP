@@ -1,5 +1,5 @@
 from defusedxml import ElementTree as ET
-from typing import Optional, IO, Union, Any, List, Dict
+from typing import Optional, IO, Union, List, Dict
 from xml.etree.ElementTree import Element as XmlElement
 from eml_types import EmlMetadata, ReportingUnitInfo
 

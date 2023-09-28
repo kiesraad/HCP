@@ -5,7 +5,7 @@ PERCENTAGE_REJECTED_THRESHOLDS = {"blanco": float(3), "ongeldig": float(3)}
 PERCENTAGE_EXPLAINED_THRESHOLD = float(2)
 PERCENTAGE_PARTY_DIFF_THRESHOLD = float(50)
 
-#### Check functions
+# Check functions
 
 
 def check_zero_votes(reporting_unit: ReportingUnitInfo) -> bool:
@@ -64,7 +64,7 @@ def check_parties_with_large_percentage_difference(
     )
 
 
-#### Helper functions
+# Helper functions
 
 
 def _get_total_votes(reporting_unit: ReportingUnitInfo) -> int:

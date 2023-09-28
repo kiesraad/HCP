@@ -4,7 +4,6 @@ import protocol_checks
 from dataclasses import dataclass
 from typing import Dict, List
 from eml_types import EmlMetadata, ReportingUnitInfo
-import re
 
 
 @dataclass
