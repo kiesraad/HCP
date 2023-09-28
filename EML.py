@@ -2,9 +2,21 @@ import xml_parser
 import re
 import protocol_checks
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 from eml_types import EmlMetadata, ReportingUnitInfo
 import re
+
+
+@dataclass
+class CheckResult:
+    zero_votes: bool
+    inexplicable_difference: int
+    high_invalid_vote_percentage: bool
+    high_blank_vote_percentage: bool
+    high_explained_difference_percentage: bool
+    parties_with_high_difference_percentage: List[str]
+    party_difference_percentages: Dict[str, float]
+    already_recounted: bool
 
 
 @dataclass
@@ -14,34 +26,34 @@ class EML:
     reporting_units_info: Dict[str, ReportingUnitInfo]
     metadata: EmlMetadata
 
-    def run_protocol(self):
+    def run_protocol(self) -> Dict[str, CheckResult]:
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
-            result = {
-                "zero_votes": protocol_checks.check_zero_votes(polling_station),
-                "inexplicable_difference": protocol_checks.check_inexplicable_difference(
+            check_result = CheckResult(
+                zero_votes=protocol_checks.check_zero_votes(polling_station),
+                inexplicable_difference=protocol_checks.check_inexplicable_difference(
                     polling_station
                 ),
-                "high_invalid_vote_percentage": protocol_checks.check_too_many_rejected_votes(
+                high_invalid_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "ongeldig"
                 ),
-                "high_blank_vote_percentage": protocol_checks.check_too_many_rejected_votes(
+                high_blank_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "blanco"
                 ),
-                "high_explained_difference_percentage": protocol_checks.check_too_many_explained_differences(
+                high_explained_difference_percentage=protocol_checks.check_too_many_explained_differences(
                     polling_station
                 ),
-                "parties_with_high_difference_percentage": protocol_checks.check_parties_with_large_percentage_difference(
+                parties_with_high_difference_percentage=protocol_checks.check_parties_with_large_percentage_difference(
                     self.main_unit_info, polling_station
                 ),
-                "party_difference_percentages": protocol_checks.get_party_difference_percentages(
+                party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
                 ),
-                "already_recounted": False,
-            }
+                already_recounted=False,
+            )
 
-            protocol_results[polling_station_id] = result
+            protocol_results[polling_station_id] = check_result
 
         return protocol_results
 

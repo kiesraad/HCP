@@ -3,7 +3,7 @@ from odt import ODT
 import csv_write
 
 
-def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
+def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None) -> None:
     # Parse the eml from the path and run all checks in the protocol
     eml = EML.from_xml(path_to_xml)
 
@@ -35,7 +35,7 @@ def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None):
                 full_id in check_results.keys()
                 and polling_station_name_eml == polling_station_name_odt
             ):
-                check_results[full_id]["already_recounted"] = True
+                check_results[full_id].already_recounted = True
 
     csv_write.write_csv_a(check_results, eml_metadata, dest_a)
     csv_write.write_csv_b(check_results, eml_metadata, dest_b)

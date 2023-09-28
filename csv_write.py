@@ -1,6 +1,7 @@
 import csv
 from eml_types import EmlMetadata
-from typing import List, Union
+from eml import CheckResult
+from typing import List, Union, Dict
 
 HEADER_COLS = [
     "Kieskringnummer",
@@ -38,7 +39,9 @@ def _id_cols(metadata: EmlMetadata, id: str) -> List[Union[str, None]]:
     ]
 
 
-def write_csv_a(check_results, eml_metadata: EmlMetadata, csv_destination):
+def write_csv_a(
+    check_results: Dict[str, CheckResult], eml_metadata: EmlMetadata, csv_destination
+) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(
@@ -48,8 +51,8 @@ def write_csv_a(check_results, eml_metadata: EmlMetadata, csv_destination):
         writer.writerow(HEADER_COLS + ["Aantal geen verklaring", "Al hergeteld"])
 
         for id, results in check_results.items():
-            inexplicable_difference = results.get("inexplicable_difference")
-            already_recounted = "x of ja" if results.get("already_recounted") else None
+            inexplicable_difference = results.inexplicable_difference
+            already_recounted = "x of ja" if results.already_recounted else None
             if inexplicable_difference:
                 writer.writerow(
                     _id_cols(eml_metadata, id)
@@ -57,7 +60,9 @@ def write_csv_a(check_results, eml_metadata: EmlMetadata, csv_destination):
                 )
 
 
-def write_csv_b(check_results, eml_metadata: EmlMetadata, csv_destination):
+def write_csv_b(
+    check_results: Dict[str, CheckResult], eml_metadata: EmlMetadata, csv_destination
+) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(
@@ -78,18 +83,18 @@ def write_csv_b(check_results, eml_metadata: EmlMetadata, csv_destination):
         )
 
         for id, results in check_results.items():
-            zero_votes = "x of ja" if results.get("zero_votes") else ""
+            zero_votes = "x of ja" if results.zero_votes else ""
             high_invalid_vote_percentage = (
-                "x of ja" if results.get("high_invalid_vote_percentage") else ""
+                "x of ja" if results.high_invalid_vote_percentage else ""
             )
             high_blank_vote_percentage = (
-                "x of ja" if results.get("high_blank_vote_percentage") else ""
+                "x of ja" if results.high_blank_vote_percentage else ""
             )
             high_explained_difference_percentage = (
-                "x of ja" if results.get("high_explained_difference_percentage") else ""
+                "x of ja" if results.high_explained_difference_percentage else ""
             )
             parties_with_high_difference_percentage = ", ".join(
-                results.get("parties_with_high_difference_percentage")
+                results.parties_with_high_difference_percentage
             )
 
             if (
@@ -111,24 +116,22 @@ def write_csv_b(check_results, eml_metadata: EmlMetadata, csv_destination):
                 )
 
 
-def write_csv_c(check_results, eml_metadata: EmlMetadata, csv_destination):
+def write_csv_c(
+    check_results: Dict[str, CheckResult], eml_metadata: EmlMetadata, csv_destination
+) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(writer, eml_metadata, "Afwijking per stembureau per partij")
 
         # Assuming all parties are the same
         parties = sorted(
-            list(
-                next(iter(check_results.values()))
-                .get("party_difference_percentages")
-                .keys()
-            )
+            list(next(iter(check_results.values())).party_difference_percentages.keys())
         )
         writer.writerow(HEADER_COLS + parties)
 
         for id, results in check_results.items():
             towrite = []
-            differences = sorted(results.get("party_difference_percentages").items())
+            differences = sorted(results.party_difference_percentages.items())
             for _, difference in differences:
                 towrite.append(f"{int(difference)}%")
 
