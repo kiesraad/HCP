@@ -1,6 +1,6 @@
 import protocol_checks
 import pytest
-from eml_types import ReportingUnitInfo, InvalidEmlException
+from eml_types import ReportingUnitInfo
 from typing import List
 
 ru_zero_votes = ReportingUnitInfo(
@@ -201,9 +201,10 @@ sum_difference_testcases = [
             reporting_unit_id=None,
             reporting_unit_name=None,
             cast=100,
-            total_counted=100,
-            rejected_votes={"ongeldig": 0, "blanco": 0},
+            total_counted=97,
+            rejected_votes={"ongeldig": 1, "blanco": 2},
             uncounted_votes={
+                "toegelaten kiezers": 90,
                 "minder getelde stembiljetten": 0,
                 "meer getelde stembiljetten": 10,
                 "te veel uitgereikte stembiljetten": 1,
@@ -220,9 +221,10 @@ sum_difference_testcases = [
             reporting_unit_id=None,
             reporting_unit_name=None,
             cast=100,
-            total_counted=100,
+            total_counted=97,
             rejected_votes={"ongeldig": 1, "blanco": 2},
             uncounted_votes={
+                "toegelaten kiezers": 110,
                 "minder getelde stembiljetten": 10,
                 "meer getelde stembiljetten": 0,
                 "meegenomen stembiljetten": 1,
@@ -234,18 +236,19 @@ sum_difference_testcases = [
             },
             votes_per_party={},
         ),
-        3,
+        -3,
     ),
     (
         ReportingUnitInfo(
             reporting_unit_id=None,
             reporting_unit_name=None,
             cast=100,
-            total_counted=100,
+            total_counted=97,
             rejected_votes={"ongeldig": 1, "blanco": 2},
             uncounted_votes={
-                "minder getelde stembiljetten": 0,
-                "meer getelde stembiljetten": 0,
+                "toegelaten kiezers": 100,
+                "minder getelde stembiljetten": 1,
+                "meer getelde stembiljetten": 1,
                 "meegenomen stembiljetten": 0,
                 "te weinig uitgereikte stembiljetten": 0,
                 "te veel uitgereikte stembiljetten": 0,
@@ -271,22 +274,3 @@ def test_check_explanation_sum_difference(
         protocol_checks.check_explanation_sum_difference(reporting_unit)
         == expected_difference
     )
-
-
-invalid_eml_state = ReportingUnitInfo(
-    reporting_unit_id=None,
-    reporting_unit_name=None,
-    cast=100,
-    total_counted=100,
-    rejected_votes={"ongeldig": 0, "blanco": 0},
-    uncounted_votes={
-        "minder getelde stembiljetten": 10,
-        "meer getelde stembiljetten": 20,
-    },
-    votes_per_party={},
-)
-
-
-def test_check_explanation_sum_invalid_state() -> None:
-    with pytest.raises(InvalidEmlException):
-        protocol_checks.check_explanation_sum_difference(invalid_eml_state)

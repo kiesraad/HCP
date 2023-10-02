@@ -1,5 +1,5 @@
 from typing import List
-from eml_types import ReportingUnitInfo, InvalidEmlException
+from eml_types import ReportingUnitInfo
 
 # Check functions
 
@@ -14,30 +14,29 @@ def check_inexplicable_difference(reporting_unit: ReportingUnitInfo) -> int:
 
 def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
     vote_metadata = reporting_unit.uncounted_votes
-    votes_too_much = vote_metadata["meer getelde stembiljetten"]
-    votes_too_few = vote_metadata["minder getelde stembiljetten"]
 
-    if votes_too_much > 0 and votes_too_few > 0:
-        raise InvalidEmlException
+    vote_difference = (
+        _get_total_votes(reporting_unit) - vote_metadata["toegelaten kiezers"]
+    )
 
-    if votes_too_much > 0:
+    if vote_difference > 0:
         return (
-            votes_too_much
+            vote_difference
             - (vote_metadata.get("te veel uitgereikte stembiljetten") or 0)
             - (vote_metadata.get("te veel briefstembiljetten") or 0)
             - (vote_metadata.get("geen verklaring") or 0)
             - (vote_metadata.get("andere verklaring") or 0)
         )
 
-    if votes_too_few > 0:
+    if vote_difference < 0:
         return (
-            votes_too_few
-            - (vote_metadata.get("meegenomen stembiljetten") or 0)
-            - (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)
-            - (vote_metadata.get("geen briefstembiljetten") or 0)
-            - (vote_metadata.get("kwijtgeraakte stembiljetten") or 0)
-            - (vote_metadata.get("geen verklaring") or 0)
-            - (vote_metadata.get("andere verklaring") or 0)
+            vote_difference
+            + (vote_metadata.get("meegenomen stembiljetten") or 0)
+            + (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)
+            + (vote_metadata.get("geen briefstembiljetten") or 0)
+            + (vote_metadata.get("kwijtgeraakte stembiljetten") or 0)
+            + (vote_metadata.get("geen verklaring") or 0)
+            + (vote_metadata.get("andere verklaring") or 0)
         )
 
     return 0
