@@ -24,3 +24,7 @@ class ReportingUnitInfo:
     rejected_votes: Dict[str, int]
     uncounted_votes: Dict[str, int]
     votes_per_party: Dict[str, int]
+
+
+class InvalidEmlException(Exception):
+    pass

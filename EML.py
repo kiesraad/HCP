@@ -2,7 +2,7 @@ import xml_parser
 import re
 import protocol_checks
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, ClassVar
 from eml_types import EmlMetadata, ReportingUnitInfo
 
 
@@ -10,6 +10,7 @@ from eml_types import EmlMetadata, ReportingUnitInfo
 class CheckResult:
     zero_votes: bool
     inexplicable_difference: int
+    explanation_sum_difference: int
     high_invalid_vote_percentage: bool
     high_blank_vote_percentage: bool
     high_explained_difference_percentage: bool
@@ -25,6 +26,11 @@ class EML:
     reporting_units_info: Dict[str, ReportingUnitInfo]
     metadata: EmlMetadata
 
+    INVALID_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
+    BLANK_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
+    EXPLAINED_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
+    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
+
     def run_protocol(self) -> Dict[str, CheckResult]:
         protocol_results = {}
 
@@ -34,17 +40,22 @@ class EML:
                 inexplicable_difference=protocol_checks.check_inexplicable_difference(
                     polling_station
                 ),
-                high_invalid_vote_percentage=protocol_checks.check_too_many_rejected_votes(
-                    polling_station, "ongeldig"
-                ),
-                high_blank_vote_percentage=protocol_checks.check_too_many_rejected_votes(
-                    polling_station, "blanco"
-                ),
-                high_explained_difference_percentage=protocol_checks.check_too_many_explained_differences(
+                explanation_sum_difference=protocol_checks.check_explanation_sum_difference(
                     polling_station
                 ),
+                high_invalid_vote_percentage=protocol_checks.check_too_many_rejected_votes(
+                    polling_station, "ongeldig", EML.INVALID_VOTE_THRESHOLD_PCT
+                ),
+                high_blank_vote_percentage=protocol_checks.check_too_many_rejected_votes(
+                    polling_station, "blanco", EML.BLANK_VOTE_THRESHOLD_PCT
+                ),
+                high_explained_difference_percentage=protocol_checks.check_too_many_explained_differences(
+                    polling_station, EML.EXPLAINED_VOTE_THRESHOLD_PCT
+                ),
                 parties_with_high_difference_percentage=protocol_checks.check_parties_with_large_percentage_difference(
-                    self.main_unit_info, polling_station
+                    self.main_unit_info,
+                    polling_station,
+                    EML.PARTY_DIFFERENCE_THRESHOLD_PCT,
                 ),
                 party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station

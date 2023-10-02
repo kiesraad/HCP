@@ -1,9 +1,5 @@
 from typing import List
-from eml_types import ReportingUnitInfo
-
-PERCENTAGE_REJECTED_THRESHOLDS = {"blanco": float(3), "ongeldig": float(3)}
-PERCENTAGE_EXPLAINED_THRESHOLD = float(2)
-PERCENTAGE_PARTY_DIFF_THRESHOLD = float(50)
+from eml_types import ReportingUnitInfo, InvalidEmlException
 
 # Check functions
 
@@ -16,23 +12,55 @@ def check_inexplicable_difference(reporting_unit: ReportingUnitInfo) -> int:
     return reporting_unit.uncounted_votes["geen verklaring"]
 
 
-def check_too_many_rejected_votes(reporting_unit: ReportingUnitInfo, kind: str) -> bool:
-    if kind not in PERCENTAGE_REJECTED_THRESHOLDS.keys():
+def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
+    vote_metadata = reporting_unit.uncounted_votes
+    votes_too_much = vote_metadata["meer getelde stembiljetten"]
+    votes_too_few = vote_metadata["minder getelde stembiljetten"]
+
+    if votes_too_much > 0 and votes_too_few > 0:
+        raise InvalidEmlException
+
+    if votes_too_much > 0:
+        return (
+            votes_too_much
+            - (vote_metadata.get("te veel uitgereikte stembiljetten") or 0)
+            - (vote_metadata.get("te veel briefstembiljetten") or 0)
+            - (vote_metadata.get("geen verklaring") or 0)
+            - (vote_metadata.get("andere verklaring") or 0)
+        )
+
+    if votes_too_few > 0:
+        return (
+            votes_too_few
+            - (vote_metadata.get("meegenomen stembiljetten") or 0)
+            - (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)
+            - (vote_metadata.get("geen briefstembiljetten") or 0)
+            - (vote_metadata.get("kwijtgeraakte stembiljetten") or 0)
+            - (vote_metadata.get("geen verklaring") or 0)
+            - (vote_metadata.get("andere verklaring") or 0)
+        )
+
+    return 0
+
+
+def check_too_many_rejected_votes(
+    reporting_unit: ReportingUnitInfo, kind: str, threshold_pct: float
+) -> bool:
+    if kind not in ["ongeldig", "blanco"]:
         raise ValueError(f"Invalid rejected vote kind passed: {kind}")
 
     rejected_votes = reporting_unit.rejected_votes.get(kind)
-    threshold = PERCENTAGE_REJECTED_THRESHOLDS.get(kind)
     total_votes = _get_total_votes(reporting_unit)
-    return _is_larger_than_percentage(rejected_votes, total_votes, threshold)
+    return _is_larger_than_percentage(rejected_votes, total_votes, threshold_pct)
 
 
-def check_too_many_explained_differences(reporting_unit: ReportingUnitInfo) -> bool:
+def check_too_many_explained_differences(
+    reporting_unit: ReportingUnitInfo, threshold_pct: float
+) -> bool:
     explained_differences = _get_explained_differences(reporting_unit)
     total_votes = _get_total_votes(reporting_unit)
 
-    return _is_larger_than_percentage(
-        explained_differences, total_votes, PERCENTAGE_EXPLAINED_THRESHOLD
-    )
+    return _is_larger_than_percentage(explained_differences, total_votes, threshold_pct)
 
 
 def get_party_difference_percentages(
@@ -52,14 +80,16 @@ def get_party_difference_percentages(
 
 
 def check_parties_with_large_percentage_difference(
-    main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo
+    main_unit: ReportingUnitInfo,
+    reporting_unit: ReportingUnitInfo,
+    threshold_pct: float,
 ) -> List[str]:
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
             name
             for (name, difference) in differences.items()
-            if abs(difference) >= PERCENTAGE_PARTY_DIFF_THRESHOLD
+            if abs(difference) >= threshold_pct
         ]
     )
 

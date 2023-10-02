@@ -1,6 +1,6 @@
 import protocol_checks
 import pytest
-from eml_types import ReportingUnitInfo
+from eml_types import ReportingUnitInfo, InvalidEmlException
 from typing import List
 
 ru_zero_votes = ReportingUnitInfo(
@@ -102,18 +102,21 @@ ru_1pc_blank_votes = ReportingUnitInfo(
 
 
 @pytest.mark.parametrize(
-    "data, kind, expected",
+    "data, kind, threshold_pct, expected",
     [
-        (ru_1pc_blank_votes, "blanco", False),
-        (ru_3pc_blank_votes, "blanco", True),
-        (ru_1pc_invalid_votes, "ongeldig", False),
-        (ru_3pc_invalid_votes, "ongeldig", True),
+        (ru_1pc_blank_votes, "blanco", 3.0, False),
+        (ru_3pc_blank_votes, "blanco", 3.0, True),
+        (ru_1pc_invalid_votes, "ongeldig", 3.0, False),
+        (ru_3pc_invalid_votes, "ongeldig", 3.0, True),
     ],
 )
 def test_check_too_many_rejected_votes(
-    data: ReportingUnitInfo, kind: str, expected: bool
+    data: ReportingUnitInfo, kind: str, threshold_pct: float, expected: bool
 ) -> None:
-    assert protocol_checks.check_too_many_rejected_votes(data, kind) == expected
+    assert (
+        protocol_checks.check_too_many_rejected_votes(data, kind, threshold_pct)
+        == expected
+    )
 
 
 ru_2pc_explained_differences = ReportingUnitInfo(
@@ -128,12 +131,16 @@ ru_2pc_explained_differences = ReportingUnitInfo(
 
 
 @pytest.mark.parametrize(
-    "data, expected", [(ru_2pc_explained_differences, True), (ru_zero_votes, False)]
+    "data, threshold_pct, expected",
+    [(ru_2pc_explained_differences, 2.0, True), (ru_zero_votes, 2.0, False)],
 )
 def test_check_too_many_explained_differences(
-    data: ReportingUnitInfo, expected: bool
+    data: ReportingUnitInfo, threshold_pct: float, expected: bool
 ) -> None:
-    assert protocol_checks.check_too_many_explained_differences(data) == expected
+    assert (
+        protocol_checks.check_too_many_explained_differences(data, threshold_pct)
+        == expected
+    )
 
 
 mu_50_pct_difference = ReportingUnitInfo(
@@ -168,18 +175,118 @@ ru_46_pct_difference = ReportingUnitInfo(
 
 
 @pytest.mark.parametrize(
-    "main_unit, reporting_unit, expected",
+    "main_unit, reporting_unit, threshold_pct, expected",
     [
-        (mu_50_pct_difference, ru_50_pct_difference, ["A"]),
-        (mu_50_pct_difference, ru_46_pct_difference, []),
+        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["A"]),
+        (mu_50_pct_difference, ru_46_pct_difference, 50.0, []),
     ],
 )
 def test_check_parties_with_large_percentage_difference(
-    main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo, expected: List[str]
+    main_unit: ReportingUnitInfo,
+    reporting_unit: ReportingUnitInfo,
+    threshold_pct: float,
+    expected: List[str],
 ) -> None:
     assert (
         protocol_checks.check_parties_with_large_percentage_difference(
-            main_unit, reporting_unit
+            main_unit, reporting_unit, threshold_pct
         )
         == expected
     )
+
+
+sum_difference_testcases = [
+    (
+        ReportingUnitInfo(
+            reporting_unit_id=None,
+            reporting_unit_name=None,
+            cast=100,
+            total_counted=100,
+            rejected_votes={"ongeldig": 0, "blanco": 0},
+            uncounted_votes={
+                "minder getelde stembiljetten": 0,
+                "meer getelde stembiljetten": 10,
+                "te veel uitgereikte stembiljetten": 1,
+                "te veel briefstembiljetten": 1,
+                "geen verklaring": 1,
+                "andere verklaring": 2,
+            },
+            votes_per_party={},
+        ),
+        5,
+    ),
+    (
+        ReportingUnitInfo(
+            reporting_unit_id=None,
+            reporting_unit_name=None,
+            cast=100,
+            total_counted=100,
+            rejected_votes={"ongeldig": 1, "blanco": 2},
+            uncounted_votes={
+                "minder getelde stembiljetten": 10,
+                "meer getelde stembiljetten": 0,
+                "meegenomen stembiljetten": 1,
+                "te weinig uitgereikte stembiljetten": 1,
+                "geen briefstembiljetten": 1,
+                "kwijtgeraakte stembiljetten": 1,
+                "geen verklaring": 2,
+                "andere verklaring": 1,
+            },
+            votes_per_party={},
+        ),
+        3,
+    ),
+    (
+        ReportingUnitInfo(
+            reporting_unit_id=None,
+            reporting_unit_name=None,
+            cast=100,
+            total_counted=100,
+            rejected_votes={"ongeldig": 1, "blanco": 2},
+            uncounted_votes={
+                "minder getelde stembiljetten": 0,
+                "meer getelde stembiljetten": 0,
+                "meegenomen stembiljetten": 0,
+                "te weinig uitgereikte stembiljetten": 0,
+                "te veel uitgereikte stembiljetten": 0,
+                "geen briefstembiljetten": 0,
+                "kwijtgeraakte stembiljetten": 0,
+                "geen verklaring": 0,
+                "andere verklaring": 0,
+            },
+            votes_per_party={},
+        ),
+        0,
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "reporting_unit, expected_difference", sum_difference_testcases
+)
+def test_check_explanation_sum_difference(
+    reporting_unit: ReportingUnitInfo, expected_difference: int
+) -> None:
+    assert (
+        protocol_checks.check_explanation_sum_difference(reporting_unit)
+        == expected_difference
+    )
+
+
+invalid_eml_state = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=100,
+    total_counted=100,
+    rejected_votes={"ongeldig": 0, "blanco": 0},
+    uncounted_votes={
+        "minder getelde stembiljetten": 10,
+        "meer getelde stembiljetten": 20,
+    },
+    votes_per_party={},
+)
+
+
+def test_check_explanation_sum_invalid_state() -> None:
+    with pytest.raises(InvalidEmlException):
+        protocol_checks.check_explanation_sum_difference(invalid_eml_state)
