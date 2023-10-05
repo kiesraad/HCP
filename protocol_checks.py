@@ -1,5 +1,6 @@
 from typing import List
-from eml_types import ReportingUnitInfo
+from eml_types import ReportingUnitInfo, PartyIdentifier
+from typing import Dict
 
 # Check functions
 
@@ -64,7 +65,7 @@ def check_too_many_explained_differences(
 
 def get_party_difference_percentages(
     main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo
-):
+) -> Dict[PartyIdentifier, float]:
     global_total = main_unit.total_counted - reporting_unit.total_counted
     global_party = _subtract_part_dictionary(
         main_unit.votes_per_party, reporting_unit.votes_per_party
@@ -86,8 +87,8 @@ def check_parties_with_large_percentage_difference(
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
-            name
-            for (name, difference) in differences.items()
+            identifier.name or f"{identifier.id}. blanco"
+            for (identifier, difference) in differences.items()
             if abs(difference) >= threshold_pct
         ]
     )

@@ -3,7 +3,7 @@ import re
 import protocol_checks
 from dataclasses import dataclass
 from typing import Dict, List, ClassVar
-from eml_types import EmlMetadata, ReportingUnitInfo
+from eml_types import EmlMetadata, ReportingUnitInfo, PartyIdentifier
 
 
 @dataclass
@@ -15,7 +15,7 @@ class CheckResult:
     high_blank_vote_percentage: bool
     high_explained_difference_percentage: bool
     parties_with_high_difference_percentage: List[str]
-    party_difference_percentages: Dict[str, float]
+    party_difference_percentages: Dict[PartyIdentifier, float]
     already_recounted: bool
 
 

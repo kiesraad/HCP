@@ -1,7 +1,12 @@
 from defusedxml import ElementTree as ET
 from typing import Optional, IO, Union, List, Dict
 from xml.etree.ElementTree import Element as XmlElement
-from eml_types import EmlMetadata, ReportingUnitInfo
+from eml_types import (
+    EmlMetadata,
+    ReportingUnitInfo,
+    PartyIdentifier,
+    InvalidEmlException,
+)
 
 NAMESPACE = {
     "eml": "urn:oasis:names:tc:evs:schema:eml",
@@ -193,7 +198,7 @@ def get_vote_metadata_dict(reporting_unit: XmlElement, path: str) -> Dict[str, i
     return result
 
 
-def get_votes_per_party(reporting_unit: XmlElement) -> Dict[str, int]:
+def get_votes_per_party(reporting_unit: XmlElement) -> Dict[PartyIdentifier, int]:
     # Total votes for a party are the selection elements which have an AffiliationIdentifier as
     # a direct child element
     result = {}
@@ -203,18 +208,22 @@ def get_votes_per_party(reporting_unit: XmlElement) -> Dict[str, int]:
     )
 
     for party in party_results:
-        party_name = party.find(
-            "./eml:AffiliationIdentifier/eml:RegisteredName", NAMESPACE
+        party_id_elem = party.find("./eml:AffiliationIdentifier", NAMESPACE)
+        if party_id_elem is None or party_id_elem.attrib.get("Id") is None:
+            raise InvalidEmlException
+
+        party_id = int(party_id_elem.attrib["Id"])
+        party_name = get_text(
+            party.find("./eml:AffiliationIdentifier/eml:RegisteredName", NAMESPACE)
         )
-        if party_name is None or party_name.text is None:
-            raise AttributeError(f"Party {party} had no registered name!")
-        party_name = party_name.text
+
+        party_identifier = PartyIdentifier(id=party_id, name=party_name)
 
         party_result = party.find("eml:ValidVotes", NAMESPACE)
         if party_result is None or party_result.text is None:
             raise AttributeError(f"Party {party} had no associated votes!")
         party_result = int(party_result.text)
 
-        result[party_name] = party_result
+        result[party_identifier] = party_result
 
     return result

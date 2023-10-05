@@ -1,5 +1,5 @@
 from eml import EML
-from eml_types import ReportingUnitInfo, EmlMetadata
+from eml_types import ReportingUnitInfo, EmlMetadata, PartyIdentifier
 import pytest
 
 test_eml_paths = [
@@ -29,10 +29,10 @@ expected_emls = [
                 "andere verklaring": 0,
             },
             votes_per_party={
-                "Het Verschil": 25205,
-                "Kleurenpartij": 32460,
-                "Prozen en Poëzie": 9000,
-                "Sportpartij": 5400,
+                PartyIdentifier(1, "Het Verschil"): 25205,
+                PartyIdentifier(2, "Kleurenpartij"): 32460,
+                PartyIdentifier(3, "Prozen en Poëzie"): 9000,
+                PartyIdentifier(4, "Sportpartij"): 5400,
             },
         ),
         reporting_units_info={
@@ -56,10 +56,10 @@ expected_emls = [
                     "andere verklaring": 0,
                 },
                 votes_per_party={
-                    "Het Verschil": 25205,
-                    "Kleurenpartij": 32460,
-                    "Prozen en Poëzie": 9000,
-                    "Sportpartij": 5400,
+                    PartyIdentifier(1, "Het Verschil"): 25205,
+                    PartyIdentifier(2, "Kleurenpartij"): 32460,
+                    PartyIdentifier(3, "Prozen en Poëzie"): 9000,
+                    PartyIdentifier(4, "Sportpartij"): 5400,
                 },
             )
         },

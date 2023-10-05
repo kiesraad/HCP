@@ -15,6 +15,12 @@ class EmlMetadata:
     reporting_unit_names: Dict[Optional[str], Optional[str]]
 
 
+@dataclass(frozen=True, order=True)
+class PartyIdentifier:
+    id: int
+    name: Optional[str]
+
+
 @dataclass
 class ReportingUnitInfo:
     reporting_unit_id: Optional[str]
@@ -23,7 +29,7 @@ class ReportingUnitInfo:
     total_counted: int
     rejected_votes: Dict[str, int]
     uncounted_votes: Dict[str, int]
-    votes_per_party: Dict[str, int]
+    votes_per_party: Dict[PartyIdentifier, int]
 
 
 class InvalidEmlException(Exception):

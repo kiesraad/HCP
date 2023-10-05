@@ -1,6 +1,6 @@
 import protocol_checks
 import pytest
-from eml_types import ReportingUnitInfo
+from eml_types import ReportingUnitInfo, PartyIdentifier
 from typing import List
 
 ru_zero_votes = ReportingUnitInfo(
@@ -150,7 +150,11 @@ mu_50_pct_difference = ReportingUnitInfo(
     total_counted=218,
     rejected_votes={"ongeldig": 20, "blanco": 10},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 1},
-    votes_per_party={"A": 118, "B": 50, "C": 50},
+    votes_per_party={
+        PartyIdentifier(1, "A"): 118,
+        PartyIdentifier(2, "B"): 50,
+        PartyIdentifier(3, "C"): 50,
+    },
 )
 
 ru_50_pct_difference = ReportingUnitInfo(
@@ -160,7 +164,11 @@ ru_50_pct_difference = ReportingUnitInfo(
     total_counted=22,
     rejected_votes={"ongeldig": 20, "blanco": 20},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 0},
-    votes_per_party={"A": 2, "B": 10, "C": 10},
+    votes_per_party={
+        PartyIdentifier(1, "A"): 2,
+        PartyIdentifier(2, "B"): 10,
+        PartyIdentifier(3, "C"): 10,
+    },
 )
 
 ru_46_pct_difference = ReportingUnitInfo(
@@ -170,7 +178,11 @@ ru_46_pct_difference = ReportingUnitInfo(
     total_counted=23,
     rejected_votes={"ongeldig": 20, "blanco": 20},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 0},
-    votes_per_party={"A": 3, "B": 10, "C": 10},
+    votes_per_party={
+        PartyIdentifier(1, "A"): 3,
+        PartyIdentifier(2, "B"): 10,
+        PartyIdentifier(3, "C"): 10,
+    },
 )
 
 
