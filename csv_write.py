@@ -124,9 +124,16 @@ def write_csv_c(
         _write_header(writer, eml_metadata, "Afwijking per stembureau per partij")
 
         # Assuming all parties are the same
-        parties = sorted(
-            list(next(iter(check_results.values())).party_difference_percentages.keys())
-        )
+        parties = [
+            identifier.name
+            for identifier in sorted(
+                list(
+                    next(
+                        iter(check_results.values())
+                    ).party_difference_percentages.keys()
+                )
+            )
+        ]
         writer.writerow(HEADER_COLS + parties)
 
         for id, results in check_results.items():

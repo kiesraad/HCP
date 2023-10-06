@@ -151,7 +151,7 @@ mu_50_pct_difference = ReportingUnitInfo(
     rejected_votes={"ongeldig": 20, "blanco": 10},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 1},
     votes_per_party={
-        PartyIdentifier(1, "A"): 118,
+        PartyIdentifier(1, None): 118,
         PartyIdentifier(2, "B"): 50,
         PartyIdentifier(3, "C"): 50,
     },
@@ -165,7 +165,7 @@ ru_50_pct_difference = ReportingUnitInfo(
     rejected_votes={"ongeldig": 20, "blanco": 20},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 0},
     votes_per_party={
-        PartyIdentifier(1, "A"): 2,
+        PartyIdentifier(1, None): 2,
         PartyIdentifier(2, "B"): 10,
         PartyIdentifier(3, "C"): 10,
     },
@@ -179,7 +179,7 @@ ru_46_pct_difference = ReportingUnitInfo(
     rejected_votes={"ongeldig": 20, "blanco": 20},
     uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 0},
     votes_per_party={
-        PartyIdentifier(1, "A"): 3,
+        PartyIdentifier(1, None): 3,
         PartyIdentifier(2, "B"): 10,
         PartyIdentifier(3, "C"): 10,
     },
@@ -189,7 +189,7 @@ ru_46_pct_difference = ReportingUnitInfo(
 @pytest.mark.parametrize(
     "main_unit, reporting_unit, threshold_pct, expected",
     [
-        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["A"]),
+        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco"]),
         (mu_50_pct_difference, ru_46_pct_difference, 50.0, []),
     ],
 )
