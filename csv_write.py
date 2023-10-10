@@ -10,10 +10,11 @@ HEADER_COLS = [
     "Stembureaunummer",
     "Stembureaunaam",
 ]
+PROTOCOL_VERSION = "TK2023"
 
 
 def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
-    writer.writerow(["Versie controleprotocol", "VERSION_NO"])
+    writer.writerow(["Versie controleprotocol", PROTOCOL_VERSION])
     writer.writerow(["Beschrijving", description])
 
     writer.writerow([])
