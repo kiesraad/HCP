@@ -8,6 +8,7 @@ defusedxml = "0.7.1"
 
 [dev-packages]
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.8"

@@ -51,3 +51,15 @@ def test_na31_3ru(odt_path, expected) -> None:
 def test_odt_invalid(odt_path):
     odt_object = ODT.from_path(odt_path)
     assert odt_object is None
+
+
+def test_odt_incomplete_polling_stations():
+    odt_object = ODT.from_path("./test/data/odts/empty_fields/Model_Na31-1.odt")
+    expected_polling_stations = [
+        PollingStation(id=3, name="Valkenburg", zip="(postcode: 2222 LC)")
+    ]
+
+    assert odt_object is not None
+    recounted = odt_object.get_already_recounted_polling_stations()
+
+    assert expected_polling_stations == recounted

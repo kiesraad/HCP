@@ -119,6 +119,12 @@ def test_check_too_many_rejected_votes(
     )
 
 
+def test_check_invalid_kind_passed_too_many_rejected_votes():
+    ru = ReportingUnitInfo(None, None, 0, 0, {}, {}, {})
+    with pytest.raises(ValueError):
+        protocol_checks.check_too_many_rejected_votes(ru, "INVALID_KIND", 0)
+
+
 ru_2pc_explained_differences = ReportingUnitInfo(
     reporting_unit_id=None,
     reporting_unit_name=None,
