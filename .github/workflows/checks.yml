@@ -1,0 +1,30 @@
+name: Checks
+on: push
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8.18"
+
+      - name: Install pipenv
+        run: |
+          python -m pip install --upgrade pipenv wheel
+
+      - name: Install dependencies
+        run: |
+          pipenv install --deploy --dev
+
+      - name: Run vulnerability check
+        run: |
+          pipenv check
+
+      - name: Run test suite
+        run: |
+          pipenv run test -v

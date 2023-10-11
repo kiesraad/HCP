@@ -1,0 +1,1542 @@
+<EML xmlns="urn:oasis:names:tc:evs:schema:eml"
+    xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+    xmlns:kr="http://www.kiesraad.nl/extensions"
+    xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0"
+    xmlns:xnl="urn:oasis:names:tc:ciq:xsdschema:xNL:2.0" Id="510b" SchemaVersion="5">
+    <TransactionId>1</TransactionId>
+    <ManagingAuthority>
+        <AuthorityIdentifier Id="0518">'s-Gravenhage</AuthorityIdentifier>
+        <AuthorityAddress></AuthorityAddress>
+    </ManagingAuthority>
+    <kr:CreationDateTime>2023-07-25T12:53:44.690</kr:CreationDateTime>
+    <ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"></ds:CanonicalizationMethod>
+    <Count>
+        <EventIdentifier></EventIdentifier>
+        <Election>
+            <ElectionIdentifier Id="TK2023">
+                <ElectionName>Tweede Kamer der Staten-Generaal 2023</ElectionName>
+                <ElectionCategory>TK</ElectionCategory>
+                <kr:ElectionSubcategory>TK</kr:ElectionSubcategory>
+                <kr:ElectionDate>2023-11-22</kr:ElectionDate>
+            </ElectionIdentifier>
+            <Contests>
+                <Contest>
+                    <ContestIdentifier Id="12">
+                        <ContestName>'s-Gravenhage</ContestName>
+                    </ContestIdentifier>
+                    <TotalVotes>
+                        <Selection>
+                            <AffiliationIdentifier Id="1">
+                                <RegisteredName>Het Verschil</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>27750</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>750</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="2">
+                                <RegisteredName>Kleurenpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>27500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>5000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="3">
+                                <RegisteredName>Prozen en Poëzie</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>7500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="4">
+                                <RegisteredName>Sportpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>10500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="5">
+                                <RegisteredName></RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>18000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>4000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="11"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="12"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="13"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="14"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="15"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="16"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="17"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="18"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="19"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="20"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="21"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="22"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="23"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="24"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="25"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="26"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="27"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="28"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="29"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="30"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="31"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="32"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="33"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="34"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="35"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="36"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="37"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="38"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="39"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="40"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="41"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="42"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="43"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="44"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="45"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="46"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="47"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="48"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="49"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="50"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Cast>175000</Cast>
+                        <TotalCounted>91250</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">47</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">23</RejectedVotes>
+                        <UncountedVotes ReasonCode="geldige stempassen">91190</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige volmachtbewijzen">38</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige kiezerspassen">32</UncountedVotes>
+                        <UncountedVotes ReasonCode="toegelaten kiezers">91260</UncountedVotes>
+                        <UncountedVotes ReasonCode="meer getelde stembiljetten">160</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">100</UncountedVotes>
+                        <UncountedVotes ReasonCode="meegenomen stembiljetten">80</UncountedVotes>
+                        <UncountedVotes ReasonCode="te weinig uitgereikte stembiljetten">10</UncountedVotes>
+                        <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">95</UncountedVotes>
+                        <UncountedVotes ReasonCode="geen verklaring">4</UncountedVotes>
+                        <UncountedVotes ReasonCode="andere verklaring">71</UncountedVotes>
+                    </TotalVotes>
+                    <ReportingUnitVotes>
+                        <ReportingUnitIdentifier Id="0518::SB1">Stembureau Segbroek (postcode: 2555 DA)</ReportingUnitIdentifier>
+                        <Selection>
+                            <AffiliationIdentifier Id="1">
+                                <RegisteredName>Het Verschil</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>11100</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>300</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="2">
+                                <RegisteredName>Kleurenpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>11000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="3">
+                                <RegisteredName>Prozen en Poëzie</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="4">
+                                <RegisteredName>Sportpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>4200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="5">
+                                <RegisteredName></RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>7200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="11"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="12"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="13"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="14"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="15"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="16"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="17"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="18"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="19"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="20"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="21"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="22"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="23"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="24"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="25"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="26"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="27"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="28"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="29"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="30"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="31"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="32"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="33"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="34"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="35"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="36"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="37"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="38"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="39"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="40"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="41"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="42"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="43"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="44"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="45"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="46"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="47"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="48"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="49"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="50"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Cast>90000</Cast>
+                        <TotalCounted>36500</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">38</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">22</RejectedVotes>
+                        <UncountedVotes ReasonCode="geldige stempassen">36620</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige volmachtbewijzen">18</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige kiezerspassen">22</UncountedVotes>
+                        <UncountedVotes ReasonCode="toegelaten kiezers">36660</UncountedVotes>
+                        <UncountedVotes ReasonCode="meer getelde stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">100</UncountedVotes>
+                        <UncountedVotes ReasonCode="meegenomen stembiljetten">80</UncountedVotes>
+                        <UncountedVotes ReasonCode="te weinig uitgereikte stembiljetten">10</UncountedVotes>
+                        <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="geen verklaring">4</UncountedVotes>
+                        <UncountedVotes ReasonCode="andere verklaring">6</UncountedVotes>
+                    </ReportingUnitVotes>
+                    <ReportingUnitVotes>
+                        <ReportingUnitIdentifier Id="0518::SB2">Stembureau Laakkwartier (postcode: 2555 DB)</ReportingUnitIdentifier>
+                        <Selection>
+                            <AffiliationIdentifier Id="1">
+                                <RegisteredName>Het Verschil</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>16650</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2700</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2100</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>900</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>450</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="2">
+                                <RegisteredName>Kleurenpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>16500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>3000</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2700</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2100</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>900</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>300</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="3">
+                                <RegisteredName>Prozen en Poëzie</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>4500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="4">
+                                <RegisteredName>Sportpartij</RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>6300</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2100</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <AffiliationIdentifier Id="5">
+                                <RegisteredName></RegisteredName>
+                            </AffiliationIdentifier>
+                            <ValidVotes>10800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="1"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2400</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="2"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1800</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="3"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>2100</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="4"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1500</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="5"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>1200</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="6"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>900</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="7"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>600</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="8"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>300</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="9"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="10"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="11"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="12"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="13"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="14"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="15"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="16"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="17"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="18"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="19"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="20"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="21"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="22"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="23"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="24"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="25"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="26"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="27"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="28"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="29"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="30"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="31"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="32"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="33"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="34"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="35"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="36"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="37"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="38"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="39"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="40"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="41"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="42"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="43"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="44"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="45"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="46"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="47"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="48"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="49"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Selection>
+                            <Candidate>
+                                <CandidateIdentifier Id="50"></CandidateIdentifier>
+                            </Candidate>
+                            <ValidVotes>0</ValidVotes>
+                        </Selection>
+                        <Cast>85000</Cast>
+                        <TotalCounted>54750</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">9</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">1</RejectedVotes>
+                        <UncountedVotes ReasonCode="geldige stempassen">54570</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige volmachtbewijzen">20</UncountedVotes>
+                        <UncountedVotes ReasonCode="geldige kiezerspassen">10</UncountedVotes>
+                        <UncountedVotes ReasonCode="toegelaten kiezers">54600</UncountedVotes>
+                        <UncountedVotes ReasonCode="meer getelde stembiljetten">160</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="meegenomen stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="te weinig uitgereikte stembiljetten">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">95</UncountedVotes>
+                        <UncountedVotes ReasonCode="geen verklaring">0</UncountedVotes>
+                        <UncountedVotes ReasonCode="andere verklaring">65</UncountedVotes>
+                    </ReportingUnitVotes>
+                </Contest>
+            </Contests>
+        </Election>
+    </Count>
+</EML>
