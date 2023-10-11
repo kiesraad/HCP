@@ -1,10 +1,15 @@
 from eml import EML
-from eml_types import ReportingUnitInfo, EmlMetadata, PartyIdentifier
+from eml_types import (
+    ReportingUnitInfo,
+    EmlMetadata,
+    PartyIdentifier,
+    InvalidEmlException,
+)
 import pytest
 
 test_eml_paths = [
     "./test/data/TK2023_DORDRECHT/Telling_TK2023_gemeente_Dordrecht.eml.xml",
-    "./test/data/emls/empty_party_name.xml",
+    "./test/data/emls/empty_party_name.eml.xml",
 ]
 
 expected_emls = [
@@ -188,3 +193,8 @@ expected_emls = [
 def test_eml_parsing(eml_path: str, expected_eml: EML) -> None:
     parsed_eml = EML.from_xml(eml_path)
     assert parsed_eml == expected_eml
+
+
+def test_invalid_eml_id():
+    with pytest.raises(InvalidEmlException):
+        EML.from_xml("./test/data/emls/invalid_eml_id.eml.xml")

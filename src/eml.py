@@ -3,7 +3,12 @@ import re
 import protocol_checks
 from dataclasses import dataclass
 from typing import Dict, List, ClassVar
-from eml_types import EmlMetadata, ReportingUnitInfo, PartyIdentifier
+from eml_types import (
+    EmlMetadata,
+    ReportingUnitInfo,
+    PartyIdentifier,
+    InvalidEmlException,
+)
 
 
 @dataclass
@@ -76,7 +81,7 @@ class EML:
         eml_file_id = xml_parser.get_eml_type(xml_root)
         # Check if EML is of type 510
         if not eml_file_id or not re.match("510[a-dqrs]", eml_file_id):
-            raise ValueError(
+            raise InvalidEmlException(
                 f"Tried to load EML with id {eml_file_id}, expected 510[a-dqrs]"
             )
 
@@ -93,7 +98,7 @@ class EML:
         for reporting_unit in reporting_units:
             info = xml_parser.get_reporting_unit_info(reporting_unit)
             if info.reporting_unit_id is None:
-                raise AttributeError(
+                raise InvalidEmlException(
                     f"Tried to add reporting unit {reporting_unit} without ID!"
                 )
             reporting_units_info[info.reporting_unit_id] = info
