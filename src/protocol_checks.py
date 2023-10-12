@@ -1,6 +1,6 @@
 from typing import List
 from eml_types import ReportingUnitInfo, PartyIdentifier
-from typing import Dict
+from typing import Dict, Optional
 
 # Check functions
 
@@ -45,22 +45,25 @@ def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
 
 def check_too_many_rejected_votes(
     reporting_unit: ReportingUnitInfo, kind: str, threshold_pct: float
-) -> bool:
+) -> Optional[float]:
     if kind not in ["ongeldig", "blanco"]:
         raise ValueError(f"Invalid rejected vote kind passed: {kind}")
 
-    rejected_votes = reporting_unit.rejected_votes.get(kind)
+    rejected_votes = reporting_unit.rejected_votes[kind]
     total_votes = _get_total_votes(reporting_unit)
-    return _is_larger_than_percentage(rejected_votes, total_votes, threshold_pct)
+    percentage = _percentage(rejected_votes, total_votes)
+
+    return percentage if percentage and percentage >= threshold_pct else None
 
 
 def check_too_many_explained_differences(
     reporting_unit: ReportingUnitInfo, threshold_pct: float
-) -> bool:
+) -> Optional[float]:
     explained_differences = _get_explained_differences(reporting_unit)
     total_votes = _get_total_votes(reporting_unit)
+    percentage = _percentage(explained_differences, total_votes)
 
-    return _is_larger_than_percentage(explained_differences, total_votes, threshold_pct)
+    return percentage if percentage and percentage >= threshold_pct else None
 
 
 def get_party_difference_percentages(
@@ -87,7 +90,9 @@ def check_parties_with_large_percentage_difference(
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
-            identifier.name or f"{identifier.id}. blanco"
+            f"{identifier.name} ({int(difference)}%)"
+            if identifier.name
+            else f"{identifier.id}. blanco ({int(difference)}%)"
             for (identifier, difference) in differences.items()
             if abs(difference) >= threshold_pct
         ]
@@ -117,11 +122,11 @@ def _get_explained_differences(reporting_unit: ReportingUnitInfo) -> int:
     )
 
 
-def _is_larger_than_percentage(part, total, percentage):
+def _percentage(part: int, total: int) -> Optional[float]:
     try:
-        return int(part) / int(total) * 100 >= percentage
+        return part / total * 100
     except ZeroDivisionError:
-        return False
+        return None
 
 
 def _get_percentages(dictionary, total):

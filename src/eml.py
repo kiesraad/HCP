@@ -2,7 +2,7 @@ import xml_parser
 import re
 import protocol_checks
 from dataclasses import dataclass
-from typing import Dict, List, ClassVar
+from typing import Dict, List, Optional, ClassVar
 from eml_types import (
     EmlMetadata,
     ReportingUnitInfo,
@@ -16,9 +16,9 @@ class CheckResult:
     zero_votes: bool
     inexplicable_difference: int
     explanation_sum_difference: int
-    high_invalid_vote_percentage: bool
-    high_blank_vote_percentage: bool
-    high_explained_difference_percentage: bool
+    high_invalid_vote_percentage: Optional[float]
+    high_blank_vote_percentage: Optional[float]
+    high_explained_difference_percentage: Optional[float]
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
     already_recounted: bool

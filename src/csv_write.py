@@ -103,13 +103,19 @@ def write_csv_b(
         for id, results in check_results.items():
             zero_votes = "x of ja" if results.zero_votes else ""
             high_invalid_vote_percentage = (
-                "x of ja" if results.high_invalid_vote_percentage else ""
+                int(results.high_invalid_vote_percentage)
+                if results.high_invalid_vote_percentage
+                else ""
             )
             high_blank_vote_percentage = (
-                "x of ja" if results.high_blank_vote_percentage else ""
+                int(results.high_blank_vote_percentage)
+                if results.high_blank_vote_percentage
+                else ""
             )
             high_explained_difference_percentage = (
-                "x of ja" if results.high_explained_difference_percentage else ""
+                int(results.high_explained_difference_percentage)
+                if results.high_explained_difference_percentage
+                else ""
             )
             parties_with_high_difference_percentage = ", ".join(
                 results.parties_with_high_difference_percentage
