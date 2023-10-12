@@ -34,8 +34,8 @@ def test_create_csv_files_a():
             "Kieskringnummer;14\n"
             "Gemeentenummer;0505\n"
             "\n"
-            "Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Aantal geen verklaring;Al hergeteld\n"
-            "14;0505;Dordrecht;1;Stembureau Binnenstad (postcode: 3331 DA);2;x of ja\n"
+            "Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Aantal geen verklaring voor verschil;Aantal ontbrekende verklaringen voor verschil;Al hergeteld\n"
+            "14;0505;Dordrecht;1;Stembureau Binnenstad (postcode: 3331 DA);2;;ja\n"
         )
         assert content == expected
 

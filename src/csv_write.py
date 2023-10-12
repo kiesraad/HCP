@@ -1,7 +1,7 @@
 import csv
 from eml_types import EmlMetadata
 from eml import CheckResult
-from typing import List, Union, Dict
+from typing import List, Dict, Optional
 
 HEADER_COLS = [
     "Kieskringnummer",
@@ -30,7 +30,17 @@ def _format_id(id: str) -> str:
     return id[8:]
 
 
-def _id_cols(metadata: EmlMetadata, id: str) -> List[Union[str, None]]:
+def _format_percentage(percentage: Optional[float]) -> Optional[str]:
+    return f"ja ({int(percentage)}%)" if percentage else None
+
+
+def _format_percentage_deviation(percentage: float) -> str:
+    percentage_int = int(percentage)
+    sign = "+" if percentage_int > 0 else ""
+    return f"{sign}{percentage_int}%"
+
+
+def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
     return [
         metadata.contest_identifier,
         metadata.authority_id,
@@ -49,15 +59,28 @@ def write_csv_a(
             writer, eml_metadata, "Stembureaus met geen verklaring voor telverschillen"
         )
 
-        writer.writerow(HEADER_COLS + ["Aantal geen verklaring", "Al hergeteld"])
+        writer.writerow(
+            HEADER_COLS
+            + [
+                "Aantal geen verklaring voor verschil",
+                "Aantal ontbrekende verklaringen voor verschil",
+                "Al hergeteld",
+            ]
+        )
 
         for id, results in check_results.items():
-            inexplicable_difference = results.inexplicable_difference
-            already_recounted = "x of ja" if results.already_recounted else None
-            if inexplicable_difference:
+            inexplicable_difference = results.inexplicable_difference or None
+            explanation_sum_difference = results.explanation_sum_difference or None
+            already_recounted = "ja" if results.already_recounted else None
+
+            if inexplicable_difference or explanation_sum_difference:
                 writer.writerow(
                     _id_cols(eml_metadata, id)
-                    + [inexplicable_difference, already_recounted]
+                    + [
+                        inexplicable_difference,
+                        explanation_sum_difference,
+                        already_recounted,
+                    ]
                 )
 
 
@@ -80,23 +103,26 @@ def write_csv_b(
                 "Stembureau >=3% blanco",
                 "Stembureau >=2% verklaarde verschillen",
                 "Stembureau met lijst >=50% afwijking",
+                "Al hergeteld",
             ]
         )
 
         for id, results in check_results.items():
-            zero_votes = "x of ja" if results.zero_votes else ""
-            high_invalid_vote_percentage = (
-                "x of ja" if results.high_invalid_vote_percentage else ""
+            zero_votes = "ja" if results.zero_votes else None
+            high_invalid_vote_percentage = _format_percentage(
+                results.high_invalid_vote_percentage
             )
-            high_blank_vote_percentage = (
-                "x of ja" if results.high_blank_vote_percentage else ""
+            high_blank_vote_percentage = _format_percentage(
+                results.high_blank_vote_percentage
             )
-            high_explained_difference_percentage = (
-                "x of ja" if results.high_explained_difference_percentage else ""
+            high_explained_difference_percentage = _format_percentage(
+                results.high_explained_difference_percentage
             )
             parties_with_high_difference_percentage = ", ".join(
                 results.parties_with_high_difference_percentage
             )
+
+            already_recounted = "ja" if results.already_recounted else None
 
             if (
                 zero_votes
@@ -113,6 +139,7 @@ def write_csv_b(
                         high_blank_vote_percentage,
                         high_explained_difference_percentage,
                         parties_with_high_difference_percentage,
+                        already_recounted,
                     ]
                 )
 
@@ -141,6 +168,6 @@ def write_csv_c(
             towrite = []
             differences = sorted(results.party_difference_percentages.items())
             for _, difference in differences:
-                towrite.append(f"{int(difference)}%")
+                towrite.append(_format_percentage_deviation(difference))
 
             writer.writerow(_id_cols(eml_metadata, id) + towrite)

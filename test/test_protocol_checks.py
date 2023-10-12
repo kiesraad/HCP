@@ -104,10 +104,10 @@ ru_1pc_blank_votes = ReportingUnitInfo(
 @pytest.mark.parametrize(
     "data, kind, threshold_pct, expected",
     [
-        (ru_1pc_blank_votes, "blanco", 3.0, False),
-        (ru_3pc_blank_votes, "blanco", 3.0, True),
-        (ru_1pc_invalid_votes, "ongeldig", 3.0, False),
-        (ru_3pc_invalid_votes, "ongeldig", 3.0, True),
+        (ru_1pc_blank_votes, "blanco", 3.0, None),
+        (ru_3pc_blank_votes, "blanco", 3.0, 3.0),
+        (ru_1pc_invalid_votes, "ongeldig", 3.0, None),
+        (ru_3pc_invalid_votes, "ongeldig", 3.0, 3.0),
     ],
 )
 def test_check_too_many_rejected_votes(
@@ -138,7 +138,7 @@ ru_2pc_explained_differences = ReportingUnitInfo(
 
 @pytest.mark.parametrize(
     "data, threshold_pct, expected",
-    [(ru_2pc_explained_differences, 2.0, True), (ru_zero_votes, 2.0, False)],
+    [(ru_2pc_explained_differences, 2.0, 2 / 98 * 100), (ru_zero_votes, 2.0, None)],
 )
 def test_check_too_many_explained_differences(
     data: ReportingUnitInfo, threshold_pct: float, expected: bool
@@ -195,7 +195,7 @@ ru_46_pct_difference = ReportingUnitInfo(
 @pytest.mark.parametrize(
     "main_unit, reporting_unit, threshold_pct, expected",
     [
-        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco"]),
+        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco (-50%)"]),
         (mu_50_pct_difference, ru_46_pct_difference, 50.0, []),
     ],
 )
@@ -254,7 +254,7 @@ sum_difference_testcases = [
             },
             votes_per_party={},
         ),
-        -3,
+        3,
     ),
     (
         ReportingUnitInfo(
