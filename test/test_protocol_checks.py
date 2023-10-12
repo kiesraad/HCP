@@ -254,7 +254,7 @@ sum_difference_testcases = [
             },
             votes_per_party={},
         ),
-        -3,
+        3,
     ),
     (
         ReportingUnitInfo(

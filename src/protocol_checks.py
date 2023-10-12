@@ -21,7 +21,7 @@ def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
     )
 
     if vote_difference > 0:
-        return (
+        return abs(
             vote_difference
             - (vote_metadata.get("te veel uitgereikte stembiljetten") or 0)
             - (vote_metadata.get("te veel briefstembiljetten") or 0)
@@ -30,7 +30,7 @@ def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
         )
 
     if vote_difference < 0:
-        return (
+        return abs(
             vote_difference
             + (vote_metadata.get("meegenomen stembiljetten") or 0)
             + (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)

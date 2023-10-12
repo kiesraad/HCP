@@ -49,15 +49,31 @@ def write_csv_a(
             writer, eml_metadata, "Stembureaus met geen verklaring voor telverschillen"
         )
 
-        writer.writerow(HEADER_COLS + ["Aantal geen verklaring", "Al hergeteld"])
+        writer.writerow(
+            HEADER_COLS
+            + [
+                "Aantal geen verklaring (zoals ingevuld)",
+                "Aantal geen verklaring (som van opgegeven verklaringen)",
+                "Al hergeteld",
+            ]
+        )
 
         for id, results in check_results.items():
             inexplicable_difference = results.inexplicable_difference
+            explanation_sum_difference = results.explanation_sum_difference
             already_recounted = "x of ja" if results.already_recounted else None
-            if inexplicable_difference:
+
+            inexplicable_difference_str = inexplicable_difference or ""
+            explanation_sum_difference_str = explanation_sum_difference or ""
+
+            if inexplicable_difference or explanation_sum_difference:
                 writer.writerow(
                     _id_cols(eml_metadata, id)
-                    + [inexplicable_difference, already_recounted]
+                    + [
+                        inexplicable_difference_str,
+                        explanation_sum_difference_str,
+                        already_recounted,
+                    ]
                 )
 
 
@@ -80,6 +96,7 @@ def write_csv_b(
                 "Stembureau >=3% blanco",
                 "Stembureau >=2% verklaarde verschillen",
                 "Stembureau met lijst >=50% afwijking",
+                "Al hergeteld",
             ]
         )
 
@@ -98,6 +115,8 @@ def write_csv_b(
                 results.parties_with_high_difference_percentage
             )
 
+            already_recounted = "x of ja" if results.already_recounted else None
+
             if (
                 zero_votes
                 or high_invalid_vote_percentage
@@ -113,6 +132,7 @@ def write_csv_b(
                         high_blank_vote_percentage,
                         high_explained_difference_percentage,
                         parties_with_high_difference_percentage,
+                        already_recounted,
                     ]
                 )
 
