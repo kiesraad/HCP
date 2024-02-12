@@ -5,7 +5,7 @@ from eml_types import (
     VoteDifferencePercentage,
     VoteDifferenceAmount,
 )
-from eml import CheckResult
+from eml import CheckResult, EML
 from typing import List, Dict, Optional
 
 HEADER_COLS = [
@@ -108,17 +108,17 @@ def write_csv_b(
         _write_header(
             writer,
             eml_metadata,
-            "Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%",
+            f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}%",
         )
 
         writer.writerow(
             HEADER_COLS
             + [
                 "Stembureau met nul stemmen",
-                "Stembureau >=3% ongeldig",
-                "Stembureau >=3% blanco",
-                "Stembureau >=10 of >=1% verklaarde verschillen",
-                "Stembureau met lijst >=50% afwijking",
+                f"Stembureau >={int(EML.INVALID_VOTE_THRESHOLD_PCT)}% ongeldig",
+                f"Stembureau >={int(EML.BLANK_VOTE_THRESHOLD_PCT)}% blanco",
+                f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verklaarde verschillen",
+                f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
                 "Al hergeteld",
             ]
         )
