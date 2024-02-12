@@ -16,6 +16,7 @@ ru_zero_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 0, "blanco": 0},
     uncounted_votes={},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_some_votes = ReportingUnitInfo(
@@ -26,6 +27,7 @@ ru_some_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 1, "blanco": 2},
     uncounted_votes={},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 
@@ -44,6 +46,7 @@ ru_two_inexplicable_difference = ReportingUnitInfo(
     rejected_votes={"ongeldig": 1, "blanco": 2},
     uncounted_votes={"geen verklaring": 2},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_zero_inexplicable_difference = ReportingUnitInfo(
@@ -54,6 +57,7 @@ ru_zero_inexplicable_difference = ReportingUnitInfo(
     rejected_votes={"ongeldig": 1, "blanco": 2},
     uncounted_votes={"geen verklaring": 0},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 
@@ -73,6 +77,7 @@ ru_3pc_invalid_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 3, "blanco": 0},
     uncounted_votes={"geen verklaring": 0},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_1pc_invalid_votes = ReportingUnitInfo(
@@ -83,6 +88,7 @@ ru_1pc_invalid_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 1, "blanco": 0},
     uncounted_votes={"geen verklaring": 0},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_3pc_blank_votes = ReportingUnitInfo(
@@ -93,6 +99,7 @@ ru_3pc_blank_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 0, "blanco": 3},
     uncounted_votes={"geen verklaring": 0},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_1pc_blank_votes = ReportingUnitInfo(
@@ -103,6 +110,7 @@ ru_1pc_blank_votes = ReportingUnitInfo(
     rejected_votes={"ongeldig": 0, "blanco": 1},
     uncounted_votes={"geen verklaring": 0},
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 
@@ -125,7 +133,7 @@ def test_check_too_many_rejected_votes(
 
 
 def test_check_invalid_kind_passed_too_many_rejected_votes():
-    ru = ReportingUnitInfo(None, None, 0, 0, {}, {}, {})
+    ru = ReportingUnitInfo(None, None, 0, 0, {}, {}, {}, {})
     with pytest.raises(ValueError):
         protocol_checks.check_too_many_rejected_votes(ru, "INVALID_KIND", 0)
 
@@ -142,6 +150,7 @@ ru_2pc_differences = ReportingUnitInfo(
         "andere verklaring": 1,
     },
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 ru_5_lost_votes = ReportingUnitInfo(
@@ -156,6 +165,7 @@ ru_5_lost_votes = ReportingUnitInfo(
         "te weinig uitgereikte stembiljetten": 2,
     },
     votes_per_party={},
+    votes_per_candidate={},
 )
 
 
@@ -193,6 +203,7 @@ mu_50_pct_difference = ReportingUnitInfo(
         PartyIdentifier(2, "B"): 50,
         PartyIdentifier(3, "C"): 50,
     },
+    votes_per_candidate={},
 )
 
 ru_50_pct_difference = ReportingUnitInfo(
@@ -207,6 +218,7 @@ ru_50_pct_difference = ReportingUnitInfo(
         PartyIdentifier(2, "B"): 10,
         PartyIdentifier(3, "C"): 10,
     },
+    votes_per_candidate={},
 )
 
 ru_46_pct_difference = ReportingUnitInfo(
@@ -221,6 +233,7 @@ ru_46_pct_difference = ReportingUnitInfo(
         PartyIdentifier(2, "B"): 10,
         PartyIdentifier(3, "C"): 10,
     },
+    votes_per_candidate={},
 )
 
 
@@ -263,6 +276,7 @@ sum_difference_testcases = [
                 "andere verklaring": 2,
             },
             votes_per_party={},
+            votes_per_candidate={},
         ),
         5,
     ),
@@ -285,6 +299,7 @@ sum_difference_testcases = [
                 "andere verklaring": 1,
             },
             votes_per_party={},
+            votes_per_candidate={},
         ),
         3,
     ),
@@ -308,6 +323,7 @@ sum_difference_testcases = [
                 "andere verklaring": 0,
             },
             votes_per_party={},
+            votes_per_candidate={},
         ),
         0,
     ),

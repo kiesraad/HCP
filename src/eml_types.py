@@ -21,6 +21,12 @@ class PartyIdentifier:
     name: Optional[str]
 
 
+@dataclass(frozen=True, order=True)
+class CandidateIdentifier:
+    party: PartyIdentifier
+    cand_id: int
+
+
 @dataclass
 class ReportingUnitInfo:
     reporting_unit_id: Optional[str]
@@ -30,6 +36,7 @@ class ReportingUnitInfo:
     rejected_votes: Dict[str, int]
     uncounted_votes: Dict[str, int]
     votes_per_party: Dict[PartyIdentifier, int]
+    votes_per_candidate: Dict[CandidateIdentifier, int]
 
 
 @dataclass

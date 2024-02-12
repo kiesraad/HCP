@@ -1,10 +1,11 @@
 from defusedxml import ElementTree as ET
-from typing import Optional, IO, Union, List, Dict
+from typing import Optional, IO, Union, List, Dict, Tuple
 from xml.etree.ElementTree import Element as XmlElement
 from eml_types import (
     EmlMetadata,
     ReportingUnitInfo,
     PartyIdentifier,
+    CandidateIdentifier,
     InvalidEmlException,
 )
 
@@ -167,7 +168,7 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
     uncounted_votes = get_vote_metadata_dict(reporting_unit, "./eml:UncountedVotes")
 
     # Fetch amount of votes per party
-    votes_per_party = get_votes_per_party(reporting_unit)
+    (votes_per_party, votes_per_candidate) = get_party_and_candvotes(reporting_unit)
 
     return ReportingUnitInfo(
         reporting_unit_id=reporting_unit_id,
@@ -177,6 +178,7 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
         rejected_votes=rejected_votes,
         uncounted_votes=uncounted_votes,
         votes_per_party=votes_per_party,
+        votes_per_candidate=votes_per_candidate,
     )
 
 
@@ -198,32 +200,60 @@ def get_vote_metadata_dict(reporting_unit: XmlElement, path: str) -> Dict[str, i
     return result
 
 
-def get_votes_per_party(reporting_unit: XmlElement) -> Dict[PartyIdentifier, int]:
-    # Total votes for a party are the selection elements which have an AffiliationIdentifier as
-    # a direct child element
-    result = {}
+def get_party_and_candvotes(
+    reporting_unit: XmlElement,
+) -> Tuple[Dict[PartyIdentifier, int], Dict[CandidateIdentifier, int]]:
+    party_votes_dict: Dict[PartyIdentifier, int] = {}
+    cand_votes_dict: Dict[CandidateIdentifier, int] = {}
 
-    party_results = reporting_unit.findall(
-        "./eml:Selection[eml:AffiliationIdentifier]", NAMESPACE
-    )
+    current_party_identifier = None
 
-    for party in party_results:
-        party_id_elem = party.find("./eml:AffiliationIdentifier", NAMESPACE)
-        if party_id_elem is None or party_id_elem.attrib.get("Id") is None:
-            raise InvalidEmlException
-
-        party_id = int(party_id_elem.attrib["Id"])
-        party_name = get_text(
-            party.find("./eml:AffiliationIdentifier/eml:RegisteredName", NAMESPACE)
+    for count in reporting_unit.findall("./eml:Selection", NAMESPACE):
+        party_identifier_elem = count.find("./eml:AffiliationIdentifier", NAMESPACE)
+        candidate_identifier_elem = count.find(
+            "./eml:Candidate/eml:CandidateIdentifier", NAMESPACE
         )
 
-        party_identifier = PartyIdentifier(id=party_id, name=party_name)
+        # Selection element contains either a party identifier or candidate identifier
+        if party_identifier_elem is not None:
+            party_id = party_identifier_elem.attrib.get("Id")
+            if party_id is None:
+                raise InvalidEmlException
 
-        party_result = party.find("eml:ValidVotes", NAMESPACE)
-        if party_result is None or party_result.text is None:
-            raise AttributeError(f"Party {party} had no associated votes!")
-        party_result = int(party_result.text)
+            party_id = int(party_id)
+            party_name = get_text(
+                party_identifier_elem.find("./eml:RegisteredName", NAMESPACE)
+            )
 
-        result[party_identifier] = party_result
+            # Set the current party identifier for upcoming candidate selection elements
+            current_party_identifier = PartyIdentifier(id=party_id, name=party_name)
+            party_votes_elem = count.find("eml:ValidVotes", NAMESPACE)
+            if party_votes_elem is None or party_votes_elem.text is None:
+                raise InvalidEmlException
+            party_votes = int(party_votes_elem.text)
 
-    return result
+            party_votes_dict[current_party_identifier] = party_votes
+
+        elif party_identifier_elem is None and candidate_identifier_elem is not None:
+            if current_party_identifier is None:
+                raise InvalidEmlException
+
+            candidate_id = candidate_identifier_elem.attrib.get("Id")
+            if candidate_id is None:
+                raise InvalidEmlException
+            candidate_id = int(candidate_id)
+            candidate_identifier = CandidateIdentifier(
+                party=current_party_identifier, cand_id=candidate_id
+            )
+
+            candidate_votes_elem = count.find("eml:ValidVotes", NAMESPACE)
+            if candidate_votes_elem is None or candidate_votes_elem.text is None:
+                raise InvalidEmlException
+            candidate_votes = int(candidate_votes_elem.text)
+
+            cand_votes_dict[candidate_identifier] = candidate_votes
+
+        else:
+            raise InvalidEmlException
+
+    return (party_votes_dict, cand_votes_dict)
