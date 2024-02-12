@@ -8,6 +8,7 @@ from eml_types import (
     ReportingUnitInfo,
     PartyIdentifier,
     InvalidEmlException,
+    VoteDifference,
 )
 
 
@@ -18,7 +19,7 @@ class CheckResult:
     explanation_sum_difference: int
     high_invalid_vote_percentage: Optional[float]
     high_blank_vote_percentage: Optional[float]
-    high_explained_difference_percentage: Optional[float]
+    high_vote_difference: Optional[VoteDifference]
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
     already_recounted: bool
@@ -33,7 +34,8 @@ class EML:
 
     INVALID_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
     BLANK_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
-    EXPLAINED_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
+    DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 1.0
+    DIFF_VOTE_THRESHOLD: ClassVar[int] = 10
     PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
 
     def run_protocol(self) -> Dict[str, CheckResult]:
@@ -54,8 +56,10 @@ class EML:
                 high_blank_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "blanco", EML.BLANK_VOTE_THRESHOLD_PCT
                 ),
-                high_explained_difference_percentage=protocol_checks.check_too_many_explained_differences(
-                    polling_station, EML.EXPLAINED_VOTE_THRESHOLD_PCT
+                high_vote_difference=protocol_checks.check_too_many_differences(
+                    polling_station,
+                    EML.DIFF_VOTE_THRESHOLD_PCT,
+                    EML.DIFF_VOTE_THRESHOLD,
                 ),
                 parties_with_high_difference_percentage=protocol_checks.check_parties_with_large_percentage_difference(
                     self.main_unit_info,

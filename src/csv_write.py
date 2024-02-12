@@ -1,5 +1,10 @@
 import csv
-from eml_types import EmlMetadata
+from eml_types import (
+    EmlMetadata,
+    VoteDifference,
+    VoteDifferencePercentage,
+    VoteDifferenceAmount,
+)
 from eml import CheckResult
 from typing import List, Dict, Optional
 
@@ -32,6 +37,17 @@ def _format_id(id: str) -> str:
 
 def _format_percentage(percentage: Optional[float]) -> Optional[str]:
     return f"ja ({int(percentage)}%)" if percentage else None
+
+
+def _format_vote_difference(vote_difference: Optional[VoteDifference]) -> Optional[str]:
+    if isinstance(vote_difference, VoteDifferenceAmount):
+        part = str(vote_difference.value)
+    elif isinstance(vote_difference, VoteDifferencePercentage):
+        part = f"{int(vote_difference.value)}%"
+    else:
+        return None
+
+    return f"ja ({part})"
 
 
 def _format_percentage_deviation(percentage: float) -> str:
@@ -101,7 +117,7 @@ def write_csv_b(
                 "Stembureau met nul stemmen",
                 "Stembureau >=3% ongeldig",
                 "Stembureau >=3% blanco",
-                "Stembureau >=2% verklaarde verschillen",
+                "Stembureau >=10 of >=1% verklaarde verschillen",
                 "Stembureau met lijst >=50% afwijking",
                 "Al hergeteld",
             ]
@@ -115,8 +131,8 @@ def write_csv_b(
             high_blank_vote_percentage = _format_percentage(
                 results.high_blank_vote_percentage
             )
-            high_explained_difference_percentage = _format_percentage(
-                results.high_explained_difference_percentage
+            high_explained_difference_percentage = _format_vote_difference(
+                results.high_vote_difference
             )
             parties_with_high_difference_percentage = ", ".join(
                 results.parties_with_high_difference_percentage

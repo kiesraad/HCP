@@ -1,6 +1,11 @@
 import protocol_checks
 import pytest
-from eml_types import ReportingUnitInfo, PartyIdentifier
+from eml_types import (
+    ReportingUnitInfo,
+    PartyIdentifier,
+    VoteDifferencePercentage,
+    VoteDifferenceAmount,
+)
 from typing import List
 
 ru_zero_votes = ReportingUnitInfo(
@@ -125,26 +130,53 @@ def test_check_invalid_kind_passed_too_many_rejected_votes():
         protocol_checks.check_too_many_rejected_votes(ru, "INVALID_KIND", 0)
 
 
-ru_2pc_explained_differences = ReportingUnitInfo(
+ru_2pc_differences = ReportingUnitInfo(
     reporting_unit_id=None,
     reporting_unit_name=None,
     cast=0,
     total_counted=94,
     rejected_votes={"ongeldig": 2, "blanco": 2},
-    uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 1},
+    uncounted_votes={
+        "toegelaten kiezers": 92,
+        "meegenomen stembiljetten": 1,
+        "andere verklaring": 1,
+    },
+    votes_per_party={},
+)
+
+ru_5_lost_votes = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=110,
+    rejected_votes={"ongeldig": 1, "blanco": 0},
+    uncounted_votes={
+        "toegelaten kiezers": 116,
+        "geen verklaring": 3,
+        "te weinig uitgereikte stembiljetten": 2,
+    },
     votes_per_party={},
 )
 
 
 @pytest.mark.parametrize(
-    "data, threshold_pct, expected",
-    [(ru_2pc_explained_differences, 2.0, 2 / 98 * 100), (ru_zero_votes, 2.0, None)],
+    "data, threshold_pct, threshold, expected",
+    [
+        (
+            ru_2pc_differences,
+            2.0,
+            10,
+            VoteDifferencePercentage(value=6 / 98 * 100),
+        ),
+        (ru_zero_votes, 2.0, 10, None),
+        (ru_5_lost_votes, 5.0, 5, VoteDifferenceAmount(value=5)),
+    ],
 )
-def test_check_too_many_explained_differences(
-    data: ReportingUnitInfo, threshold_pct: float, expected: bool
+def test_check_too_many_differences(
+    data: ReportingUnitInfo, threshold_pct: float, threshold: int, expected: bool
 ) -> None:
     assert (
-        protocol_checks.check_too_many_explained_differences(data, threshold_pct)
+        protocol_checks.check_too_many_differences(data, threshold_pct, threshold)
         == expected
     )
 

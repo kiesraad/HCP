@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 
 
 @dataclass
@@ -30,6 +30,19 @@ class ReportingUnitInfo:
     rejected_votes: Dict[str, int]
     uncounted_votes: Dict[str, int]
     votes_per_party: Dict[PartyIdentifier, int]
+
+
+@dataclass
+class VoteDifferenceAmount:
+    value: int
+
+
+@dataclass
+class VoteDifferencePercentage:
+    value: float
+
+
+VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
 
 
 class InvalidEmlException(Exception):

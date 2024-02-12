@@ -1,5 +1,11 @@
 from typing import List
-from eml_types import ReportingUnitInfo, PartyIdentifier
+from eml_types import (
+    ReportingUnitInfo,
+    PartyIdentifier,
+    VoteDifference,
+    VoteDifferenceAmount,
+    VoteDifferencePercentage,
+)
 from typing import Dict, Optional
 
 # Check functions
@@ -56,14 +62,20 @@ def check_too_many_rejected_votes(
     return percentage if percentage and percentage >= threshold_pct else None
 
 
-def check_too_many_explained_differences(
-    reporting_unit: ReportingUnitInfo, threshold_pct: float
-) -> Optional[float]:
-    explained_differences = _get_explained_differences(reporting_unit)
+def check_too_many_differences(
+    reporting_unit: ReportingUnitInfo, threshold_pct: float, threshold: int
+) -> Optional[VoteDifference]:
+    differences = _get_differences(reporting_unit)
     total_votes = _get_total_votes(reporting_unit)
-    percentage = _percentage(explained_differences, total_votes)
+    percentage = _percentage(differences, total_votes)
 
-    return percentage if percentage and percentage >= threshold_pct else None
+    if differences >= threshold:
+        return VoteDifferenceAmount(value=differences)
+
+    if percentage and percentage >= threshold_pct:
+        return VoteDifferencePercentage(value=percentage)
+
+    return None
 
 
 def get_party_difference_percentages(
@@ -90,9 +102,11 @@ def check_parties_with_large_percentage_difference(
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
-            f"{identifier.name} ({int(difference)}%)"
-            if identifier.name
-            else f"{identifier.id}. blanco ({int(difference)}%)"
+            (
+                f"{identifier.name} ({int(difference)}%)"
+                if identifier.name
+                else f"{identifier.id}. blanco ({int(difference)}%)"
+            )
             for (identifier, difference) in differences.items()
             if abs(difference) >= threshold_pct
         ]
@@ -111,15 +125,11 @@ def _get_total_votes(reporting_unit: ReportingUnitInfo) -> int:
     )
 
 
-def _get_explained_differences(reporting_unit: ReportingUnitInfo) -> int:
-    # Metadata fields
-    uncounted_votes = reporting_unit.uncounted_votes
-    return (
-        (uncounted_votes.get("meegenomen stembiljetten") or 0)
-        + (uncounted_votes.get("te weinig uitgereikte stembiljetten") or 0)
-        + (uncounted_votes.get("te veel uitgereikte stembiljetten") or 0)
-        + (uncounted_votes.get("andere verklaring") or 0)
-    )
+def _get_differences(reporting_unit: ReportingUnitInfo) -> int:
+    admitted_voters = reporting_unit.uncounted_votes.get("toegelaten kiezers") or 0
+    total_votes = _get_total_votes(reporting_unit)
+
+    return abs(total_votes - admitted_voters)
 
 
 def _percentage(part: int, total: int) -> Optional[float]:
