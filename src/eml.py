@@ -9,6 +9,7 @@ from eml_types import (
     PartyIdentifier,
     InvalidEmlException,
     VoteDifference,
+    SwitchedCandidate,
 )
 
 
@@ -22,6 +23,7 @@ class CheckResult:
     high_vote_difference: Optional[VoteDifference]
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
+    potentially_switched_candidates: List[SwitchedCandidate]
     already_recounted: bool
 
 
@@ -34,9 +36,15 @@ class EML:
 
     INVALID_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
     BLANK_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
+
     DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 1.0
     DIFF_VOTE_THRESHOLD: ClassVar[int] = 10
+
     PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
+
+    MINIMUM_REPORTING_UNITS: ClassVar[int] = 5
+    MINIMUM_DEVIATION_FACTOR: ClassVar[int] = 10
+    MINIMUM_VOTES: ClassVar[int] = 20
 
     def run_protocol(self) -> Dict[str, CheckResult]:
         protocol_results = {}
@@ -68,6 +76,14 @@ class EML:
                 ),
                 party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
+                ),
+                potentially_switched_candidates=protocol_checks.get_potentially_switched_candidates(
+                    self.main_unit_info,
+                    polling_station,
+                    amount_of_reporting_units=self.metadata.reporting_unit_amount,
+                    minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
+                    minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
+                    minimum_votes=EML.MINIMUM_VOTES,
                 ),
                 already_recounted=False,
             )

@@ -115,6 +115,7 @@ def get_metadata(root: XmlElement) -> EmlMetadata:
         election_domain=election_domain,
         election_date=election_date,
         contest_identifier=contest_identifier,
+        reporting_unit_amount=len(reporting_units),
         reporting_unit_names=reporting_unit_names,
     )
 

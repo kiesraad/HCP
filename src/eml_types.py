@@ -12,6 +12,7 @@ class EmlMetadata:
     election_domain: Optional[str]
     election_date: Optional[str]
     contest_identifier: Optional[str]
+    reporting_unit_amount: int
     reporting_unit_names: Dict[Optional[str], Optional[str]]
 
 
@@ -50,6 +51,16 @@ class VoteDifferencePercentage:
 
 
 VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
+
+
+@dataclass
+class SwitchedCandidate:
+    candidate_with_fewer: CandidateIdentifier
+    candidate_with_fewer_received: int
+    candidate_with_fewer_expected: int
+    candidate_with_more: CandidateIdentifier
+    candidate_with_more_received: int
+    candidate_with_more_expected: int
 
 
 class InvalidEmlException(Exception):

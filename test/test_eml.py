@@ -227,6 +227,7 @@ expected_emls = [
             election_domain=None,
             election_date="2023-11-22",
             contest_identifier="14",
+            reporting_unit_amount=1,
             reporting_unit_names={
                 "0505::SB1": "Stembureau Binnenstad (postcode: 3331 DA)"
             },
