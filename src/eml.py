@@ -46,7 +46,7 @@ class EML:
     MINIMUM_DEVIATION_FACTOR: ClassVar[int] = 10
     MINIMUM_VOTES: ClassVar[int] = 20
 
-    def run_protocol(self) -> Dict[str, CheckResult]:
+    def run_protocol(self, neighbourhood_data=None) -> Dict[str, CheckResult]:
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
@@ -80,6 +80,7 @@ class EML:
                 potentially_switched_candidates=protocol_checks.get_potentially_switched_candidates(
                     self.main_unit_info,
                     polling_station,
+                    neighbourhood_data,
                     amount_of_reporting_units=self.metadata.reporting_unit_amount,
                     minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
                     minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,

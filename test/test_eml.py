@@ -231,6 +231,7 @@ expected_emls = [
             reporting_unit_names={
                 "0505::SB1": "Stembureau Binnenstad (postcode: 3331 DA)"
             },
+            reporting_unit_zips={"0505::SB1": "3331DA"},
         ),
     ),
 ]

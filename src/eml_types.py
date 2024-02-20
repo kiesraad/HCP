@@ -13,7 +13,8 @@ class EmlMetadata:
     election_date: Optional[str]
     contest_identifier: Optional[str]
     reporting_unit_amount: int
-    reporting_unit_names: Dict[Optional[str], Optional[str]]
+    reporting_unit_names: Dict[str, Optional[str]]
+    reporting_unit_zips: Dict[str, Optional[str]]
 
 
 @dataclass(frozen=True, order=True)

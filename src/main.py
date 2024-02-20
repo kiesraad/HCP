@@ -1,13 +1,24 @@
 from eml import EML
 from odt import ODT
+from neighbourhood import NeighbourhoodData
 import csv_write
 
 
-def create_csv_files(path_to_xml, dest_a, dest_b, dest_c, path_to_odt=None) -> None:
+def create_csv_files(
+    path_to_xml,
+    dest_a,
+    dest_b,
+    dest_c,
+    path_to_odt=None,
+    path_to_neighbourhood_data=None,
+) -> None:
     # Parse the eml from the path and run all checks in the protocol
     eml = EML.from_xml(path_to_xml)
 
-    check_results = eml.run_protocol()
+    # Load in neighbourhood data
+    neighbourhood_data = NeighbourhoodData.from_path(path_to_neighbourhood_data)
+
+    check_results = eml.run_protocol(neighbourhood_data=path_to_neighbourhood_data)
     eml_metadata = eml.metadata
 
     # If odt_path is specified we try to read the file and extract the relevant

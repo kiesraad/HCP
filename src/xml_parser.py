@@ -8,6 +8,7 @@ from eml_types import (
     CandidateIdentifier,
     InvalidEmlException,
 )
+import re
 
 NAMESPACE = {
     "eml": "urn:oasis:names:tc:evs:schema:eml",
@@ -16,6 +17,7 @@ NAMESPACE = {
     "xal": "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0",
     "xnl": "urn:oasis:names:tc:ciq:xsdschema:xNL:2.0",
 }
+ZIP_REGEX = re.compile(r"\(postcode: (\d{4} \w{2})\)")
 
 
 def get_text(xml_element: Optional[XmlElement]) -> Optional[str]:
@@ -37,6 +39,31 @@ def get_mandatory_text(xml_element: Optional[XmlElement]) -> str:
 
 def get_attrib(xml_element: Optional[XmlElement], attrib_name: str) -> Optional[str]:
     return xml_element.attrib.get(attrib_name) if xml_element is not None else None
+
+
+def get_mandatory_attrib(xml_element: Optional[XmlElement], attrib_name: str) -> str:
+    if xml_element is None:
+        raise ValueError("Could not find specified XML element")
+
+    attrib = xml_element.attrib.get(attrib_name)
+    if attrib is None:
+        raise AttributeError(
+            f"Element {xml_element} did not have attribute {attrib_name} but was mandatory"
+        )
+
+    return attrib
+
+
+def extract_zip_from_name(reporting_unit_name: Optional[str]) -> Optional[str]:
+    if reporting_unit_name is None:
+        return None
+    search_result = re.search(ZIP_REGEX, reporting_unit_name)
+    if search_result is None:
+        return None
+    search_groups = search_result.groups()
+    if len(search_groups) != 1:
+        return None
+    return search_groups[0].replace(" ", "")
 
 
 def parse_xml(file_name: Union[str, IO[bytes]]) -> XmlElement:
@@ -103,7 +130,11 @@ def get_metadata(root: XmlElement) -> EmlMetadata:
 
     reporting_units = root.findall(".//eml:ReportingUnitIdentifier", NAMESPACE)
     reporting_unit_names = {
-        get_attrib(elem, "Id"): get_text(elem) for elem in reporting_units
+        get_mandatory_attrib(elem, "Id"): get_text(elem) for elem in reporting_units
+    }
+    reporting_unit_zips = {
+        reporting_unit_id: extract_zip_from_name(reporting_unit_name)
+        for (reporting_unit_id, reporting_unit_name) in reporting_unit_names.items()
     }
 
     return EmlMetadata(
@@ -117,6 +148,7 @@ def get_metadata(root: XmlElement) -> EmlMetadata:
         contest_identifier=contest_identifier,
         reporting_unit_amount=len(reporting_units),
         reporting_unit_names=reporting_unit_names,
+        reporting_unit_zips=reporting_unit_zips,
     )
 
 
