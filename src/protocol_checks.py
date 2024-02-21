@@ -10,7 +10,7 @@ from eml_types import (
 )
 from typing import Dict, Optional, TypeVar
 from itertools import product as cartesian_product
-from neighbourhood import NeighbourhoodData
+from neighbourhood import ReportingNeighbourhoods
 
 T = TypeVar("T")
 N = TypeVar("N", int, float)
@@ -140,7 +140,7 @@ def get_expected_candidate_votes(
 def get_potentially_switched_candidates(
     main_unit: ReportingUnitInfo,
     reporting_unit: ReportingUnitInfo,
-    neighbourhood_data: Optional[NeighbourhoodData],
+    neighbourhood_data: Optional[ReportingNeighbourhoods],
     amount_of_reporting_units: int,
     minimum_reporting_units: int,
     minimum_deviation_factor: int,

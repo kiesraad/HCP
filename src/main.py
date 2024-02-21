@@ -2,6 +2,7 @@ from eml import EML
 from odt import ODT
 from neighbourhood import NeighbourhoodData
 import csv_write
+from pprint import pprint
 
 
 def create_csv_files(
@@ -17,8 +18,14 @@ def create_csv_files(
 
     # Load in neighbourhood data
     neighbourhood_data = NeighbourhoodData.from_path(path_to_neighbourhood_data)
+    if neighbourhood_data:
+        reporting_neighbourhouds = neighbourhood_data.fetch_reporting_neighbourhoods(
+            eml.metadata.reporting_unit_zips
+        )
+    else:
+        reporting_neighbourhouds = None
 
-    check_results = eml.run_protocol(neighbourhood_data=path_to_neighbourhood_data)
+    check_results = eml.run_protocol(neighbourhood_data=reporting_neighbourhouds)
     eml_metadata = eml.metadata
 
     # If odt_path is specified we try to read the file and extract the relevant

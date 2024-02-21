@@ -1,3 +1,4 @@
+from neighbourhood import ReportingNeighbourhoods
 import xml_parser
 import re
 import protocol_checks
@@ -46,7 +47,9 @@ class EML:
     MINIMUM_DEVIATION_FACTOR: ClassVar[int] = 10
     MINIMUM_VOTES: ClassVar[int] = 20
 
-    def run_protocol(self, neighbourhood_data=None) -> Dict[str, CheckResult]:
+    def run_protocol(
+        self, neighbourhood_data: Optional[ReportingNeighbourhoods] = None
+    ) -> Dict[str, CheckResult]:
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
