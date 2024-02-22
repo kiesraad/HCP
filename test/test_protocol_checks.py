@@ -1,12 +1,15 @@
 import protocol_checks
 import pytest
 from eml_types import (
+    CandidateIdentifier,
     ReportingUnitInfo,
     PartyIdentifier,
+    SwitchedCandidate,
     VoteDifferencePercentage,
     VoteDifferenceAmount,
 )
-from typing import List
+from typing import Dict, List
+from itertools import repeat
 
 ru_zero_votes = ReportingUnitInfo(
     reporting_unit_id=None,
@@ -339,4 +342,129 @@ def test_check_explanation_sum_difference(
     assert (
         protocol_checks.check_explanation_sum_difference(reporting_unit)
         == expected_difference
+    )
+
+
+switched_main_unit = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=0,
+    rejected_votes={},
+    uncounted_votes={},
+    votes_per_party={PartyIdentifier(1, None): 101},
+    votes_per_candidate={
+        CandidateIdentifier(PartyIdentifier(1, None), 1): 40,
+        CandidateIdentifier(PartyIdentifier(1, None), 2): 30,
+        CandidateIdentifier(PartyIdentifier(1, None), 3): 20,
+        CandidateIdentifier(PartyIdentifier(1, None), 4): 10,
+        CandidateIdentifier(PartyIdentifier(1, None), 5): 1,
+    },
+)
+
+expected_reporting_unit = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=0,
+    rejected_votes={},
+    uncounted_votes={},
+    votes_per_party={PartyIdentifier(1, None): 11},
+    votes_per_candidate={
+        CandidateIdentifier(PartyIdentifier(1, None), 1): 1,
+        CandidateIdentifier(PartyIdentifier(1, None), 2): 2,
+        CandidateIdentifier(PartyIdentifier(1, None), 3): 3,
+        CandidateIdentifier(PartyIdentifier(1, None), 4): 4,
+        CandidateIdentifier(PartyIdentifier(1, None), 5): 1,
+    },
+)
+
+expected_cand_votes = {
+    CandidateIdentifier(PartyIdentifier(1, None), 1): ((40 - 1) / 90) * 11,
+    CandidateIdentifier(PartyIdentifier(1, None), 2): ((30 - 2) / 90) * 11,
+    CandidateIdentifier(PartyIdentifier(1, None), 3): ((20 - 3) / 90) * 11,
+    CandidateIdentifier(PartyIdentifier(1, None), 4): ((10 - 4) / 90) * 11,
+    CandidateIdentifier(PartyIdentifier(1, None), 5): 0,
+}
+
+
+@pytest.mark.parametrize(
+    "main_unit, reporting_unit, expected",
+    [(switched_main_unit, expected_reporting_unit, expected_cand_votes)],
+)
+def test_check_expected_candidate_votes(
+    main_unit: ReportingUnitInfo,
+    reporting_unit: ReportingUnitInfo,
+    expected: Dict[CandidateIdentifier, float],
+) -> None:
+    assert (
+        protocol_checks.get_expected_candidate_votes(main_unit, reporting_unit)
+        == expected
+    )
+
+
+switched_reporting_unit = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=0,
+    rejected_votes={},
+    uncounted_votes={},
+    votes_per_party={PartyIdentifier(1, None): 10},
+    votes_per_candidate={
+        CandidateIdentifier(PartyIdentifier(1, None), 1): 1,
+        CandidateIdentifier(PartyIdentifier(1, None), 2): 3,
+        CandidateIdentifier(PartyIdentifier(1, None), 3): 2,
+        CandidateIdentifier(PartyIdentifier(1, None), 4): 4,
+        CandidateIdentifier(PartyIdentifier(1, None), 5): 0,
+    },
+)
+
+expected_switched_candidates = [
+    SwitchedCandidate(
+        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 1),
+        candidate_with_fewer_expected=4,
+        candidate_with_fewer_received=1,
+        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 4),
+        candidate_with_more_expected=1,
+        candidate_with_more_received=4,
+    )
+]
+
+switched_test_cases = list(
+    zip(
+        repeat(switched_main_unit),
+        repeat(switched_reporting_unit),
+        [expected_switched_candidates, [], [], []],
+        [10, 4, 10, 10],
+        [1, 5, 5, 5],
+        [4, 4, 5, 4],
+        [4, 4, 4, 5],
+    )
+)
+
+
+@pytest.mark.parametrize(
+    "main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes",
+    switched_test_cases,
+)
+def test_check_switched_candidate(
+    main_unit,
+    reporting_unit,
+    expected,
+    amount_of_reporting_units,
+    minimum_reporting_units,
+    minimum_deviation_factor,
+    minimum_votes,
+) -> None:
+    assert (
+        protocol_checks.get_potentially_switched_candidates(
+            main_unit,
+            reporting_unit,
+            amount_of_reporting_units,
+            minimum_reporting_units,
+            minimum_deviation_factor,
+            minimum_votes,
+        )
+        == expected
     )
