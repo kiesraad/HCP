@@ -36,12 +36,14 @@ class NeighbourhoodData:
     def __init__(self, data) -> None:
         self.data = data
 
-    def fetch_neighbourhood_code(self, zip_code: str) -> str:
+    def fetch_neighbourhood_code(self, zip_code: str) -> Optional[str]:
         queried_result = (
             self.data.filter(pl.col("zip_code") == zip_code)
             .select("neighbourhood_code")
             .collect()
         )
+        if len(queried_result) != 1:
+            return None
         return queried_result.item()
 
     def fetch_reporting_neighbourhoods(
