@@ -1,4 +1,5 @@
 import polars as pl
+import re
 from pathlib import Path
 from typing import Optional, List, Dict, TypeVar, Set
 from dataclasses import dataclass
@@ -6,6 +7,15 @@ from collections import defaultdict
 from eml_types import ReportingUnitInfo
 
 T = TypeVar("T")
+REGEX_NON_NEIGHBOURHOOD_NAME = re.compile(
+    r"brief|station|mobiel|metro|cabin|tent|tijdelijk", flags=re.IGNORECASE
+)
+
+
+def _name_is_non_neighbourhood(name: Optional[str]) -> bool:
+    if name is None:
+        return False
+    return bool(re.search(REGEX_NON_NEIGHBOURHOOD_NAME, name))
 
 
 def _add_dict(a: Dict[T, int], b: Dict[T, int]) -> Dict[T, int]:
@@ -49,7 +59,9 @@ class NeighbourhoodData:
         # Construct mapping from reporting unit id to neighbourhood id
         reporting_unit_id_to_neighbourhood_id = {}
         for reporting_unit_id, zip in reporting_unit_zips.items():
-            if zip is None:
+            if zip is None or _name_is_non_neighbourhood(
+                reporting_unit_info[reporting_unit_id].reporting_unit_name
+            ):
                 reporting_unit_id_to_neighbourhood_id[reporting_unit_id] = None
             else:
                 reporting_unit_id_to_neighbourhood_id[reporting_unit_id] = (

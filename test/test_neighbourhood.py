@@ -119,7 +119,89 @@ reporting_neighbourhoods_test_cases = [
                 )
             },
         ),
-    )
+    ),
+    (
+        "./test/data/neighbourhood_files/valid.csv",
+        {"SB1": "1234AB", "SB2": "1235AB", "SB3": "9999XX", "SB4": None},
+        {
+            "SB1": ReportingUnitInfo(
+                reporting_unit_id="SB1",
+                reporting_unit_name="Stembureau StAtIoN NS dorpsstraat",
+                cast=0,
+                total_counted=0,
+                rejected_votes={},
+                uncounted_votes={},
+                votes_per_party={PartyIdentifier(id=1, name=None): 10},
+                votes_per_candidate={
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 1): 8,
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 2): 2,
+                },
+            ),
+            "SB2": ReportingUnitInfo(
+                reporting_unit_id="SB2",
+                reporting_unit_name="SB2",
+                cast=0,
+                total_counted=0,
+                rejected_votes={},
+                uncounted_votes={},
+                votes_per_party={PartyIdentifier(id=1, name=None): 12},
+                votes_per_candidate={
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 1): 11,
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 2): 1,
+                },
+            ),
+            "SB3": ReportingUnitInfo(
+                reporting_unit_id="SB3",
+                reporting_unit_name="SB3",
+                cast=0,
+                total_counted=0,
+                rejected_votes={},
+                uncounted_votes={},
+                votes_per_party={PartyIdentifier(id=1, name=None): 100},
+                votes_per_candidate={
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 1): 80,
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 2): 20,
+                },
+            ),
+            "SB4": ReportingUnitInfo(
+                reporting_unit_id="SB4",
+                reporting_unit_name="SB4",
+                cast=0,
+                total_counted=0,
+                rejected_votes={},
+                uncounted_votes={},
+                votes_per_party={PartyIdentifier(id=1, name=None): 200},
+                votes_per_candidate={
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 1): 160,
+                    CandidateIdentifier(PartyIdentifier(id=1, name=None), 2): 40,
+                },
+            ),
+        },
+        ReportingNeighbourhoods(
+            reporting_unit_id_to_neighbourhood_id={
+                "SB1": None,
+                "SB2": "WK123",
+                "SB3": None,
+                "SB4": None,
+            },
+            neighbourhood_id_to_reporting_unit_ids={"WK123": set(["SB2"])},
+            neighbourhood_id_to_reference_group={
+                "WK123": ReportingUnitInfo(
+                    reporting_unit_id="WK123",
+                    reporting_unit_name=f"Reference group for WK123",
+                    cast=0,
+                    total_counted=0,
+                    rejected_votes={},
+                    uncounted_votes={},
+                    votes_per_party={PartyIdentifier(id=1, name=None): 12},
+                    votes_per_candidate={
+                        CandidateIdentifier(PartyIdentifier(id=1, name=None), 1): 11,
+                        CandidateIdentifier(PartyIdentifier(id=1, name=None), 2): 1,
+                    },
+                )
+            },
+        ),
+    ),
 ]
 
 
