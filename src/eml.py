@@ -25,6 +25,7 @@ class CheckResult:
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
     potentially_switched_candidates: List[SwitchedCandidate]
+    potentially_switched_neighbourhood_candidates: Optional[List[SwitchedCandidate]]
     already_recounted: bool
 
 
@@ -48,11 +49,17 @@ class EML:
     MINIMUM_VOTES: ClassVar[int] = 20
 
     def run_protocol(
-        self, neighbourhood_data: Optional[ReportingNeighbourhoods] = None
+        self, reporting_neighbourhoods: Optional[ReportingNeighbourhoods] = None
     ) -> Dict[str, CheckResult]:
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
+            neighbourhood_reference_group = (
+                (reporting_neighbourhoods.get_reference_group(polling_station_id))
+                if reporting_neighbourhoods
+                else None
+            )
+
             check_result = CheckResult(
                 zero_votes=protocol_checks.check_zero_votes(polling_station),
                 inexplicable_difference=protocol_checks.check_inexplicable_difference(
@@ -83,11 +90,22 @@ class EML:
                 potentially_switched_candidates=protocol_checks.get_potentially_switched_candidates(
                     self.main_unit_info,
                     polling_station,
-                    neighbourhood_data,
                     amount_of_reporting_units=self.metadata.reporting_unit_amount,
                     minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
                     minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
                     minimum_votes=EML.MINIMUM_VOTES,
+                ),
+                potentially_switched_neighbourhood_candidates=(
+                    protocol_checks.get_potentially_switched_candidates(
+                        neighbourhood_reference_group,
+                        polling_station,
+                        amount_of_reporting_units=self.metadata.reporting_unit_amount,
+                        minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
+                        minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
+                        minimum_votes=EML.MINIMUM_VOTES,
+                    )
+                    if neighbourhood_reference_group
+                    else None
                 ),
                 already_recounted=False,
             )

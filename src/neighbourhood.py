@@ -1,27 +1,33 @@
 import polars as pl
 from pathlib import Path
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, TypeVar, Set
 from dataclasses import dataclass
 from collections import defaultdict
+from eml_types import ReportingUnitInfo
+
+T = TypeVar("T")
+
+
+def _add_dict(a: Dict[T, int], b: Dict[T, int]) -> Dict[T, int]:
+    return {key_a: a[key_a] + b[key_a] for key_a in a.keys()}
 
 
 @dataclass
 class ReportingNeighbourhoods:
-    reporting_unit_to_neighbourhood: Dict[str, Optional[str]]
-    neighbourhood_to_reporting_units: Dict[str, List[str]]
+    reporting_unit_id_to_neighbourhood_id: Dict[str, Optional[str]]
+    neighbourhood_id_to_reporting_unit_ids: Dict[str, Set[str]]
+    neighbourhood_id_to_reference_group: Dict[str, ReportingUnitInfo]
 
-    def get_reference_group(self, reporting_unit_id: str) -> List[str]:
-        neighbourhood = self.reporting_unit_to_neighbourhood.get(reporting_unit_id)
-        if not neighbourhood:
-            return []
-        else:
-            return [
-                comparison_id
-                for comparison_id in self.neighbourhood_to_reporting_units[
-                    neighbourhood
-                ]
-                if comparison_id != reporting_unit_id
-            ]
+    def get_reference_group(
+        self, reporting_unit_id: str
+    ) -> Optional[ReportingUnitInfo]:
+        neighbourhood_id = self.reporting_unit_id_to_neighbourhood_id.get(
+            reporting_unit_id
+        )
+        if neighbourhood_id is None:
+            return None
+
+        return self.neighbourhood_id_to_reference_group[neighbourhood_id]
 
 
 class NeighbourhoodData:
@@ -39,35 +45,81 @@ class NeighbourhoodData:
         return queried_result.item()
 
     def fetch_reporting_neighbourhoods(
-        self, reporting_unit_zips: Dict[str, Optional[str]]
+        self,
+        reporting_unit_zips: Dict[str, Optional[str]],
+        reporting_unit_info: Dict[str, ReportingUnitInfo],
     ) -> ReportingNeighbourhoods:
+        # Fetch the neighbourhood codes for all unique zips
         zips = set((zip for zip in reporting_unit_zips.values() if zip is not None))
         zips_to_neighbourhoods = {
             zip: self.fetch_neighbourhood_code(zip) for zip in zips
         }
 
-        reporting_unit_to_neighbourhood = {}
+        # Construct mapping from reporting unit id to neighbourhood id
+        reporting_unit_id_to_neighbourhood_id = {}
         for reporting_unit_id, zip in reporting_unit_zips.items():
             if zip is None:
-                reporting_unit_to_neighbourhood[reporting_unit_id] = None
+                reporting_unit_id_to_neighbourhood_id[reporting_unit_id] = None
             else:
-                reporting_unit_to_neighbourhood[reporting_unit_id] = (
+                reporting_unit_id_to_neighbourhood_id[reporting_unit_id] = (
                     zips_to_neighbourhoods[zip]
                 )
 
-        neighbourhood_to_reporting_units = defaultdict(list)
+        # Construct mapping from neighbourhood id to reporting unit id list
+        neighbourhood_id_to_reporting_unit_ids = defaultdict(set)
         for (
             reporting_unit_id,
             neighbourhood_code,
-        ) in reporting_unit_to_neighbourhood.items():
+        ) in reporting_unit_id_to_neighbourhood_id.items():
             if neighbourhood_code:
-                neighbourhood_to_reporting_units[neighbourhood_code].append(
+                neighbourhood_id_to_reporting_unit_ids[neighbourhood_code].add(
                     reporting_unit_id
                 )
 
+        # Given the mapping from neighbourhood ids to reporting unit ids, constuct reporting unit objects
+        neighbourhood_id_to_reference_group = {}
+        for (
+            neighbourhood_id,
+            reporting_unit_ids,
+        ) in neighbourhood_id_to_reporting_unit_ids.items():
+
+            # Construct the reference group vote counts by adding dicts of the reporting ids
+            # that belong to this neighbourhood
+            summed_votes_per_party = {}
+            summed_votes_per_candidate = {}
+            for reporting_unit_id, reporting_unit in reporting_unit_info.items():
+                if reporting_unit_id not in reporting_unit_ids:
+                    continue
+
+                if len(summed_votes_per_party) == 0:
+                    summed_votes_per_party = reporting_unit.votes_per_party
+                else:
+                    summed_votes_per_party = _add_dict(
+                        summed_votes_per_party, reporting_unit.votes_per_party
+                    )
+
+                if len(summed_votes_per_candidate) == 0:
+                    summed_votes_per_candidate = reporting_unit.votes_per_candidate
+                else:
+                    summed_votes_per_candidate = _add_dict(
+                        summed_votes_per_candidate, reporting_unit.votes_per_candidate
+                    )
+
+            neighbourhood_id_to_reference_group[neighbourhood_id] = ReportingUnitInfo(
+                reporting_unit_id=neighbourhood_id,
+                reporting_unit_name=f"Reference group for {neighbourhood_id}",
+                cast=0,
+                total_counted=0,
+                rejected_votes={},
+                uncounted_votes={},
+                votes_per_party=summed_votes_per_party,
+                votes_per_candidate=summed_votes_per_candidate,
+            )
+
         return ReportingNeighbourhoods(
-            reporting_unit_to_neighbourhood=reporting_unit_to_neighbourhood,
-            neighbourhood_to_reporting_units=neighbourhood_to_reporting_units,
+            reporting_unit_id_to_neighbourhood_id=reporting_unit_id_to_neighbourhood_id,
+            neighbourhood_id_to_reporting_unit_ids=neighbourhood_id_to_reporting_unit_ids,
+            neighbourhood_id_to_reference_group=neighbourhood_id_to_reference_group,
         )
 
     @staticmethod
