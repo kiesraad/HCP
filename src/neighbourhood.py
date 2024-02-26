@@ -28,6 +28,14 @@ class ReportingNeighbourhoods:
     neighbourhood_id_to_reporting_unit_ids: Dict[str, Set[str]]
     neighbourhood_id_to_reference_group: Dict[str, ReportingUnitInfo]
 
+    def get_reference_group(
+        self, reporting_unit_id: str
+    ) -> Optional[ReportingUnitInfo]:
+        neighbourhood_id = self.reporting_unit_id_to_neighbourhood_id[reporting_unit_id]
+        if not neighbourhood_id:
+            return None
+        return self.neighbourhood_id_to_reference_group[neighbourhood_id]
+
 
 class NeighbourhoodData:
     data: pl.LazyFrame

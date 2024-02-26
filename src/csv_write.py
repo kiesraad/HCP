@@ -1,6 +1,7 @@
 import csv
 from eml_types import (
     EmlMetadata,
+    SwitchedCandidate,
     VoteDifference,
     VoteDifferencePercentage,
     VoteDifferenceAmount,
@@ -15,7 +16,7 @@ HEADER_COLS = [
     "Stembureaunummer",
     "Stembureaunaam",
 ]
-PROTOCOL_VERSION = "TK2023"
+PROTOCOL_VERSION = "EP2024"
 
 
 def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
@@ -48,6 +49,17 @@ def _format_vote_difference(vote_difference: Optional[VoteDifference]) -> Option
         return None
 
     return f"ja ({part})"
+
+
+# TODO handle intersection with neighbourhood candidates
+def _format_potentially_switched_candidates(
+    potentially_switched_candidates: List[SwitchedCandidate],
+    potentially_switched_neighbourhood_candidates: Optional[List[SwitchedCandidate]],
+) -> Optional[str]:
+    if len(potentially_switched_candidates) == 0:
+        return None
+
+    return ", ".join([str(cand) for cand in potentially_switched_candidates])
 
 
 def _format_percentage_deviation(percentage: float) -> str:
@@ -119,6 +131,7 @@ def write_csv_b(
                 f"Stembureau >={int(EML.BLANK_VOTE_THRESHOLD_PCT)}% blanco",
                 f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verklaarde verschillen",
                 f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
+                f"Mogelijk verwisselde kandidaten",
                 "Al hergeteld",
             ]
         )
@@ -137,6 +150,10 @@ def write_csv_b(
             parties_with_high_difference_percentage = ", ".join(
                 results.parties_with_high_difference_percentage
             )
+            potentially_switched_candidates = _format_potentially_switched_candidates(
+                results.potentially_switched_candidates,
+                results.potentially_switched_neighbourhood_candidates,
+            )
 
             already_recounted = "ja" if results.already_recounted else None
 
@@ -146,6 +163,7 @@ def write_csv_b(
                 or high_blank_vote_percentage
                 or high_explained_difference_percentage
                 or parties_with_high_difference_percentage
+                or potentially_switched_candidates
             ):
                 writer.writerow(
                     _id_cols(eml_metadata, id)
@@ -155,6 +173,7 @@ def write_csv_b(
                         high_blank_vote_percentage,
                         high_explained_difference_percentage,
                         parties_with_high_difference_percentage,
+                        potentially_switched_candidates,
                         already_recounted,
                     ]
                 )
