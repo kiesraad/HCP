@@ -36,6 +36,12 @@ class ReportingNeighbourhoods:
             return None
         return self.neighbourhood_id_to_reference_group[neighbourhood_id]
 
+    def get_reference_size(self, reporting_unit_id: str) -> int:
+        neighbourhood_id = self.reporting_unit_id_to_neighbourhood_id[reporting_unit_id]
+        if not neighbourhood_id:
+            return 0
+        return len(self.neighbourhood_id_to_reporting_unit_ids[neighbourhood_id])
+
 
 class NeighbourhoodData:
     data: pl.LazyFrame

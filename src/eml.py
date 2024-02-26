@@ -99,12 +99,14 @@ class EML:
                     protocol_checks.get_potentially_switched_candidates(
                         neighbourhood_reference_group,
                         polling_station,
-                        amount_of_reporting_units=self.metadata.reporting_unit_amount,
+                        amount_of_reporting_units=reporting_neighbourhoods.get_reference_size(
+                            polling_station_id
+                        ),
                         minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
                         minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
                         minimum_votes=EML.MINIMUM_VOTES,
                     )
-                    if neighbourhood_reference_group
+                    if neighbourhood_reference_group and reporting_neighbourhoods
                     else None
                 ),
                 already_recounted=False,
