@@ -17,12 +17,13 @@ def create_csv_files(
 
     # Load in neighbourhood data
     neighbourhood_data = NeighbourhoodData.from_path(path_to_neighbourhood_data)
-    if neighbourhood_data:
-        reporting_neighbourhouds = neighbourhood_data.fetch_reporting_neighbourhoods(
+    reporting_neighbourhouds = (
+        neighbourhood_data.fetch_reporting_neighbourhoods(
             eml.metadata.reporting_unit_zips, eml.reporting_units_info
         )
-    else:
-        reporting_neighbourhouds = None
+        if neighbourhood_data
+        else None
+    )
 
     check_results = eml.run_protocol(reporting_neighbourhoods=reporting_neighbourhouds)
     eml_metadata = eml.metadata

@@ -64,11 +64,13 @@ class SwitchedCandidate:
     candidate_with_more_expected: int
 
     def __str__(self) -> str:
-        return f"""Mogelijke verwisseling op lijst {self.candidate_with_more.party.id} ({self.candidate_with_more.party.name}). \
-Kandidaat {self.candidate_with_more.cand_id} had {self.candidate_with_more_received} stemmen \
-maar verwachting was {self.candidate_with_more_expected}. \
-Kandidaat {self.candidate_with_fewer.cand_id} had {self.candidate_with_fewer_received} stemmen \
-maar verwachting was {self.candidate_with_fewer_expected}"""
+        return (
+            f"Mogelijke verwisseling op lijst {self.candidate_with_more.party.id} ({self.candidate_with_more.party.name}). "
+            f"Kandidaat {self.candidate_with_more.cand_id} had {self.candidate_with_more_received} stemmen "
+            f"maar verwachting was {self.candidate_with_more_expected}. "
+            f"Kandidaat {self.candidate_with_fewer.cand_id} had {self.candidate_with_fewer_received} stemmen "
+            f"maar verwachting was {self.candidate_with_fewer_expected}"
+        )
 
 
 class InvalidEmlException(Exception):

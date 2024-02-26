@@ -59,6 +59,28 @@ def _format_potentially_switched_candidates(
     if len(potentially_switched_candidates) == 0:
         return None
 
+    # If we were able to run the check on neighbourhood level, only report those which exist
+    # both at neighbourhood and municipality level
+    if potentially_switched_neighbourhood_candidates is not None:
+        cand_id_intersection = set(
+            (cand.candidate_with_fewer, cand.candidate_with_more)
+            for cand in potentially_switched_candidates
+        ).intersection(
+            set(
+                (cand.candidate_with_fewer, cand.candidate_with_more)
+                for cand in potentially_switched_neighbourhood_candidates
+            )
+        )
+        potentially_switched_candidates = [
+            switched_candidate
+            for switched_candidate in potentially_switched_candidates
+            if (
+                switched_candidate.candidate_with_fewer,
+                switched_candidate.candidate_with_more,
+            )
+            in cand_id_intersection
+        ]
+
     return ", ".join([str(cand) for cand in potentially_switched_candidates])
 
 
@@ -154,7 +176,6 @@ def write_csv_b(
                 results.potentially_switched_candidates,
                 results.potentially_switched_neighbourhood_candidates,
             )
-
             already_recounted = "ja" if results.already_recounted else None
 
             if (
