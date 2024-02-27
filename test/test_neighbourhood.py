@@ -139,7 +139,7 @@ reporting_neighbourhoods_test_cases = [
             ),
             "SB2": ReportingUnitInfo(
                 reporting_unit_id="SB2",
-                reporting_unit_name="SB2",
+                reporting_unit_name=None,
                 cast=0,
                 total_counted=0,
                 rejected_votes={},

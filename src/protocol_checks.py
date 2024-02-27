@@ -175,16 +175,52 @@ def get_potentially_switched_candidates(
     for cand_with_more, cand_with_less in cartesian_product(
         cands_with_more_votes, cands_with_less_votes
     ):
-        result.append(
-            SwitchedCandidate(
-                candidate_with_fewer=cand_with_less,
-                candidate_with_fewer_received=received_votes[cand_with_less],
-                candidate_with_fewer_expected=round(expected_votes[cand_with_less]),
-                candidate_with_more=cand_with_more,
-                candidate_with_more_received=received_votes[cand_with_more],
-                candidate_with_more_expected=round(expected_votes[cand_with_more]),
+        if cand_with_more.party == cand_with_less.party:
+            result.append(
+                SwitchedCandidate(
+                    candidate_with_fewer=cand_with_less,
+                    candidate_with_fewer_received=received_votes[cand_with_less],
+                    candidate_with_fewer_expected=round(expected_votes[cand_with_less]),
+                    candidate_with_more=cand_with_more,
+                    candidate_with_more_received=received_votes[cand_with_more],
+                    candidate_with_more_expected=round(expected_votes[cand_with_more]),
+                )
             )
-        )
+
+    return result
+
+
+def get_switched_candidate_combination(
+    municipality_switched: List[SwitchedCandidate],
+    neighbourhood_switched: Optional[List[SwitchedCandidate]],
+) -> List[SwitchedCandidate]:
+    # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
+    # then we just return the municipality results
+    if neighbourhood_switched is None:
+        return municipality_switched
+
+    # Otherwise, we only return those for which there was a neighbourhood result
+    # Construct lookup tables
+    municpality_lookup = {
+        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        for cand in municipality_switched
+    }
+    neighbourhood_lookup = {
+        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        for cand in neighbourhood_switched
+    }
+
+    # For each switch which occurs *at least* at neighbourhood level, check if it also
+    # occurs at municipality level. If so, return those expected values, otherwise we
+    # return the neighbourhood values
+    result: List[SwitchedCandidate] = []
+
+    for cand_id, neighbourhood_switched_obj in neighbourhood_lookup.items():
+        municipality_switched_obj = municpality_lookup.get(cand_id)
+        if municipality_switched_obj is not None:
+            result.append(municipality_switched_obj)
+        else:
+            result.append(neighbourhood_switched_obj)
 
     return result
 

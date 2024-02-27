@@ -25,7 +25,6 @@ class CheckResult:
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
     potentially_switched_candidates: List[SwitchedCandidate]
-    potentially_switched_neighbourhood_candidates: Optional[List[SwitchedCandidate]]
     already_recounted: bool
 
 
@@ -44,7 +43,9 @@ class EML:
 
     PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
 
-    MINIMUM_REPORTING_UNITS: ClassVar[int] = 5
+    # Switched candidate parameters
+    MINIMUM_REPORTING_UNITS_MUNICIPALITY: ClassVar[int] = 2
+    MINIMUM_REPORTING_UNITS_NEIGHBOURHOOD: ClassVar[int] = 5
     MINIMUM_DEVIATION_FACTOR: ClassVar[int] = 10
     MINIMUM_VOTES: ClassVar[int] = 20
 
@@ -58,6 +59,39 @@ class EML:
                 (reporting_neighbourhoods.get_reference_group(polling_station_id))
                 if reporting_neighbourhoods
                 else None
+            )
+
+            potentially_switched_municipality_candidates = (
+                protocol_checks.get_potentially_switched_candidates(
+                    self.main_unit_info,
+                    polling_station,
+                    amount_of_reporting_units=self.metadata.reporting_unit_amount,
+                    minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS_MUNICIPALITY,
+                    minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
+                    minimum_votes=EML.MINIMUM_VOTES,
+                )
+            )
+
+            potentially_switched_neighbourhood_candidates = (
+                protocol_checks.get_potentially_switched_candidates(
+                    neighbourhood_reference_group,
+                    polling_station,
+                    amount_of_reporting_units=reporting_neighbourhoods.get_reference_size(
+                        polling_station_id
+                    ),
+                    minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS_NEIGHBOURHOOD,
+                    minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
+                    minimum_votes=EML.MINIMUM_VOTES,
+                )
+                if neighbourhood_reference_group and reporting_neighbourhoods
+                else None
+            )
+
+            potentially_switched_candidates = (
+                protocol_checks.get_switched_candidate_combination(
+                    potentially_switched_municipality_candidates,
+                    potentially_switched_neighbourhood_candidates,
+                )
             )
 
             check_result = CheckResult(
@@ -87,28 +121,7 @@ class EML:
                 party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
                 ),
-                potentially_switched_candidates=protocol_checks.get_potentially_switched_candidates(
-                    self.main_unit_info,
-                    polling_station,
-                    amount_of_reporting_units=self.metadata.reporting_unit_amount,
-                    minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
-                    minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
-                    minimum_votes=EML.MINIMUM_VOTES,
-                ),
-                potentially_switched_neighbourhood_candidates=(
-                    protocol_checks.get_potentially_switched_candidates(
-                        neighbourhood_reference_group,
-                        polling_station,
-                        amount_of_reporting_units=reporting_neighbourhoods.get_reference_size(
-                            polling_station_id
-                        ),
-                        minimum_reporting_units=EML.MINIMUM_REPORTING_UNITS,
-                        minimum_deviation_factor=EML.MINIMUM_DEVIATION_FACTOR,
-                        minimum_votes=EML.MINIMUM_VOTES,
-                    )
-                    if neighbourhood_reference_group and reporting_neighbourhoods
-                    else None
-                ),
+                potentially_switched_candidates=potentially_switched_candidates,
                 already_recounted=False,
             )
 
