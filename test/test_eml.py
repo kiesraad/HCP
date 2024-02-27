@@ -1,12 +1,12 @@
+import pytest
 from eml import EML
 from eml_types import (
-    ReportingUnitInfo,
-    EmlMetadata,
-    PartyIdentifier,
     CandidateIdentifier,
+    EmlMetadata,
     InvalidEmlException,
+    PartyIdentifier,
+    ReportingUnitInfo,
 )
-import pytest
 
 test_eml_paths = [
     "./test/data/TK2023_DORDRECHT/Telling_TK2023_gemeente_Dordrecht.eml.xml",

@@ -1,9 +1,10 @@
-import polars as pl
 import re
-from pathlib import Path
-from typing import Optional, List, Dict, TypeVar, Set
-from dataclasses import dataclass
 from collections import defaultdict
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Dict, Optional, Set, TypeVar
+
+import polars as pl
 from eml_types import ReportingUnitInfo
 
 T = TypeVar("T")
@@ -141,7 +142,7 @@ class NeighbourhoodData:
 
     @staticmethod
     def from_path(str_path: Optional[str]):
-        if str_path == None:
+        if str_path is None:
             return None
 
         try:

@@ -1,8 +1,9 @@
-from zipfile import ZipFile
+from dataclasses import dataclass
 from enum import Enum, auto
 from typing import List, Optional
-from dataclasses import dataclass
 from xml.etree.ElementTree import Element as XmlElement
+from zipfile import ZipFile
+
 import xml_parser
 
 NAMESPACE = {

@@ -1,13 +1,14 @@
 import csv
+from typing import Dict, List, Optional
+
+from eml import EML, CheckResult
 from eml_types import (
     EmlMetadata,
     SwitchedCandidate,
     VoteDifference,
-    VoteDifferencePercentage,
     VoteDifferenceAmount,
+    VoteDifferencePercentage,
 )
-from eml import CheckResult, EML
-from typing import List, Dict, Optional
 
 HEADER_COLS = [
     "Kieskringnummer",
@@ -128,7 +129,7 @@ def write_csv_b(
                 f"Stembureau >={int(EML.BLANK_VOTE_THRESHOLD_PCT)}% blanco",
                 f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verklaarde verschillen",
                 f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
-                f"Mogelijk verwisselde kandidaten",
+                "Mogelijk verwisselde kandidaten",
                 "Al hergeteld",
             ]
         )

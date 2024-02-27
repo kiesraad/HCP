@@ -1,15 +1,16 @@
+from itertools import repeat
+from typing import Dict, List, Optional
+
 import protocol_checks
 import pytest
 from eml_types import (
     CandidateIdentifier,
-    ReportingUnitInfo,
     PartyIdentifier,
+    ReportingUnitInfo,
     SwitchedCandidate,
-    VoteDifferencePercentage,
     VoteDifferenceAmount,
+    VoteDifferencePercentage,
 )
-from typing import Dict, List, Optional
-from itertools import repeat
 
 ru_zero_votes = ReportingUnitInfo(
     reporting_unit_id=None,
@@ -392,13 +393,13 @@ expected_cand_votes = {
     "main_unit, reporting_unit, expected",
     [(switched_main_unit, expected_reporting_unit, expected_cand_votes)],
 )
-def test_check_expected_candidate_votes(
+def test_get_expected_candidate_votes(
     main_unit: ReportingUnitInfo,
     reporting_unit: ReportingUnitInfo,
     expected: Dict[CandidateIdentifier, float],
 ) -> None:
     assert (
-        protocol_checks.get_expected_candidate_votes(main_unit, reporting_unit)
+        protocol_checks._get_expected_candidate_votes(main_unit, reporting_unit)
         == expected
     )
 
@@ -448,7 +449,7 @@ switched_test_cases = list(
     "main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes",
     switched_test_cases,
 )
-def test_check_switched_candidate(
+def test_get_switched_candidate(
     main_unit,
     reporting_unit,
     expected,
@@ -458,7 +459,7 @@ def test_check_switched_candidate(
     minimum_votes,
 ) -> None:
     assert (
-        protocol_checks.get_potentially_switched_candidates(
+        protocol_checks._get_potentially_switched_candidates(
             main_unit,
             reporting_unit,
             amount_of_reporting_units,
@@ -555,7 +556,7 @@ def test_get_switched_candidate_combination(
     expected: List[SwitchedCandidate],
 ) -> None:
     assert (
-        protocol_checks.get_switched_candidate_combination(
+        protocol_checks._get_switched_candidate_combination(
             switched_municipality, switched_neighbourhood
         )
         == expected

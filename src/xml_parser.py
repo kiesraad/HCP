@@ -1,14 +1,15 @@
-from defusedxml import ElementTree as ET
-from typing import Optional, IO, Union, List, Dict, Tuple
-from xml.etree.ElementTree import Element as XmlElement
-from eml_types import (
-    EmlMetadata,
-    ReportingUnitInfo,
-    PartyIdentifier,
-    CandidateIdentifier,
-    InvalidEmlException,
-)
 import re
+from typing import IO, Dict, List, Optional, Tuple, Union
+from xml.etree.ElementTree import Element as XmlElement
+
+from defusedxml import ElementTree as ET
+from eml_types import (
+    CandidateIdentifier,
+    EmlMetadata,
+    InvalidEmlException,
+    PartyIdentifier,
+    ReportingUnitInfo,
+)
 
 NAMESPACE = {
     "eml": "urn:oasis:names:tc:evs:schema:eml",

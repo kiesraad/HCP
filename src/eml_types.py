@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 
 @dataclass
@@ -71,6 +71,14 @@ class SwitchedCandidate:
             f"Kandidaat {self.candidate_with_fewer.cand_id} had {self.candidate_with_fewer_received} stemmen "
             f"maar verwachting was {self.candidate_with_fewer_expected}"
         )
+
+
+@dataclass
+class SwitchedCandidateConfig:
+    minimum_reporting_units_municipality: int
+    minimum_reporting_units_neighbourhood: int
+    minimum_deviation_factor: int
+    minimum_votes: int
 
 
 class InvalidEmlException(Exception):

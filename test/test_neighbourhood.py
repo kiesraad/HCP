@@ -1,8 +1,9 @@
+from itertools import repeat
+from typing import Dict, Optional
+
 import pytest
 from eml_types import CandidateIdentifier, PartyIdentifier, ReportingUnitInfo
 from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
-from typing import Optional, Dict
-from itertools import repeat
 
 read_test_cases = [
     ("./test/data/neighbourhood_files/valid.parquet", True),
@@ -110,7 +111,7 @@ reporting_neighbourhoods_test_cases = [
             neighbourhood_id_to_reference_group={
                 "WK123": ReportingUnitInfo(
                     reporting_unit_id="WK123",
-                    reporting_unit_name=f"Reference group for WK123",
+                    reporting_unit_name="Reference group for WK123",
                     cast=0,
                     total_counted=0,
                     rejected_votes={},
@@ -192,7 +193,7 @@ reporting_neighbourhoods_test_cases = [
             neighbourhood_id_to_reference_group={
                 "WK123": ReportingUnitInfo(
                     reporting_unit_id="WK123",
-                    reporting_unit_name=f"Reference group for WK123",
+                    reporting_unit_name="Reference group for WK123",
                     cast=0,
                     total_counted=0,
                     rejected_votes={},

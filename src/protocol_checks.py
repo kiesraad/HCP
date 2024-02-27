@@ -1,15 +1,17 @@
-from typing import List, Dict
+from itertools import product as cartesian_product
+from typing import Dict, List, Optional, TypeVar
+
 from eml_types import (
-    ReportingUnitInfo,
+    CandidateIdentifier,
     PartyIdentifier,
+    ReportingUnitInfo,
+    SwitchedCandidate,
+    SwitchedCandidateConfig,
     VoteDifference,
     VoteDifferenceAmount,
     VoteDifferencePercentage,
-    CandidateIdentifier,
-    SwitchedCandidate,
 )
-from typing import Dict, Optional, TypeVar
-from itertools import product as cartesian_product
+from neighbourhood import ReportingNeighbourhoods
 
 T = TypeVar("T")
 N = TypeVar("N", int, float)
@@ -117,115 +119,51 @@ def check_parties_with_large_percentage_difference(
     )
 
 
-def get_expected_candidate_votes(
-    main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo
-) -> Dict[CandidateIdentifier, float]:
-    party_votes_without_current = _subtract_part_dictionary(
-        main_unit.votes_per_party, reporting_unit.votes_per_party
-    )
-    cand_votes_without_current = _subtract_part_dictionary(
-        main_unit.votes_per_candidate, reporting_unit.votes_per_candidate
-    )
-    cand_ratios = _get_candidate_ratios(
-        party_votes_without_current, cand_votes_without_current
-    )
-
-    return {
-        cand_id: ratio * reporting_unit.votes_per_party[cand_id.party]
-        for cand_id, ratio in cand_ratios.items()
-    }
-
-
-def get_potentially_switched_candidates(
+def check_potentially_switched_candidates(
+    polling_station_id: str,
     main_unit: ReportingUnitInfo,
-    reporting_unit: ReportingUnitInfo,
-    amount_of_reporting_units: int,
-    minimum_reporting_units: int,
-    minimum_deviation_factor: int,
-    minimum_votes: int,
+    polling_station: ReportingUnitInfo,
+    reporting_unit_amount: int,
+    reporting_neighbourhoods: Optional[ReportingNeighbourhoods],
+    config: SwitchedCandidateConfig,
 ) -> List[SwitchedCandidate]:
-    # Not enough reporting units to do a good check
-    if amount_of_reporting_units < minimum_reporting_units:
-        return []
+    neighbourhood_reference_group = (
+        (reporting_neighbourhoods.get_reference_group(polling_station_id))
+        if reporting_neighbourhoods
+        else None
+    )
 
-    received_votes = reporting_unit.votes_per_candidate
-    expected_votes = get_expected_candidate_votes(main_unit, reporting_unit)
+    potentially_switched_municipality_candidates = _get_potentially_switched_candidates(
+        main_unit,
+        polling_station,
+        amount_of_reporting_units=reporting_unit_amount,
+        minimum_reporting_units=config.minimum_reporting_units_municipality,
+        minimum_deviation_factor=config.minimum_deviation_factor,
+        minimum_votes=config.minimum_votes,
+    )
 
-    cands_with_more_votes: List[CandidateIdentifier] = []
-    cands_with_less_votes: List[CandidateIdentifier] = []
+    potentially_switched_neighbourhood_candidates = (
+        _get_potentially_switched_candidates(
+            neighbourhood_reference_group,
+            polling_station,
+            amount_of_reporting_units=reporting_neighbourhoods.get_reference_size(
+                polling_station_id
+            ),
+            minimum_reporting_units=config.minimum_reporting_units_neighbourhood,
+            minimum_deviation_factor=config.minimum_deviation_factor,
+            minimum_votes=config.minimum_votes,
+        )
+        if neighbourhood_reference_group and reporting_neighbourhoods
+        else None
+    )
 
-    for cand_id in received_votes.keys():
-        if received_votes[cand_id] >= minimum_votes and (
-            (
-                expected_votes[cand_id] == 0
-                or received_votes[cand_id] / expected_votes[cand_id]
-                >= minimum_deviation_factor
-            )
-        ):
-            cands_with_more_votes.append(cand_id)
-        elif (
-            expected_votes[cand_id] >= minimum_votes
-            and received_votes[cand_id] / expected_votes[cand_id]
-            <= 1 / minimum_deviation_factor
-        ):
-            cands_with_less_votes.append(cand_id)
-
-    result: List[SwitchedCandidate] = []
-
-    for cand_with_more, cand_with_less in cartesian_product(
-        cands_with_more_votes, cands_with_less_votes
-    ):
-        if cand_with_more.party == cand_with_less.party:
-            result.append(
-                SwitchedCandidate(
-                    candidate_with_fewer=cand_with_less,
-                    candidate_with_fewer_received=received_votes[cand_with_less],
-                    candidate_with_fewer_expected=round(expected_votes[cand_with_less]),
-                    candidate_with_more=cand_with_more,
-                    candidate_with_more_received=received_votes[cand_with_more],
-                    candidate_with_more_expected=round(expected_votes[cand_with_more]),
-                )
-            )
-
-    return result
+    return _get_switched_candidate_combination(
+        potentially_switched_municipality_candidates,
+        potentially_switched_neighbourhood_candidates,
+    )
 
 
-def get_switched_candidate_combination(
-    municipality_switched: List[SwitchedCandidate],
-    neighbourhood_switched: Optional[List[SwitchedCandidate]],
-) -> List[SwitchedCandidate]:
-    # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
-    # then we just return the municipality results
-    if neighbourhood_switched is None:
-        return municipality_switched
-
-    # Otherwise, we only return those for which there was a neighbourhood result
-    # Construct lookup tables
-    municpality_lookup = {
-        (cand.candidate_with_fewer, cand.candidate_with_more): cand
-        for cand in municipality_switched
-    }
-    neighbourhood_lookup = {
-        (cand.candidate_with_fewer, cand.candidate_with_more): cand
-        for cand in neighbourhood_switched
-    }
-
-    # For each switch which occurs *at least* at neighbourhood level, check if it also
-    # occurs at municipality level. If so, return those expected values, otherwise we
-    # return the neighbourhood values
-    result: List[SwitchedCandidate] = []
-
-    for cand_id, neighbourhood_switched_obj in neighbourhood_lookup.items():
-        municipality_switched_obj = municpality_lookup.get(cand_id)
-        if municipality_switched_obj is not None:
-            result.append(municipality_switched_obj)
-        else:
-            result.append(neighbourhood_switched_obj)
-
-    return result
-
-
-# Helper functions
+# Implementation details
 
 
 def _get_total_votes(reporting_unit: ReportingUnitInfo) -> int:
@@ -268,6 +206,79 @@ def _subtract_part_dictionary(
     return {key: total[key] - part_dictionary[key] for key in part_dictionary.keys()}
 
 
+def _get_potentially_switched_candidates(
+    main_unit: ReportingUnitInfo,
+    reporting_unit: ReportingUnitInfo,
+    amount_of_reporting_units: int,
+    minimum_reporting_units: int,
+    minimum_deviation_factor: int,
+    minimum_votes: int,
+) -> List[SwitchedCandidate]:
+    # Not enough reporting units to do a good check
+    if amount_of_reporting_units < minimum_reporting_units:
+        return []
+
+    received_votes = reporting_unit.votes_per_candidate
+    expected_votes = _get_expected_candidate_votes(main_unit, reporting_unit)
+
+    cands_with_more_votes: List[CandidateIdentifier] = []
+    cands_with_less_votes: List[CandidateIdentifier] = []
+
+    for cand_id in received_votes.keys():
+        if received_votes[cand_id] >= minimum_votes and (
+            (
+                expected_votes[cand_id] == 0
+                or received_votes[cand_id] / expected_votes[cand_id]
+                >= minimum_deviation_factor
+            )
+        ):
+            cands_with_more_votes.append(cand_id)
+        elif (
+            expected_votes[cand_id] >= minimum_votes
+            and received_votes[cand_id] / expected_votes[cand_id]
+            <= 1 / minimum_deviation_factor
+        ):
+            cands_with_less_votes.append(cand_id)
+
+    result: List[SwitchedCandidate] = []
+
+    for cand_with_more, cand_with_less in cartesian_product(
+        cands_with_more_votes, cands_with_less_votes
+    ):
+        if cand_with_more.party == cand_with_less.party:
+            result.append(
+                SwitchedCandidate(
+                    candidate_with_fewer=cand_with_less,
+                    candidate_with_fewer_received=received_votes[cand_with_less],
+                    candidate_with_fewer_expected=round(expected_votes[cand_with_less]),
+                    candidate_with_more=cand_with_more,
+                    candidate_with_more_received=received_votes[cand_with_more],
+                    candidate_with_more_expected=round(expected_votes[cand_with_more]),
+                )
+            )
+
+    return result
+
+
+def _get_expected_candidate_votes(
+    main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo
+) -> Dict[CandidateIdentifier, float]:
+    party_votes_without_current = _subtract_part_dictionary(
+        main_unit.votes_per_party, reporting_unit.votes_per_party
+    )
+    cand_votes_without_current = _subtract_part_dictionary(
+        main_unit.votes_per_candidate, reporting_unit.votes_per_candidate
+    )
+    cand_ratios = _get_candidate_ratios(
+        party_votes_without_current, cand_votes_without_current
+    )
+
+    return {
+        cand_id: ratio * reporting_unit.votes_per_party[cand_id.party]
+        for cand_id, ratio in cand_ratios.items()
+    }
+
+
 def _get_candidate_ratios(
     party_votes: Dict[PartyIdentifier, int],
     candidate_votes: Dict[CandidateIdentifier, int],
@@ -276,3 +287,38 @@ def _get_candidate_ratios(
         cand_id: votes / party_votes[cand_id.party] if votes > 0 else 0
         for cand_id, votes in candidate_votes.items()
     }
+
+
+def _get_switched_candidate_combination(
+    municipality_switched: List[SwitchedCandidate],
+    neighbourhood_switched: Optional[List[SwitchedCandidate]],
+) -> List[SwitchedCandidate]:
+    # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
+    # then we just return the municipality results
+    if neighbourhood_switched is None:
+        return municipality_switched
+
+    # Otherwise, we only return those for which there was a neighbourhood result
+    # Construct lookup tables
+    municpality_lookup = {
+        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        for cand in municipality_switched
+    }
+    neighbourhood_lookup = {
+        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        for cand in neighbourhood_switched
+    }
+
+    # For each switch which occurs *at least* at neighbourhood level, check if it also
+    # occurs at municipality level. If so, return those expected values, otherwise we
+    # return the neighbourhood values
+    result: List[SwitchedCandidate] = []
+
+    for cand_id, neighbourhood_switched_obj in neighbourhood_lookup.items():
+        municipality_switched_obj = municpality_lookup.get(cand_id)
+        if municipality_switched_obj is not None:
+            result.append(municipality_switched_obj)
+        else:
+            result.append(neighbourhood_switched_obj)
+
+    return result
