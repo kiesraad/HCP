@@ -35,11 +35,12 @@ class EML:
     reporting_units_info: Dict[str, ReportingUnitInfo]
     metadata: EmlMetadata
 
+    # Config ---
     INVALID_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
     BLANK_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
 
-    DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 1.0
-    DIFF_VOTE_THRESHOLD: ClassVar[int] = 10
+    DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
+    DIFF_VOTE_THRESHOLD: ClassVar[int] = 15
 
     PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
 
@@ -48,6 +49,7 @@ class EML:
     MINIMUM_REPORTING_UNITS_NEIGHBOURHOOD: ClassVar[int] = 5
     MINIMUM_DEVIATION_FACTOR: ClassVar[int] = 10
     MINIMUM_VOTES: ClassVar[int] = 20
+    # ---
 
     def run_protocol(
         self, reporting_neighbourhoods: Optional[ReportingNeighbourhoods] = None

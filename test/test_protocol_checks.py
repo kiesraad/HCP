@@ -8,7 +8,7 @@ from eml_types import (
     VoteDifferencePercentage,
     VoteDifferenceAmount,
 )
-from typing import Dict, List
+from typing import Dict, List, Optional
 from itertools import repeat
 
 ru_zero_votes = ReportingUnitInfo(
@@ -465,6 +465,98 @@ def test_check_switched_candidate(
             minimum_reporting_units,
             minimum_deviation_factor,
             minimum_votes,
+        )
+        == expected
+    )
+
+
+combine_switched_testcases = [
+    (
+        [
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                0,
+                10,
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                10,
+                0,
+            )
+        ],
+        [
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                0,
+                2,
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                3,
+                0,
+            ),
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(5, None), 10),
+                1,
+                101,
+                CandidateIdentifier(PartyIdentifier(5, None), 8),
+                108,
+                1,
+            ),
+        ],
+        [
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                0,
+                10,
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                10,
+                0,
+            ),
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(5, None), 10),
+                1,
+                101,
+                CandidateIdentifier(PartyIdentifier(5, None), 8),
+                108,
+                1,
+            ),
+        ],
+    ),
+    (
+        [
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                0,
+                10,
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                10,
+                0,
+            )
+        ],
+        None,
+        [
+            SwitchedCandidate(
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                0,
+                10,
+                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                10,
+                0,
+            )
+        ],
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "switched_municipality, switched_neighbourhood, expected",
+    combine_switched_testcases,
+)
+def test_get_switched_candidate_combination(
+    switched_municipality: List[SwitchedCandidate],
+    switched_neighbourhood: Optional[List[SwitchedCandidate]],
+    expected: List[SwitchedCandidate],
+) -> None:
+    assert (
+        protocol_checks.get_switched_candidate_combination(
+            switched_municipality, switched_neighbourhood
         )
         == expected
     )

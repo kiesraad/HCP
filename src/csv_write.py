@@ -56,7 +56,7 @@ def _format_potentially_switched_candidates(
 ) -> Optional[str]:
     if len(potentially_switched_candidates) == 0:
         return None
-    return ", ".join([str(cand) for cand in potentially_switched_candidates])
+    return "\n".join([str(cand) for cand in potentially_switched_candidates])
 
 
 def _format_percentage_deviation(percentage: float) -> str:

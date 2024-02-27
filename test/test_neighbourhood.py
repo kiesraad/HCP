@@ -2,6 +2,7 @@ import pytest
 from eml_types import CandidateIdentifier, PartyIdentifier, ReportingUnitInfo
 from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
 from typing import Optional, Dict
+from itertools import repeat
 
 read_test_cases = [
     ("./test/data/neighbourhood_files/valid.parquet", True),
@@ -10,11 +11,14 @@ read_test_cases = [
     ("./test/data/THIS_FOLDER_DOES_NOT_EXIST/valid.parquet", False),
     ("./test/data/neighbourhood_files/wrong_filetype.txt", False),
     ("./test/data/neighbourhood_files/invalid.csv", False),
+    (None, False),
 ]
 
 
 @pytest.mark.parametrize("path_to_read, should_load", read_test_cases)
-def test_read_neighbourhood_file(path_to_read: str, should_load: bool) -> None:
+def test_read_neighbourhood_file(
+    path_to_read: Optional[str], should_load: bool
+) -> None:
     result = NeighbourhoodData.from_path(path_to_read)
     if should_load:
         assert isinstance(result, NeighbourhoodData)
@@ -31,7 +35,7 @@ fetch_test_cases = [
 
 @pytest.mark.parametrize("path_to_read, zip_code, expected", fetch_test_cases)
 def test_fetch_neighbourhood_code(
-    path_to_read: str, zip_code: str, expected: str
+    path_to_read: str, zip_code: str, expected: Optional[str]
 ) -> None:
     data = NeighbourhoodData.from_path(path_to_read)
     assert data is not None and data.fetch_neighbourhood_code(zip_code) == expected
@@ -221,3 +225,57 @@ def test_fetch_reporting_neighbourhoods(
         reporting_unit_zips, reporting_unit_info
     )
     assert reporting_neighourhoods == expected
+
+
+def construct_reporting_unit(id: str) -> ReportingUnitInfo:
+    return ReportingUnitInfo(
+        reporting_unit_id=id,
+        reporting_unit_name=id,
+        cast=0,
+        total_counted=0,
+        rejected_votes={},
+        uncounted_votes={},
+        votes_per_party={},
+        votes_per_candidate={},
+    )
+
+
+reporting_unit_data = ReportingNeighbourhoods(
+    reporting_unit_id_to_neighbourhood_id={"a": "1", "b": "2", "c": "2", "d": None},
+    neighbourhood_id_to_reporting_unit_ids={"1": set(["a"]), "2": set(["b", "c"])},
+    neighbourhood_id_to_reference_group={
+        "1": construct_reporting_unit("ref_a"),
+        "2": construct_reporting_unit("ref_b_c"),
+    },
+)
+
+reference_group_test_cases = zip(
+    repeat(reporting_unit_data),
+    ["a", "b", "d"],
+    [construct_reporting_unit("ref_a"), construct_reporting_unit("ref_b_c"), None],
+)
+reference_size_test_cases = zip(repeat(reporting_unit_data), ["a", "b", "d"], [1, 2, 0])
+
+
+@pytest.mark.parametrize(
+    "reporting_neighbourhoods, reporting_unit_id, expected",
+    reference_group_test_cases,
+)
+def test_reporting_neighbourhoods_reference_group(
+    reporting_neighbourhoods: ReportingNeighbourhoods,
+    reporting_unit_id: str,
+    expected: Optional[ReportingUnitInfo],
+):
+    assert reporting_neighbourhoods.get_reference_group(reporting_unit_id) == expected
+
+
+@pytest.mark.parametrize(
+    "reporting_neighbourhoods, reporting_unit_id, expected",
+    reference_size_test_cases,
+)
+def test_reporting_neighbourhoods_size(
+    reporting_neighbourhoods: ReportingNeighbourhoods,
+    reporting_unit_id: str,
+    expected: Optional[ReportingUnitInfo],
+):
+    assert reporting_neighbourhoods.get_reference_size(reporting_unit_id) == expected
