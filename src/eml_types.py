@@ -64,8 +64,13 @@ class SwitchedCandidate:
     candidate_with_more_expected: int
 
     def __str__(self) -> str:
+        party_name = (
+            f" ({self.candidate_with_more.party.name})"
+            if self.candidate_with_more.party.name
+            else ""
+        )
         return (
-            f"Mogelijke verwisseling op lijst {self.candidate_with_more.party.id} ({self.candidate_with_more.party.name}). "
+            f"Mogelijke verwisseling op lijst {self.candidate_with_more.party.id}{party_name}. "
             f"Kandidaat {self.candidate_with_more.cand_id} had {self.candidate_with_more_received} stemmen "
             f"maar verwachting was {self.candidate_with_more_expected}. "
             f"Kandidaat {self.candidate_with_fewer.cand_id} had {self.candidate_with_fewer_received} stemmen "
