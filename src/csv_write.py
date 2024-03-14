@@ -90,7 +90,7 @@ def write_csv_a(
             + [
                 "Aantal geen verklaring voor verschil",
                 "Aantal ontbrekende verklaringen voor verschil",
-                "Al hergeteld",
+                "Al herteld",
             ]
         )
 
@@ -118,7 +118,12 @@ def write_csv_b(
         _write_header(
             writer,
             eml_metadata,
-            f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}%",
+            (
+                f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
+                "stembureaus met nul stemmen, "
+                f"afwijkingen van het lijstgemiddelde >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% "
+                "en mogelijk verwisselde kandidaten"
+            ),
         )
 
         writer.writerow(
@@ -127,10 +132,13 @@ def write_csv_b(
                 "Stembureau met nul stemmen",
                 f"Stembureau >={int(EML.INVALID_VOTE_THRESHOLD_PCT)}% ongeldig",
                 f"Stembureau >={int(EML.BLANK_VOTE_THRESHOLD_PCT)}% blanco",
-                f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verklaarde verschillen",
+                (
+                    f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verschil "
+                    "tussen toegelaten kiezers en uitgebrachte stemmen"
+                ),
                 f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
                 "Mogelijk verwisselde kandidaten",
-                "Al hergeteld",
+                "Al herteld",
             ]
         )
 
