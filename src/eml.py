@@ -13,7 +13,7 @@ from eml_types import (
     SwitchedCandidateConfig,
     VoteDifference,
 )
-from neighbourhood import ReportingNeighbourhoods
+from neighbourhood import NeighbourhoodData
 
 
 @dataclass
@@ -57,12 +57,21 @@ class EML:
     # ---
 
     def run_protocol(
-        self, reporting_neighbourhoods: Optional[ReportingNeighbourhoods] = None
+        self, neighbourhood_data: Optional[NeighbourhoodData] = None
     ) -> Dict[str, CheckResult]:
+        # Generate reporting neighbourhoods data which can be reused for all individual
+        # polling stations
+        reporting_neighbourhoods = (
+            neighbourhood_data.fetch_reporting_neighbourhoods(
+                self.metadata.reporting_unit_zips, self.reporting_units_info
+            )
+            if neighbourhood_data
+            else None
+        )
+
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
-
             check_result = CheckResult(
                 zero_votes=protocol_checks.check_zero_votes(polling_station),
                 inexplicable_difference=protocol_checks.check_inexplicable_difference(

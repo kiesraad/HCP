@@ -12,20 +12,14 @@ def create_csv_files(
     path_to_odt=None,
     path_to_neighbourhood_data=None,
 ) -> None:
-    # Parse the eml from the path and run all checks in the protocol
+    # Parse the eml from the path
     eml = EML.from_xml(path_to_xml)
 
     # Load in neighbourhood data
     neighbourhood_data = NeighbourhoodData.from_path(path_to_neighbourhood_data)
-    reporting_neighbourhouds = (
-        neighbourhood_data.fetch_reporting_neighbourhoods(
-            eml.metadata.reporting_unit_zips, eml.reporting_units_info
-        )
-        if neighbourhood_data
-        else None
-    )
 
-    check_results = eml.run_protocol(reporting_neighbourhoods=reporting_neighbourhouds)
+    # Run protocol
+    check_results = eml.run_protocol(neighbourhood_data=neighbourhood_data)
     eml_metadata = eml.metadata
 
     # If odt_path is specified we try to read the file and extract the relevant
