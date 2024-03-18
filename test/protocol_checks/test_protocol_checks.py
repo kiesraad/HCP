@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal
 
 import protocol_checks
 import pytest
@@ -125,7 +125,10 @@ ru_1pc_blank_votes = ReportingUnitInfo(
     ],
 )
 def test_check_too_many_rejected_votes(
-    data: ReportingUnitInfo, kind: str, threshold_pct: float, expected: bool
+    data: ReportingUnitInfo,
+    kind: Literal["blanco", "ongeldig"],
+    threshold_pct: float,
+    expected: bool,
 ) -> None:
     assert (
         protocol_checks.check_too_many_rejected_votes(data, kind, threshold_pct)

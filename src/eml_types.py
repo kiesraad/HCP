@@ -4,6 +4,10 @@ from typing import Dict, Optional, Union
 
 @dataclass
 class EmlMetadata:
+    """Dataclass which holds EML metadata like the creation_date_time of
+    the EML file or derived mappings from reporting_unit_id to zip or name.
+    """
+
     creation_date_time: Optional[str]
     authority_id: Optional[str]
     authority_name: Optional[str]
@@ -19,18 +23,27 @@ class EmlMetadata:
 
 @dataclass(frozen=True, order=True)
 class PartyIdentifier:
+    """Party identifier used for matching parties in dicts."""
+
     id: int
     name: Optional[str]
 
 
 @dataclass(frozen=True, order=True)
 class CandidateIdentifier:
+    """Candidate identifier used for matching candidates in dicts."""
+
     party: PartyIdentifier
     cand_id: int
 
 
 @dataclass
 class ReportingUnitInfo:
+    """Container which holds the main information for a given reporting unit, containing
+    vote counts at candidate and party level, and information about those votes
+    (amount of blank votes, invalid votes etc..)
+    """
+
     reporting_unit_id: Optional[str]
     reporting_unit_name: Optional[str]
     cast: int
@@ -43,11 +56,15 @@ class ReportingUnitInfo:
 
 @dataclass
 class VoteDifferenceAmount:
+    """Simple wrapper for int value."""
+
     value: int
 
 
 @dataclass
 class VoteDifferencePercentage:
+    """Simple wrapper for float value."""
+
     value: float
 
 
@@ -56,6 +73,8 @@ VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
 
 @dataclass
 class SwitchedCandidate:
+    """Container representing a potentially switched candidate."""
+
     candidate_with_fewer: CandidateIdentifier
     candidate_with_fewer_received: int
     candidate_with_fewer_expected: int
@@ -80,6 +99,10 @@ class SwitchedCandidate:
 
 @dataclass
 class SwitchedCandidateConfig:
+    """Container for configuration parameters for the switched candidate
+    check
+    """
+
     minimum_reporting_units_municipality: int
     minimum_reporting_units_neighbourhood: int
     minimum_deviation_factor: int

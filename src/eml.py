@@ -13,11 +13,15 @@ from eml_types import (
     SwitchedCandidateConfig,
     VoteDifference,
 )
-from neighbourhood import NeighbourhoodData
+from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
 
 
 @dataclass
 class CheckResult:
+    """Container representing the result of running all checks
+    on a given EML file.
+    """
+
     zero_votes: bool
     inexplicable_difference: int
     explanation_sum_difference: int
@@ -32,6 +36,11 @@ class CheckResult:
 
 @dataclass
 class EML:
+    """Main container for all information which has been loaded from an .eml.xml file.
+    Contains all the necessary information for running all checks, and additionally
+    contains the configuration for all the checks.
+    """
+
     eml_file_id: str
     main_unit_info: ReportingUnitInfo
     reporting_units_info: Dict[str, ReportingUnitInfo]
@@ -59,9 +68,17 @@ class EML:
     def run_protocol(
         self, neighbourhood_data: Optional[NeighbourhoodData] = None
     ) -> Dict[str, CheckResult]:
+        """Run all specified protocol checks on this EML instance.
+
+        Args:
+            neighbourhood_data: If NeighbourhoodData is specified, also run some checks at neighbourhood level.
+
+        Returns:
+            Dictionary mapping reporting unit ids to resulting CheckResults obtained by running all checks
+        """
         # Generate reporting neighbourhoods data which can be reused for all individual
         # polling stations
-        reporting_neighbourhoods = (
+        reporting_neighbourhoods: Optional[ReportingNeighbourhoods] = (
             neighbourhood_data.fetch_reporting_neighbourhoods(
                 self.metadata.reporting_unit_zips, self.reporting_units_info
             )
@@ -115,7 +132,20 @@ class EML:
         return protocol_results
 
     @staticmethod
-    def from_xml(file_path):
+    def from_xml(file_path: str) -> "EML":
+        """Static method for constructing an instance of the EML class
+        from a given file_path
+
+        Args:
+            file_path: Path to the .eml.xml file to read.
+
+        Raises:
+            InvalidEmlException: when specified .eml.xml is of incorrect type.
+            InvalidEmlException: when any reporting unit does not have an id.
+
+        Returns:
+            EML class instance with all relevant data to run the protocol checks.
+        """
         # Root element of the XML file
         xml_root = xml_parser.parse_xml(file_path)
 

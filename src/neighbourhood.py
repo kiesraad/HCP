@@ -25,6 +25,26 @@ def _add_dict(a: Dict[T, int], b: Dict[T, int]) -> Dict[T, int]:
 
 @dataclass
 class ReportingNeighbourhoods:
+    """Container which contains several mappings used for running checks at
+    a neighbourhood level. The combination of these mappings can then be used
+    to look up a reference `ReportingUnitInfo` for a given reporting unit id
+    by hopping from `reportinging_unit_id` -> `neighbourhood_id` ->
+    `ReportingUnitInfo`.
+
+    This 'reference_group' is a `ReportingUnitInfo` instance which is the sum
+    of all reporting unit vote counts which are in the same
+    neighbourhood as the specified reporting unit.
+
+    The following mappings are present:
+        - reporting_unit_id_to_neighbourhood_id: used for lookup of neighbourhood
+        corresponding to specified reporting unit id.
+        - neighbourhood_id_to_reporting_unit_ids: used for getting all reporting
+        unit ids which are in the given neighbourhood.
+        - neighbourhood_id_to_reference_group: used for lookup of reference group
+        for a given neighbourhood id.
+
+    """
+
     reporting_unit_id_to_neighbourhood_id: Dict[str, Optional[str]]
     neighbourhood_id_to_reporting_unit_ids: Dict[str, Set[str]]
     neighbourhood_id_to_reference_group: Dict[str, ReportingUnitInfo]
@@ -32,25 +52,57 @@ class ReportingNeighbourhoods:
     def get_reference_group(
         self, reporting_unit_id: str
     ) -> Optional[ReportingUnitInfo]:
+        """Get the reference group for a given reporting unit id.
+
+        Args:
+            reporting_unit_id: The reporting unit id to query for.
+
+        Returns:
+            An optional `ReportingUnitInfo` instance which contains the sum of all vote counts
+            of all reporting units in that neighbourhood.
+        """
         neighbourhood_id = self.reporting_unit_id_to_neighbourhood_id[reporting_unit_id]
         if not neighbourhood_id:
             return None
         return self.neighbourhood_id_to_reference_group[neighbourhood_id]
 
     def get_reference_size(self, reporting_unit_id: str) -> int:
+        """Get the reference size (amount of reporting units) in the associated neighbourhood
+        for a given `reporting_unit_id`. Note that the reporting unit itself is also included
+        in this size.
+
+        Args:
+            reporting_unit_id: The reporting unit id to query for
+
+        Returns:
+            The amount of reporting units present in the corresponding neighbourhood.
+
+        """
         neighbourhood_id = self.reporting_unit_id_to_neighbourhood_id[reporting_unit_id]
         if not neighbourhood_id:
             return 0
         return len(self.neighbourhood_id_to_reporting_unit_ids[neighbourhood_id])
 
 
+@dataclass
 class NeighbourhoodData:
+    """Class containing a **lazy** dataframe containing neighbourhood data.
+    This allows you to call the defined methods on this lazyframe, without
+    having to load in all the neighbourhood data to memory.
+    """
+
     data: pl.LazyFrame
 
-    def __init__(self, data) -> None:
-        self.data = data
-
     def fetch_neighbourhood_code(self, zip_code: str) -> Optional[str]:
+        """Given a specified zip_code, return the corresponding neighbourhood
+        code as specified in the neighbourhood data.
+
+        Args:
+            zip_code: Zip code to query the data for, without spaces (e.g. `1011AB`)
+
+        Returns:
+            The corresponding neighbourhood code (e.g. `WK0363AF`) if the zip code was found
+        """
         queried_result = (
             self.data.filter(pl.col("zip_code") == zip_code)
             .select("neighbourhood_code")
@@ -65,6 +117,19 @@ class NeighbourhoodData:
         reporting_unit_zips: Dict[str, Optional[str]],
         reporting_unit_info: Dict[str, ReportingUnitInfo],
     ) -> ReportingNeighbourhoods:
+        """Constructs a `ReportingNeighbourhoods` instance for the given
+        neighbourhood data. The reference groups are calculated by summing
+        up the votes per party and the votes per candidate for all reporting
+        units and constructing a new `ReportingUnitInfo` instance for each
+        neighbourhood.
+
+        Args:
+            reporting_unit_zips: Mapping from reporting unit id to the associated zip code.
+            reporting_unit_info: Mapping from reporting unit id to the `ReportingUnitInfo`.
+
+        Returns:
+            Instance of `ReportingNeighbourhoods`.
+        """
         # Fetch the neighbourhood codes for all unique zips
         zips = set((zip for zip in reporting_unit_zips.values() if zip is not None))
         zips_to_neighbourhoods = {
@@ -141,7 +206,12 @@ class NeighbourhoodData:
         )
 
     @staticmethod
-    def from_path(str_path: Optional[str]):
+    def from_path(str_path: Optional[str]) -> Optional["NeighbourhoodData"]:
+        """Construct an instance of `NeihbourhoodData` from a given path.
+
+        Returns:
+            `NeighbourhoodData` instance if path was specified, `None` otherwise.
+        """
         if str_path is None:
             return None
 

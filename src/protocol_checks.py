@@ -1,5 +1,5 @@
 from itertools import product as cartesian_product
-from typing import Dict, List, Optional, TypeVar
+from typing import Dict, List, Literal, Optional, TypeVar
 
 from eml_types import (
     CandidateIdentifier,
@@ -18,14 +18,41 @@ N = TypeVar("N", int, float)
 
 
 def check_zero_votes(reporting_unit: ReportingUnitInfo) -> bool:
+    """Checks if the given reporting unit has zero valid votes.
+
+    Args:
+        reporting_unit: The reporting unit to check.
+
+    Returns:
+        True if reporting unit has zero votes.
+    """
     return _get_total_votes(reporting_unit) == 0
 
 
 def check_inexplicable_difference(reporting_unit: ReportingUnitInfo) -> int:
+    """Returns the amount of **specified** inexplicable differences.
+
+    Args:
+        reporting_unit: The reporting unit to check.
+
+    Returns:
+        Integer representing the amount of specified inexplicable differences.
+    """
     return reporting_unit.uncounted_votes["geen verklaring"]
 
 
 def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
+    """Calculates the difference between the total valid votes and the
+    admitted voters. If the specified explanations do not sum up to this
+    difference between amount of votes and admitted voters, then these are
+    seen as inexplicable differences as well.
+
+    Args:
+        reporting_unit: The reporting unit to check.
+
+    Returns:
+        Integer representing the implicit inexplicable votes.
+    """
     vote_metadata = reporting_unit.uncounted_votes
 
     vote_difference = (
@@ -56,8 +83,27 @@ def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
 
 
 def check_too_many_rejected_votes(
-    reporting_unit: ReportingUnitInfo, kind: str, threshold_pct: float
+    reporting_unit: ReportingUnitInfo,
+    kind: Literal["ongeldig", "blanco"],
+    threshold_pct: float,
 ) -> Optional[float]:
+    """Check if there are too many rejected votes of a certain kind.
+    This checks if the rejected vote of the given kind is above the
+    given threshold percentage.
+    The percentage is calculated by dividing by the total amount of
+    valid votes.
+
+    Args:
+        reporting_unit: The reporting unit to check.
+        kind: The kind of rejected vote to check.
+        threshold_pct: The percentage to define 'too much'.
+
+    Raises:
+        ValueError: If invalid kind is passed.
+
+    Returns:
+        Percentage of rejected votes if threshold is crossed, `None` otherwise.
+    """
     if kind not in ["ongeldig", "blanco"]:
         raise ValueError(f"Invalid rejected vote kind passed: {kind}")
 
@@ -71,6 +117,19 @@ def check_too_many_rejected_votes(
 def check_too_many_differences(
     reporting_unit: ReportingUnitInfo, threshold_pct: float, threshold: int
 ) -> Optional[VoteDifference]:
+    """Checks if the amount of differences (explained + unexplained) is bigger
+    than some threshold. The threshold consist of both a percentage AND an
+    absolute amount. Returns a `VoteDifference` if **either** of these thresholds
+    is exceeded.
+
+    Args:
+        reporting_unit: The reporting unit to check.
+        threshold_pct: The threshold percentage to check against.
+        threshold: The absolute threshold to check against.
+
+    Returns:
+        A `VoteDifference` if either threshold is exceeded. `None` otherwise.
+    """
     differences = _get_differences(reporting_unit)
     total_votes = _get_total_votes(reporting_unit)
     percentage = _percentage(differences, total_votes)
@@ -87,6 +146,20 @@ def check_too_many_differences(
 def get_party_difference_percentages(
     main_unit: ReportingUnitInfo, reporting_unit: ReportingUnitInfo
 ) -> Dict[PartyIdentifier, float]:
+    """Gets the party difference percentages for a given reporting unit. This is calculated
+    as the difference in percentage **points**. This means that if a party has 30% of the votes
+    in the given reporting unit, while that same party has 70% of votes in the `main_unit`
+    (usually municipality) then the difference is `70 - 30 = 40`. Note that for the calculation
+    of the percentage for the main unit, the reporting unit we are checking is subtracted
+    from the total.
+
+    Args:
+        main_unit: The main unit to check against. This is usually the municipality total.
+        reporting_unit: The reporting unit to check.
+
+    Returns:
+        A dictionary mapping party identifiers to the percentage point difference.
+    """
     global_total = main_unit.total_counted - reporting_unit.total_counted
     global_party = _subtract_part_dictionary(
         main_unit.votes_per_party, reporting_unit.votes_per_party
@@ -105,6 +178,20 @@ def check_parties_with_large_percentage_difference(
     reporting_unit: ReportingUnitInfo,
     threshold_pct: float,
 ) -> List[str]:
+    """Checks which parties have a percentage point difference compared to the main
+    unit which exceeds the threshold value. Note that the vote count of the reporting
+    unit we are checking are subtracted from the main unit for calculating the main unit
+    percentage.
+
+    Args:
+        main_unit: The main unit to check against. This is usually the municipality total.
+        reporting_unit: The reporting unit to check.
+        threshold_pct: The threshold percentage to check against.
+
+    Returns:
+        A list of names of the parties which exceed this threshold, along with the given percentage.
+            For example: `"VVD (51%)"`
+    """
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
@@ -127,6 +214,42 @@ def check_potentially_switched_candidates(
     reporting_neighbourhoods: Optional[ReportingNeighbourhoods],
     config: SwitchedCandidateConfig,
 ) -> List[SwitchedCandidate]:
+    """Checks if there are potential switched candidates in the given reporting unit.
+    Usually called from within an instance of EML, but can also be called without.
+    For a formal definition of this check, see [here](https://www.kiesraad.nl/binaries/kiesraad/documenten/publicaties/2024/02/15/toetsingskader-voor-controles-verkiezingsuitslagen-op-stembureauniveau/CBS+Onderzoek+Toetsingskader+voor+controles+verkiezingsuitslagen+op+stembureauniveau.pdf)
+
+    The main logic for checking if the registered votes for two candidates has been
+    switched is as follows:
+        - Calculate the *expected* amount of votes for all candidates. We do this by
+        calculating the percentage of votes (`votes_candidate / total_party_votes`) a
+        given candidate got in either the main_unit for the municipality level or
+        in a reference group as calculated from the `ReportingNeighbourhoods` for
+        the neighbourhood level. This percentage is then multiplied by the amount
+        of votes the party got in the polling station we are checking. Note: for the
+        reference group at municipality and neighbourhood level the votes in the
+        polling station to check are subtracted from the total.
+        - Calculate the factor difference between the expected votes and the actual
+        received votes as `votes_expected / votes_received`.
+        - If one of the candidates got >= `config.minimum_deviation_factor` votes
+        while another got <= `1/config.minimum_deviation_factor` votes AND
+        both candidates got either more received or expected votes than
+        `config.minimum_votes` we consider this pair of candidates as a potential switch.
+        - Additionally, the reference group (municipality or neighbourhood) should contain
+        at least the amount of reporting units as specified in the config.
+
+    Args:
+        polling_station_id: The id of the polling station to check. Needed for potential neighbourhood lookup.
+        main_unit: The main unit (municipality) to compare against.
+        polling_station: The polling station (`reporting_unit`) to check.
+        reporting_unit_amount: The amount of reporting units in the **municipality**.
+            When this method is called from `EML` then this comes from the `EmlMetadata`.
+        reporting_neighbourhoods: A `ReportingNeighbourhoods` instance if we also want to check at neighbourhood level.
+            Can be constructed from `NeighbourhoodData`.
+        config: Config parameters like the deviation factor and the minimum amount of reporting units required for the check.
+
+    Returns:
+        A list of potentially switched pairs of candidates. Can be empty if none are found.
+    """
     neighbourhood_reference_group = (
         (reporting_neighbourhoods.get_reference_group(polling_station_id))
         if reporting_neighbourhoods
