@@ -103,7 +103,9 @@ def write_csv_a(
             explanation_sum_difference = results.explanation_sum_difference or None
             already_recounted = "ja" if results.already_recounted else None
 
-            if inexplicable_difference or explanation_sum_difference:
+            if (
+                inexplicable_difference or explanation_sum_difference
+            ) and not results.already_recounted:
                 writer.writerow(
                     _id_cols(eml_metadata, id)
                     + [
