@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from enum import Enum
 from typing import ClassVar, Dict, List, Optional
 
 import protocol_checks
@@ -14,6 +15,11 @@ from eml_types import (
     VoteDifference,
 )
 from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
+
+
+class SummaryType(Enum):
+    A = "A"
+    B = "B"
 
 
 @dataclass
@@ -32,6 +38,66 @@ class CheckResult:
     party_difference_percentages: Dict[PartyIdentifier, float]
     potentially_switched_candidates: List[SwitchedCandidate]
     already_recounted: bool
+
+    def summarise(self, summary_type: SummaryType) -> str:
+        def prefix(n_findings: int) -> str:
+            if n_findings == 0:
+                return " "
+            elif n_findings == 1:
+                return " Daarnaast "
+            else:
+                return " Ook "
+
+        class Sentence:
+            def __init__(self) -> None:
+                self.content = ["In dit stembureau"]
+                self.n_findings = 0
+
+            def add(self, text: str) -> None:
+                self.content += f"{prefix(self.n_findings)}{text}."
+                self.n_findings += 1
+
+            def render(self, recounted: bool) -> str:
+                if self.n_findings == 0:
+                    return f"{self.content} zijn er geen bevindingen."
+                return f"{''.join(self.content)} Er is {'wel' if recounted else 'niet'} herteld."
+
+        sentence = Sentence()
+
+        if summary_type == SummaryType.A:
+            if self.inexplicable_difference:
+                sentence.add(
+                    f"is er een onverklaard verschil van {self.inexplicable_difference}"
+                )
+            if self.explanation_sum_difference:
+                sentence.add(
+                    f"is er een verschil tussen het aantal toegelaten kiezers en de som van de gegeven verklaringen van {self.explanation_sum_difference}"
+                )
+        elif summary_type == SummaryType.B:
+            if self.zero_votes:
+                sentence.add("zijn er 0 stemmen uitgebracht")
+            if self.high_invalid_vote_percentage:
+                sentence.add(
+                    f"is er een hoog percentage ongeldige stemmen ({int(self.high_invalid_vote_percentage)}%)"
+                )
+            if self.high_blank_vote_percentage:
+                sentence.add(
+                    f"is er een hoog percentage blanco stemmen ({int(self.high_blank_vote_percentage)}%)"
+                )
+            if self.high_vote_difference:
+                sentence.add(
+                    f"is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen ({self.high_vote_difference})"
+                )
+            if self.parties_with_high_difference_percentage:
+                sentence.add(
+                    f"hebben de volgende partijen een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde: {', '.join(self.parties_with_high_difference_percentage)}"
+                )
+            if self.potentially_switched_candidates:
+                sentence.add(
+                    f"is er een mogelijke verwisseling bij de volgende kandidaten: {', '.join((str(switch) for switch in self.potentially_switched_candidates))}"
+                )
+
+        return sentence.render(self.already_recounted)
 
 
 @dataclass

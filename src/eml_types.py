@@ -60,12 +60,18 @@ class VoteDifferenceAmount:
 
     value: int
 
+    def __str__(self) -> str:
+        return str(self.value)
+
 
 @dataclass
 class VoteDifferencePercentage:
     """Simple wrapper for float value."""
 
     value: float
+
+    def __str__(self) -> str:
+        return f"{self.value}%"
 
 
 VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
