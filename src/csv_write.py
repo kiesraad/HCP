@@ -11,6 +11,7 @@ from eml_types import (
 )
 
 HEADER_COLS = [
+    "Verkiezingnummer",
     "Kieskringnummer",
     "Gemeentenummer",
     "Gemeentenaam",
@@ -68,6 +69,7 @@ def _format_percentage_deviation(percentage: float) -> str:
 
 def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
     return [
+        metadata.election_id,
         metadata.contest_identifier,
         metadata.authority_id,
         metadata.authority_name,
