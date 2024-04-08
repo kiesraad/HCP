@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 from eml import EML, CheckResult
 from eml_types import (
     EmlMetadata,
+    SummaryType,
     SwitchedCandidate,
     VoteDifference,
     VoteDifferenceAmount,
@@ -58,7 +59,7 @@ def _format_potentially_switched_candidates(
 ) -> Optional[str]:
     if len(potentially_switched_candidates) == 0:
         return None
-    return "\n".join([str(cand) for cand in potentially_switched_candidates])
+    return ", ".join([str(cand) for cand in potentially_switched_candidates])
 
 
 def _format_percentage_deviation(percentage: float) -> str:
@@ -93,6 +94,7 @@ def write_csv_a(
                 "Aantal geen verklaring voor verschil",
                 "Aantal ontbrekende verklaringen voor verschil",
                 "Al herteld",
+                "Samenvatting",
             ]
         )
 
@@ -108,6 +110,7 @@ def write_csv_a(
                         inexplicable_difference,
                         explanation_sum_difference,
                         already_recounted,
+                        results.summarise(SummaryType.A),
                     ]
                 )
 
@@ -141,6 +144,7 @@ def write_csv_b(
                 f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
                 "Mogelijk verwisselde kandidaten",
                 "Al herteld",
+                "Samenvatting",
             ]
         )
 
@@ -181,6 +185,7 @@ def write_csv_b(
                         parties_with_high_difference_percentage,
                         potentially_switched_candidates,
                         already_recounted,
+                        results.summarise(SummaryType.B),
                     ]
                 )
 
