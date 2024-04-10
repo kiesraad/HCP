@@ -52,7 +52,7 @@ def test_create_csv_files_a_b():
             "Gemeentenummer;0505\n"
             "\n"
             "Verkiezingnummer;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Stembureau met nul stemmen;Stembureau >=3% ongeldig;Stembureau >=3% blanco;Stembureau >=15 of >=2% verschil tussen toegelaten kiezers en uitgebrachte stemmen;Stembureau met lijst >=50% afwijking;Mogelijk verwisselde kandidaten;Al herteld;Samenvatting\n"
-            "TK2023;14;0505;Dordrecht;1;Stembureau Binnenstad (postcode: 3331 DA);;;;ja (28);;;ja;In dit stembureau is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28). Er is wel herteld.\n"
+            "TK2023;14;0505;Dordrecht;1;Stembureau Binnenstad;;;;ja (28);;;ja;In dit stembureau is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28). Er is wel herteld.\n"
         )
         assert content == expected
 

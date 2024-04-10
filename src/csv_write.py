@@ -1,4 +1,5 @@
 import csv
+import re
 from typing import Dict, List, Optional
 
 from eml import EML, CheckResult
@@ -20,6 +21,9 @@ HEADER_COLS = [
     "Stembureaunaam",
 ]
 PROTOCOL_VERSION = "EP2024"
+
+ZIP_CODE_PATTERN = re.compile(r"\(postcode: \d{4} [A-Z]{2}\)")
+STEMBUREAU_PREFIX_PATTERN = re.compile(r"^Stembureau Stembureau")
 
 
 def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
@@ -68,6 +72,16 @@ def _format_percentage_deviation(percentage: float) -> str:
     return f"{sign}{percentage_int}%"
 
 
+def _format_reporting_unit_name(reporting_unit_name: Optional[str]) -> str:
+    return (
+        STEMBUREAU_PREFIX_PATTERN.sub(
+            "Stembureau", ZIP_CODE_PATTERN.sub("", reporting_unit_name)
+        ).strip()
+        if reporting_unit_name
+        else ""
+    )
+
+
 def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
     return [
         metadata.election_id,
@@ -75,7 +89,7 @@ def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
         metadata.authority_id,
         metadata.authority_name,
         _format_id(id),
-        metadata.reporting_unit_names.get(id),
+        _format_reporting_unit_name(metadata.reporting_unit_names.get(id)),
     ]
 
 
