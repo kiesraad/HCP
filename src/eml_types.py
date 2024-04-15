@@ -72,7 +72,7 @@ class VoteDifferencePercentage:
     value: float
 
     def __str__(self) -> str:
-        return f"{self.value}%"
+        return f"{round(self.value, 1)}%"
 
 
 VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
@@ -141,15 +141,15 @@ class CheckResult:
     def summarise(self, summary_type: SummaryType) -> str:
         def prefix(n_findings: int) -> str:
             if n_findings == 0:
-                return " "
+                return "Er is "
             elif n_findings == 1:
-                return " Daarnaast "
+                return " Daarnaast is er "
             else:
-                return " Ook "
+                return " Ook is er "
 
         class Sentence:
             def __init__(self) -> None:
-                self.content = ["In dit stembureau"]
+                self.content = []
                 self.n_findings = 0
 
             def add(self, text: str) -> None:
@@ -158,7 +158,7 @@ class CheckResult:
 
             def render(self, recounted: bool) -> str:
                 if self.n_findings == 0:
-                    return f"{self.content} zijn er geen bevindingen."
+                    return "Er zijn geen bevindingen."
                 return f"{''.join(self.content)} Er is {'wel' if recounted else 'niet'} herteld."
 
         sentence = Sentence()
@@ -166,34 +166,34 @@ class CheckResult:
         if summary_type == SummaryType.A:
             if self.inexplicable_difference:
                 sentence.add(
-                    f"is er een onverklaard verschil van {self.inexplicable_difference}"
+                    f"een onverklaard verschil van {self.inexplicable_difference}"
                 )
             if self.explanation_sum_difference:
                 sentence.add(
-                    f"is er een verschil tussen het aantal toegelaten kiezers en de som van de gegeven verklaringen van {self.explanation_sum_difference}"
+                    f"een aantal ontbrekende verklaringen van {self.explanation_sum_difference}"
                 )
         elif summary_type == SummaryType.B:
             if self.zero_votes:
-                sentence.add("zijn er 0 stemmen uitgebracht")
+                sentence.add("een aantal uitgebrachte stemmen van 0")
             if self.high_invalid_vote_percentage:
                 sentence.add(
-                    f"is er een hoog percentage ongeldige stemmen ({int(self.high_invalid_vote_percentage)}%)"
+                    f"een hoog percentage ongeldige stemmen ({int(self.high_invalid_vote_percentage)}%)"
                 )
             if self.high_blank_vote_percentage:
                 sentence.add(
-                    f"is er een hoog percentage blanco stemmen ({int(self.high_blank_vote_percentage)}%)"
+                    f"een hoog percentage blanco stemmen ({int(self.high_blank_vote_percentage)}%)"
                 )
             if self.high_vote_difference:
                 sentence.add(
-                    f"is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen ({self.high_vote_difference})"
+                    f"een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen ({self.high_vote_difference})"
                 )
             if self.parties_with_high_difference_percentage:
                 sentence.add(
-                    f"hebben de volgende partijen een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde: {', '.join(self.parties_with_high_difference_percentage)}"
+                    f"een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: {', '.join(self.parties_with_high_difference_percentage)}"
                 )
             if self.potentially_switched_candidates:
                 sentence.add(
-                    f"is er een mogelijke verwisseling bij de volgende kandidaten: {', '.join((str(switch) for switch in self.potentially_switched_candidates))}"
+                    f"een mogelijke verwisseling bij de volgende kandidaten: {', '.join((str(switch) for switch in self.potentially_switched_candidates))}"
                 )
 
         return sentence.render(self.already_recounted)

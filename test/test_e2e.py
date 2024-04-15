@@ -52,7 +52,7 @@ def test_create_csv_files_a_b():
             "Gemeentenummer;0505\n"
             "\n"
             "Verkiezingnummer;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Stembureau met nul stemmen;Stembureau >=3% ongeldig;Stembureau >=3% blanco;Stembureau >=15 of >=2% verschil tussen toegelaten kiezers en uitgebrachte stemmen;Stembureau met lijst >=50% afwijking;Mogelijk verwisselde kandidaten;Al herteld;Samenvatting\n"
-            "TK2023;14;0505;Dordrecht;1;Stembureau Binnenstad;;;;ja (28);;;ja;In dit stembureau is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28). Er is wel herteld.\n"
+            "TK2023;14;0505;Dordrecht;1;Stembureau Binnenstad;;;;ja (28);;;ja;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28). Er is wel herteld.\n"
         )
         assert content == expected
 
@@ -91,8 +91,8 @@ def test_create_csv_files_a_b_2():
             "Gemeentenummer;1708\n"
             "\n"
             "Verkiezingnummer;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Aantal geen verklaring voor verschil;Aantal ontbrekende verklaringen voor verschil;Al herteld;Samenvatting\n"
-            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;1;405;;In dit stembureau is er een onverklaard verschil van 1. Daarnaast is er een verschil tussen het aantal toegelaten kiezers en de som van de gegeven verklaringen van 405. Er is niet herteld.\n"
-            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";108;;;In dit stembureau is er een onverklaard verschil van 108. Er is niet herteld.\n'
+            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;1;405;;Er is een onverklaard verschil van 1. Daarnaast is er een aantal ontbrekende verklaringen van 405. Er is niet herteld.\n"
+            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";108;;;Er is een onverklaard verschil van 108. Er is niet herteld.\n'
         )
         assert content == expected
 
@@ -107,10 +107,10 @@ def test_create_csv_files_a_b_2():
             "Gemeentenummer;1708\n"
             "\n"
             "Verkiezingnummer;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Stembureau met nul stemmen;Stembureau >=3% ongeldig;Stembureau >=3% blanco;Stembureau >=15 of >=2% verschil tussen toegelaten kiezers en uitgebrachte stemmen;Stembureau met lijst >=50% afwijking;Mogelijk verwisselde kandidaten;Al herteld;Samenvatting\n"
-            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;;;;ja (417);Kleurenpartij (51%);;;In dit stembureau is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (417). Daarnaast hebben de volgende partijen een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde: Kleurenpartij (51%). Er is niet herteld.\n"
-            "EP2024;alle;1708;Steenwijkerland;2;Stembureau Lege boel;ja;;;;Kleurenpartij (-51%);;;In dit stembureau zijn er 0 stemmen uitgebracht. Daarnaast hebben de volgende partijen een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde: Kleurenpartij (-51%). Er is niet herteld.\n"
-            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";;ja (3%);ja (3%);ja (108);;;;In dit stembureau is er een hoog percentage ongeldige stemmen (3%). Daarnaast is er een hoog percentage blanco stemmen (3%). Ook is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (108). Er is niet herteld.\n'
-            "EP2024;alle;1708;Steenwijkerland;4;Stembureau Schoolstraat;;;;ja (20%);Het Verschil (61%), Kleurenpartij (-51%);;;In dit stembureau is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (20.0%). Daarnaast hebben de volgende partijen een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde: Het Verschil (61%), Kleurenpartij (-51%). Er is niet herteld.\n"
+            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;;;;ja (417);Kleurenpartij (51%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (417). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (51%). Er is niet herteld.\n"
+            "EP2024;alle;1708;Steenwijkerland;2;Stembureau Lege boel;ja;;;;Kleurenpartij (-51%);;;Er is een aantal uitgebrachte stemmen van 0. Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (-51%). Er is niet herteld.\n"
+            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";;ja (3%);ja (3%);ja (108);;;;Er is een hoog percentage ongeldige stemmen (3%). Daarnaast is er een hoog percentage blanco stemmen (3%). Ook is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (108). Er is niet herteld.\n'
+            "EP2024;alle;1708;Steenwijkerland;4;Stembureau Schoolstraat;;;;ja (20%);Het Verschil (61%), Kleurenpartij (-51%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (20.0%). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Het Verschil (61%), Kleurenpartij (-51%). Er is niet herteld.\n"
         )
         assert content == expected
 
