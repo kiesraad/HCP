@@ -244,7 +244,7 @@ ru_46_pct_difference = ReportingUnitInfo(
 @pytest.mark.parametrize(
     "main_unit, reporting_unit, threshold_pct, expected",
     [
-        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco (-50%)"]),
+        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco (-50.1%)"]),
         (mu_50_pct_difference, ru_46_pct_difference, 50.0, []),
     ],
 )

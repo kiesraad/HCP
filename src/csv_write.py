@@ -44,14 +44,14 @@ def _format_id(id: str) -> str:
 
 
 def _format_percentage(percentage: Optional[float]) -> Optional[str]:
-    return f"ja ({int(percentage)}%)" if percentage else None
+    return f"ja ({round(percentage, 1)}%)" if percentage else None
 
 
 def _format_vote_difference(vote_difference: Optional[VoteDifference]) -> Optional[str]:
     if isinstance(vote_difference, VoteDifferenceAmount):
         part = str(vote_difference.value)
     elif isinstance(vote_difference, VoteDifferencePercentage):
-        part = f"{int(vote_difference.value)}%"
+        part = f"{round(vote_difference.value, 1)}%"
     else:
         return None
 
@@ -67,9 +67,9 @@ def _format_potentially_switched_candidates(
 
 
 def _format_percentage_deviation(percentage: float) -> str:
-    percentage_int = int(percentage)
-    sign = "+" if percentage_int > 0 else ""
-    return f"{sign}{percentage_int}%"
+    percentage_rounded = round(percentage, 1)
+    sign = "+" if percentage_rounded > 0.0 else ""
+    return f"{sign}{percentage_rounded}%"
 
 
 def _format_reporting_unit_name(reporting_unit_name: Optional[str]) -> str:
@@ -142,7 +142,7 @@ def write_csv_b(
             (
                 f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
                 "stembureaus met nul stemmen, "
-                f"afwijkingen van het lijstgemiddelde >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% "
+                f"afwijkingen van het lijstgemiddelde >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% "
                 "en mogelijk verwisselde kandidaten"
             ),
         )
@@ -151,13 +151,13 @@ def write_csv_b(
             HEADER_COLS
             + [
                 "Stembureau met nul stemmen",
-                f"Stembureau >={int(EML.INVALID_VOTE_THRESHOLD_PCT)}% ongeldig",
-                f"Stembureau >={int(EML.BLANK_VOTE_THRESHOLD_PCT)}% blanco",
+                f"Stembureau >={EML.INVALID_VOTE_THRESHOLD_PCT}% ongeldig",
+                f"Stembureau >={EML.BLANK_VOTE_THRESHOLD_PCT}% blanco",
                 (
-                    f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={int(EML.DIFF_VOTE_THRESHOLD_PCT)}% verschil "
+                    f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={EML.DIFF_VOTE_THRESHOLD_PCT}% verschil "
                     "tussen toegelaten kiezers en uitgebrachte stemmen"
                 ),
-                f"Stembureau met lijst >={int(EML.PARTY_DIFFERENCE_THRESHOLD_PCT)}% afwijking",
+                f"Stembureau met lijst >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% afwijking",
                 "Mogelijk verwisselde kandidaten",
                 "Al herteld",
                 "Samenvatting",

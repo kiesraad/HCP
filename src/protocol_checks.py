@@ -190,15 +190,15 @@ def check_parties_with_large_percentage_difference(
 
     Returns:
         A list of names of the parties which exceed this threshold, along with the given percentage.
-            For example: `"VVD (51%)"`
+            For example: `"VVD (51.0%)"`
     """
     differences = get_party_difference_percentages(main_unit, reporting_unit)
     return sorted(
         [
             (
-                f"{identifier.name} ({int(difference)}%)"
+                f"{identifier.name} ({round(difference, 1)}%)"
                 if identifier.name
-                else f"{identifier.id}. blanco ({int(difference)}%)"
+                else f"{identifier.id}. blanco ({round(difference, 1)}%)"
             )
             for (identifier, difference) in differences.items()
             if abs(difference) >= threshold_pct

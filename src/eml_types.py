@@ -177,11 +177,11 @@ class CheckResult:
                 sentence.add("een aantal uitgebrachte stemmen van 0")
             if self.high_invalid_vote_percentage:
                 sentence.add(
-                    f"een hoog percentage ongeldige stemmen ({int(self.high_invalid_vote_percentage)}%)"
+                    f"een hoog percentage ongeldige stemmen ({round(self.high_invalid_vote_percentage, 1)}%)"
                 )
             if self.high_blank_vote_percentage:
                 sentence.add(
-                    f"een hoog percentage blanco stemmen ({int(self.high_blank_vote_percentage)}%)"
+                    f"een hoog percentage blanco stemmen ({round(self.high_blank_vote_percentage, 1)}%)"
                 )
             if self.high_vote_difference:
                 sentence.add(
