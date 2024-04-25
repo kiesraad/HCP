@@ -91,8 +91,8 @@ def test_create_csv_files_a_b_2():
             "Gemeentenummer;1708\n"
             "\n"
             "Verkiezingnummer;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Aantal geen verklaring voor verschil;Aantal ontbrekende verklaringen voor verschil;Al herteld;Samenvatting\n"
-            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;1;405;;Er is een onverklaard verschil van 1. Daarnaast is er een aantal ontbrekende verklaringen van 405. Er is niet herteld.\n"
-            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";108;;;Er is een onverklaard verschil van 108. Er is niet herteld.\n'
+            "EP2024;alle;1708;Steenwijkerland;1;Stembureau Holterberg;1;405;;Er is een onverklaard verschil tussen het aantal toegelaten kiezers en het aantal getelde stembiljetten van 406. In het proces-verbaal is ingevuld dat er 1 keer geen verklaring is voor het verschil. De verklaringen die gegeven zijn tellen niet op tot het totale verschil. Er is niet herteld.\n"
+            'EP2024;alle;1708;Steenwijkerland;3;"Stembureau ""De Waarschuwing""";108;;;Er is een onverklaard verschil tussen het aantal toegelaten kiezers en het aantal getelde stembiljetten van 108. Er is niet herteld.\n'
         )
         assert content == expected
 

@@ -164,14 +164,26 @@ class CheckResult:
         sentence = Sentence()
 
         if summary_type == SummaryType.A:
-            if self.inexplicable_difference:
+            if self.inexplicable_difference and not self.explanation_sum_difference:
                 sentence.add(
-                    f"een onverklaard verschil van {self.inexplicable_difference}"
+                    "een onverklaard verschil tussen het aantal toegelaten kiezers en "
+                    f"het aantal getelde stembiljetten van {self.inexplicable_difference}"
                 )
-            if self.explanation_sum_difference:
+            elif self.explanation_sum_difference and not self.inexplicable_difference:
                 sentence.add(
-                    f"een aantal ontbrekende verklaringen van {self.explanation_sum_difference}"
+                    "een onverklaard verschil tussen het aantal toegelaten kiezers en het "
+                    f"aantal getelde stembiljetten van {self.explanation_sum_difference}. "
+                    "In het proces-verbaal tellen de verklaringen die gegeven zijn niet op tot "
+                    "het verschil tussen het aantal toegelaten kiezers en het aantal getelde stembiljetten"
                 )
+            elif self.explanation_sum_difference and self.inexplicable_difference:
+                sentence.add(
+                    "een onverklaard verschil tussen het aantal toegelaten kiezers en het aantal "
+                    f"getelde stembiljetten van {self.inexplicable_difference + self.explanation_sum_difference}. "
+                    f"In het proces-verbaal is ingevuld dat er {self.inexplicable_difference} keer geen verklaring "
+                    "is voor het verschil. De verklaringen die gegeven zijn tellen niet op tot het totale verschil"
+                )
+
         elif summary_type == SummaryType.B:
             if self.zero_votes:
                 sentence.add("een aantal uitgebrachte stemmen van 0")
