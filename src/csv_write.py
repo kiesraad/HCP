@@ -22,7 +22,7 @@ HEADER_COLS = [
 ]
 PROTOCOL_VERSION = "EP2024"
 
-ZIP_CODE_PATTERN = re.compile(r"\(postcode: \d{4} [A-Z]{2}\)")
+ZIP_CODE_PATTERN = re.compile(r"\(postcode: \d{4} ?[A-Z]{2}\)")
 STEMBUREAU_PREFIX_PATTERN = re.compile(r"^Stembureau Stembureau")
 
 
