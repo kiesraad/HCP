@@ -167,4 +167,6 @@ cython_debug/
 testing_wip.py
 
 # Output csv files
-*.csv
+a.csv
+b.csv
+c.csv

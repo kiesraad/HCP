@@ -1,42 +1,71 @@
-import xml_parser
 import re
-import protocol_checks
 from dataclasses import dataclass
-from typing import Dict, List, Optional, ClassVar
+from typing import ClassVar, Dict, Optional
+
+import protocol_checks
+import xml_parser
 from eml_types import (
+    CheckResult,
     EmlMetadata,
-    ReportingUnitInfo,
-    PartyIdentifier,
     InvalidEmlException,
+    ReportingUnitInfo,
+    SwitchedCandidateConfig,
 )
-
-
-@dataclass
-class CheckResult:
-    zero_votes: bool
-    inexplicable_difference: int
-    explanation_sum_difference: int
-    high_invalid_vote_percentage: Optional[float]
-    high_blank_vote_percentage: Optional[float]
-    high_explained_difference_percentage: Optional[float]
-    parties_with_high_difference_percentage: List[str]
-    party_difference_percentages: Dict[PartyIdentifier, float]
-    already_recounted: bool
+from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
 
 
 @dataclass
 class EML:
+    """Main container for all information which has been loaded from an .eml.xml file.
+    Contains all the necessary information for running all checks, and additionally
+    contains the configuration for all the checks.
+    """
+
     eml_file_id: str
     main_unit_info: ReportingUnitInfo
     reporting_units_info: Dict[str, ReportingUnitInfo]
     metadata: EmlMetadata
 
+    # Config ---
     INVALID_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
     BLANK_VOTE_THRESHOLD_PCT: ClassVar[float] = 3.0
-    EXPLAINED_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
+
+    DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
+    DIFF_VOTE_THRESHOLD: ClassVar[int] = 15
+
     PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
 
-    def run_protocol(self) -> Dict[str, CheckResult]:
+    SWITCHED_CANDIDATE_CONFIG: ClassVar[SwitchedCandidateConfig] = (
+        SwitchedCandidateConfig(
+            minimum_reporting_units_municipality=2,
+            minimum_reporting_units_neighbourhood=5,
+            minimum_deviation_factor=10,
+            minimum_votes=20,
+        )
+    )
+    # ---
+
+    def run_protocol(
+        self, neighbourhood_data: Optional[NeighbourhoodData] = None
+    ) -> Dict[str, CheckResult]:
+        """Run all specified protocol checks on this EML instance.
+
+        Args:
+            neighbourhood_data: If NeighbourhoodData is specified, also run some checks at neighbourhood level.
+
+        Returns:
+            Dictionary mapping reporting unit ids to resulting CheckResults obtained by running all checks
+        """
+        # Generate reporting neighbourhoods data which can be reused for all individual
+        # polling stations
+        reporting_neighbourhoods: Optional[ReportingNeighbourhoods] = (
+            neighbourhood_data.fetch_reporting_neighbourhoods(
+                self.metadata.reporting_unit_zips, self.reporting_units_info
+            )
+            if neighbourhood_data
+            else None
+        )
+
         protocol_results = {}
 
         for polling_station_id, polling_station in self.reporting_units_info.items():
@@ -54,8 +83,10 @@ class EML:
                 high_blank_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "blanco", EML.BLANK_VOTE_THRESHOLD_PCT
                 ),
-                high_explained_difference_percentage=protocol_checks.check_too_many_explained_differences(
-                    polling_station, EML.EXPLAINED_VOTE_THRESHOLD_PCT
+                high_vote_difference=protocol_checks.check_too_many_differences(
+                    polling_station,
+                    EML.DIFF_VOTE_THRESHOLD_PCT,
+                    EML.DIFF_VOTE_THRESHOLD,
                 ),
                 parties_with_high_difference_percentage=protocol_checks.check_parties_with_large_percentage_difference(
                     self.main_unit_info,
@@ -65,6 +96,14 @@ class EML:
                 party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
                 ),
+                potentially_switched_candidates=protocol_checks.check_potentially_switched_candidates(
+                    polling_station_id,
+                    self.main_unit_info,
+                    polling_station,
+                    self.metadata.reporting_unit_amount,
+                    reporting_neighbourhoods,
+                    EML.SWITCHED_CANDIDATE_CONFIG,
+                ),
                 already_recounted=False,
             )
 
@@ -73,7 +112,20 @@ class EML:
         return protocol_results
 
     @staticmethod
-    def from_xml(file_path):
+    def from_xml(file_path: str) -> "EML":
+        """Static method for constructing an instance of the EML class
+        from a given file_path
+
+        Args:
+            file_path: Path to the .eml.xml file to read.
+
+        Raises:
+            InvalidEmlException: when specified .eml.xml is of incorrect type.
+            InvalidEmlException: when any reporting unit does not have an id.
+
+        Returns:
+            EML class instance with all relevant data to run the protocol checks.
+        """
         # Root element of the XML file
         xml_root = xml_parser.parse_xml(file_path)
 

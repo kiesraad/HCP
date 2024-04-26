@@ -1,16 +1,29 @@
 import csv
-from eml_types import EmlMetadata
-from eml import CheckResult
-from typing import List, Dict, Optional
+import re
+from typing import Dict, List, Optional
+
+from eml import EML, CheckResult
+from eml_types import (
+    EmlMetadata,
+    SummaryType,
+    SwitchedCandidate,
+    VoteDifference,
+    VoteDifferenceAmount,
+    VoteDifferencePercentage,
+)
 
 HEADER_COLS = [
+    "Verkiezingnummer",
     "Kieskringnummer",
     "Gemeentenummer",
     "Gemeentenaam",
     "Stembureaunummer",
     "Stembureaunaam",
 ]
-PROTOCOL_VERSION = "TK2023"
+PROTOCOL_VERSION = "EP2024"
+
+ZIP_CODE_PATTERN = re.compile(r"\(postcode: \d{4} ?[A-Z]{2}\)")
+STEMBUREAU_PREFIX_PATTERN = re.compile(r"^Stembureau Stembureau")
 
 
 def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
@@ -31,22 +44,52 @@ def _format_id(id: str) -> str:
 
 
 def _format_percentage(percentage: Optional[float]) -> Optional[str]:
-    return f"ja ({int(percentage)}%)" if percentage else None
+    return f"ja ({round(percentage, 1)}%)" if percentage else None
+
+
+def _format_vote_difference(vote_difference: Optional[VoteDifference]) -> Optional[str]:
+    if isinstance(vote_difference, VoteDifferenceAmount):
+        part = str(vote_difference.value)
+    elif isinstance(vote_difference, VoteDifferencePercentage):
+        part = f"{round(vote_difference.value, 1)}%"
+    else:
+        return None
+
+    return f"ja ({part})"
+
+
+def _format_potentially_switched_candidates(
+    potentially_switched_candidates: List[SwitchedCandidate],
+) -> Optional[str]:
+    if len(potentially_switched_candidates) == 0:
+        return None
+    return ", ".join([str(cand) for cand in potentially_switched_candidates])
 
 
 def _format_percentage_deviation(percentage: float) -> str:
-    percentage_int = int(percentage)
-    sign = "+" if percentage_int > 0 else ""
-    return f"{sign}{percentage_int}%"
+    percentage_rounded = round(percentage, 1)
+    sign = "+" if percentage_rounded > 0.0 else ""
+    return f"{sign}{percentage_rounded}%"
+
+
+def _format_reporting_unit_name(reporting_unit_name: Optional[str]) -> str:
+    return (
+        STEMBUREAU_PREFIX_PATTERN.sub(
+            "Stembureau", ZIP_CODE_PATTERN.sub("", reporting_unit_name)
+        ).strip()
+        if reporting_unit_name
+        else ""
+    )
 
 
 def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
     return [
+        metadata.election_id,
         metadata.contest_identifier,
         metadata.authority_id,
         metadata.authority_name,
         _format_id(id),
-        metadata.reporting_unit_names.get(id),
+        _format_reporting_unit_name(metadata.reporting_unit_names.get(id)),
     ]
 
 
@@ -64,7 +107,8 @@ def write_csv_a(
             + [
                 "Aantal geen verklaring voor verschil",
                 "Aantal ontbrekende verklaringen voor verschil",
-                "Al hergeteld",
+                "Al herteld",
+                "Samenvatting",
             ]
         )
 
@@ -73,13 +117,16 @@ def write_csv_a(
             explanation_sum_difference = results.explanation_sum_difference or None
             already_recounted = "ja" if results.already_recounted else None
 
-            if inexplicable_difference or explanation_sum_difference:
+            if (
+                inexplicable_difference or explanation_sum_difference
+            ) and not results.already_recounted:
                 writer.writerow(
                     _id_cols(eml_metadata, id)
                     + [
                         inexplicable_difference,
                         explanation_sum_difference,
                         already_recounted,
+                        results.summarise(SummaryType.A),
                     ]
                 )
 
@@ -92,18 +139,28 @@ def write_csv_b(
         _write_header(
             writer,
             eml_metadata,
-            "Spreadsheet afwijkende percentages blanco en ongeldige stemmen, stembureaus met nul stemmen en afwijkingen van het lijstgemiddelde > 50%",
+            (
+                f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
+                "stembureaus met nul stemmen, "
+                f"afwijkingen van het lijstgemiddelde >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% "
+                "en mogelijk verwisselde kandidaten"
+            ),
         )
 
         writer.writerow(
             HEADER_COLS
             + [
                 "Stembureau met nul stemmen",
-                "Stembureau >=3% ongeldig",
-                "Stembureau >=3% blanco",
-                "Stembureau >=2% verklaarde verschillen",
-                "Stembureau met lijst >=50% afwijking",
-                "Al hergeteld",
+                f"Stembureau >={EML.INVALID_VOTE_THRESHOLD_PCT}% ongeldig",
+                f"Stembureau >={EML.BLANK_VOTE_THRESHOLD_PCT}% blanco",
+                (
+                    f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={EML.DIFF_VOTE_THRESHOLD_PCT}% verschil "
+                    "tussen toegelaten kiezers en uitgebrachte stemmen"
+                ),
+                f"Stembureau met lijst >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% afwijking",
+                "Mogelijk verwisselde kandidaten",
+                "Al herteld",
+                "Samenvatting",
             ]
         )
 
@@ -115,13 +172,15 @@ def write_csv_b(
             high_blank_vote_percentage = _format_percentage(
                 results.high_blank_vote_percentage
             )
-            high_explained_difference_percentage = _format_percentage(
-                results.high_explained_difference_percentage
+            high_explained_difference_percentage = _format_vote_difference(
+                results.high_vote_difference
             )
             parties_with_high_difference_percentage = ", ".join(
                 results.parties_with_high_difference_percentage
             )
-
+            potentially_switched_candidates = _format_potentially_switched_candidates(
+                results.potentially_switched_candidates
+            )
             already_recounted = "ja" if results.already_recounted else None
 
             if (
@@ -130,6 +189,7 @@ def write_csv_b(
                 or high_blank_vote_percentage
                 or high_explained_difference_percentage
                 or parties_with_high_difference_percentage
+                or potentially_switched_candidates
             ):
                 writer.writerow(
                     _id_cols(eml_metadata, id)
@@ -139,7 +199,9 @@ def write_csv_b(
                         high_blank_vote_percentage,
                         high_explained_difference_percentage,
                         parties_with_high_difference_percentage,
+                        potentially_switched_candidates,
                         already_recounted,
+                        results.summarise(SummaryType.B),
                     ]
                 )
 
