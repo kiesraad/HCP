@@ -1,3 +1,4 @@
+<!-- This is TESTDATA and not a real election result -->
 <EML xmlns="urn:oasis:names:tc:evs:schema:eml"
     xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
     xmlns:kr="http://www.kiesraad.nl/extensions"

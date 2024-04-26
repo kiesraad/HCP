@@ -9,7 +9,7 @@ from eml_types import (
 )
 
 test_eml_paths = [
-    "./test/data/TK2023_DORDRECHT/Telling_TK2023_gemeente_Dordrecht.eml.xml",
+    "./test/data/FAKE_TEST_DATA_TK2023_DORDRECHT/Fake_test_data_Telling_TK2023_gemeente_Dordrecht.eml.xml",
     # "./test/data/emls/empty_party_name.eml.xml",
 ]
 

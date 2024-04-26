@@ -8,10 +8,8 @@ def test_create_csv_files_a_b():
 
     This test case only includes one polling station with two inexplicable differences, which does show up in the .odt
     """
-    path_to_eml = (
-        "./test/data/TK2023_DORDRECHT/Telling_TK2023_gemeente_Dordrecht.eml.xml"
-    )
-    path_to_odt = "./test/data/TK2023_DORDRECHT/Model_Na31-1.odt"
+    path_to_eml = "./test/data/FAKE_TEST_DATA_TK2023_DORDRECHT/Fake_test_data_Telling_TK2023_gemeente_Dordrecht.eml.xml"
+    path_to_odt = "./test/data/FAKE_TEST_DATA_TK2023_DORDRECHT/Model_Na31-1.odt"
 
     temp_out_a = "./test/data/a.csv"
     temp_out_b = "./test/data/b.csv"
@@ -66,7 +64,9 @@ def test_create_csv_files_a_b_2():
     This test case is slightly more involved and tries to trigger each warning at least once,
     except for the switched candidates.
     """
-    path_to_eml = "./test/data/e2e/Telling_EP2024_gemeente_Steenwijkerland.eml.xml"
+    path_to_eml = (
+        "./test/data/e2e/Fake_test_data_Telling_EP2024_gemeente_Steenwijkerland.eml.xml"
+    )
 
     temp_out_a = "./test/data/a.csv"
     temp_out_b = "./test/data/b.csv"
