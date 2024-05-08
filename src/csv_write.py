@@ -1,6 +1,6 @@
 import csv
 import re
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from eml import EML, CheckResult
 from eml_types import (
@@ -14,6 +14,7 @@ from eml_types import (
 
 HEADER_COLS = [
     "Verkiezingnummer",
+    "Type",
     "Kieskringnummer",
     "Gemeentenummer",
     "Gemeentenaam",
@@ -22,8 +23,8 @@ HEADER_COLS = [
 ]
 PROTOCOL_VERSION = "EP2024"
 
-ZIP_CODE_PATTERN = re.compile(r"\(postcode: \d{4} ?[A-Z]{2}\)")
-STEMBUREAU_PREFIX_PATTERN = re.compile(r"^Stembureau Stembureau")
+ZIP_CODE_PATTERN = re.compile(r"\(\s*postcode:\s*\d{4}\s*[A-Z]{2}\s*\)")
+STEMBUREAU_PREFIX_PATTERN = re.compile(r"^(Stembureau\s)+")
 
 
 def _write_header(writer, metadata: EmlMetadata, description: str) -> None:
@@ -75,16 +76,19 @@ def _format_percentage_deviation(percentage: float) -> str:
 def _format_reporting_unit_name(reporting_unit_name: Optional[str]) -> str:
     return (
         STEMBUREAU_PREFIX_PATTERN.sub(
-            "Stembureau", ZIP_CODE_PATTERN.sub("", reporting_unit_name)
+            "", ZIP_CODE_PATTERN.sub("", reporting_unit_name)
         ).strip()
         if reporting_unit_name
         else ""
     )
 
 
-def _id_cols(metadata: EmlMetadata, id: str) -> List[Optional[str]]:
+def _id_cols(
+    metadata: EmlMetadata, id: str, type: Literal["A", "B", "C"]
+) -> List[Optional[str]]:
     return [
         metadata.election_id,
+        type,
         metadata.contest_identifier,
         metadata.authority_id,
         metadata.authority_name,
@@ -121,7 +125,7 @@ def write_csv_a(
                 inexplicable_difference or explanation_sum_difference
             ) and not results.already_recounted:
                 writer.writerow(
-                    _id_cols(eml_metadata, id)
+                    _id_cols(eml_metadata, id, "A")
                     + [
                         inexplicable_difference,
                         explanation_sum_difference,
@@ -192,7 +196,7 @@ def write_csv_b(
                 or potentially_switched_candidates
             ):
                 writer.writerow(
-                    _id_cols(eml_metadata, id)
+                    _id_cols(eml_metadata, id, "B")
                     + [
                         zero_votes,
                         high_invalid_vote_percentage,
@@ -232,4 +236,4 @@ def write_csv_c(
             for _, difference in differences:
                 towrite.append(_format_percentage_deviation(difference))
 
-            writer.writerow(_id_cols(eml_metadata, id) + towrite)
+            writer.writerow(_id_cols(eml_metadata, id, "C") + towrite)
