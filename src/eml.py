@@ -39,8 +39,8 @@ class EML:
         SwitchedCandidateConfig(
             minimum_reporting_units_municipality=2,
             minimum_reporting_units_neighbourhood=5,
-            minimum_deviation_factor=10,
-            minimum_votes=20,
+            minimum_deviation_factor=5,
+            minimum_votes=15,
         )
     )
     # ---
