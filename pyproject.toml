@@ -2,7 +2,7 @@
 name = "HCP"
 version = "1.0"
 description = "Hulpmiddel controle protocol. Scripts ter ondersteuning van onderdeel A van het Controleprotocol Centraal Stembureau."
-requires-python = "== 3.8.20"
+requires-python = "~= 3.8.0"
 readme = "README.md"
 dependencies = ["defusedxml == 0.7.1", "polars == 0.20.3"]
 
