@@ -21,7 +21,7 @@ HEADER_COLS = [
     "Stembureaunummer",
     "Stembureaunaam",
 ]
-PROTOCOL_VERSION = "EP2024"
+PROTOCOL_VERSION = "TK2025"
 
 ZIP_CODE_PATTERN = re.compile(r"\(\s*postcode:\s*\d{4}\s*[A-Z]{2}\s*\)")
 STEMBUREAU_PREFIX_PATTERN = re.compile(r"^(Stembureau\s)+")
