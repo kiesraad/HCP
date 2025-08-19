@@ -4,7 +4,7 @@ from typing import List, Optional
 from xml.etree.ElementTree import Element as XmlElement
 from zipfile import ZipFile
 
-import xml_parser
+from . import xml_parser
 
 NAMESPACE = {
     "office": "urn:oasis:names:tc:opendocument:xmlns:office:1.0",

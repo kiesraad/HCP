@@ -1,8 +1,9 @@
 from typing import List, Literal
 
-import protocol_checks
 import pytest
-from eml_types import (
+
+from hcp import protocol_checks
+from hcp.eml_types import (
     PartyIdentifier,
     ReportingUnitInfo,
     VoteDifferenceAmount,

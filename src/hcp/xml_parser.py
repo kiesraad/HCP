@@ -4,7 +4,7 @@ from xml.etree.ElementTree import Element as XmlElement
 
 from defusedxml import ElementTree as ET
 
-from eml_types import (
+from .eml_types import (
     CandidateIdentifier,
     EmlMetadata,
     InvalidEmlException,

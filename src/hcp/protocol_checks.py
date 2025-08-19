@@ -1,7 +1,7 @@
 from itertools import product as cartesian_product
 from typing import Dict, List, Literal, Optional, TypeVar
 
-from eml_types import (
+from .eml_types import (
     CandidateIdentifier,
     PartyIdentifier,
     ReportingUnitInfo,
@@ -11,7 +11,7 @@ from eml_types import (
     VoteDifferenceAmount,
     VoteDifferencePercentage,
 )
-from neighbourhood import ReportingNeighbourhoods
+from .neighbourhood import ReportingNeighbourhoods
 
 T = TypeVar("T")
 N = TypeVar("N", int, float)

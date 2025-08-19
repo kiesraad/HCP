@@ -1,5 +1,6 @@
 import pytest
-from odt import ODT, PollingStation
+
+from hcp.odt import ODT, PollingStation
 
 expected_polling_stations_3ru = [
     PollingStation(id=1, name="Hoornes West", zip="(postcode: 2221 LA)"),

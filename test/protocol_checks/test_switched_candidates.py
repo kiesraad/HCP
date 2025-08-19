@@ -1,15 +1,15 @@
 from collections import defaultdict
 from typing import Dict, List
 
-import protocol_checks
-from eml_types import (
+from hcp import protocol_checks
+from hcp.eml_types import (
     CandidateIdentifier,
     PartyIdentifier,
     ReportingUnitInfo,
     SwitchedCandidate,
     SwitchedCandidateConfig,
 )
-from neighbourhood import ReportingNeighbourhoods
+from hcp.neighbourhood import ReportingNeighbourhoods
 
 # Helper functions to easily create testing datasets
 

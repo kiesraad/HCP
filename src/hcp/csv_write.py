@@ -2,8 +2,8 @@ import csv
 import re
 from typing import Dict, List, Literal, Optional
 
-from eml import EML, CheckResult
-from eml_types import (
+from .eml import EML, CheckResult
+from .eml_types import (
     EmlMetadata,
     SummaryType,
     SwitchedCandidate,
@@ -98,12 +98,17 @@ def _id_cols(
 
 
 def write_csv_a(
-    check_results: Dict[str, CheckResult], eml_metadata: EmlMetadata, csv_destination
+    check_results: Dict[str, CheckResult],
+    eml_metadata: EmlMetadata,
+    odt_used: bool,
+    csv_destination,
 ) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
         _write_header(
-            writer, eml_metadata, "Stembureaus met geen verklaring voor telverschillen"
+            writer,
+            eml_metadata,
+            f"Stembureaus met geen verklaring voor telverschillen (odt {("gebruikt" if odt_used else "niet gebruikt")})",
         )
 
         writer.writerow(
@@ -136,7 +141,10 @@ def write_csv_a(
 
 
 def write_csv_b(
-    check_results: Dict[str, CheckResult], eml_metadata: EmlMetadata, csv_destination
+    check_results: Dict[str, CheckResult],
+    eml_metadata: EmlMetadata,
+    neighbourhoods_used: bool,
+    csv_destination,
 ) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile, delimiter=";")
@@ -147,7 +155,7 @@ def write_csv_b(
                 f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
                 "stembureaus met nul stemmen, "
                 f"afwijkingen van het lijstgemiddelde >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% "
-                "en mogelijk verwisselde kandidaten"
+                f"en mogelijk verwisselde kandidaten (wijkdata {"gebruikt" if neighbourhoods_used else "niet_gebruikt"})"
             ),
         )
 

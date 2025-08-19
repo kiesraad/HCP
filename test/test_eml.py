@@ -1,6 +1,7 @@
 import pytest
-from eml import EML
-from eml_types import (
+
+from hcp.eml import EML
+from hcp.eml_types import (
     CandidateIdentifier,
     EmlMetadata,
     InvalidEmlException,

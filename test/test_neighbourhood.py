@@ -2,8 +2,9 @@ from itertools import repeat
 from typing import Dict, Optional
 
 import pytest
-from eml_types import CandidateIdentifier, PartyIdentifier, ReportingUnitInfo
-from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
+
+from hcp.eml_types import CandidateIdentifier, PartyIdentifier, ReportingUnitInfo
+from hcp.neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
 
 read_test_cases = [
     ("./test/data/neighbourhood_files/valid.parquet", True),
