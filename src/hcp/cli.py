@@ -5,7 +5,7 @@ from zipfile import ZipFile
 
 from .main import create_csv_files
 
-CURRENT_NEIGHBOURHOOD_FILE = "zip_to_neighbourhood_2023.parquet"
+CURRENT_NEIGHBOURHOOD_FILE = "zip_to_neighbourhood_2024.parquet"
 
 p = argparse.ArgumentParser()
 p.add_argument("data_source", help="The election result to run HCP on.")
