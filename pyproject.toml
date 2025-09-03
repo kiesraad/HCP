@@ -18,10 +18,10 @@ build-backend = "hatchling.build"
 package = true
 
 [tool.hatch.build.targets.sdist.force-include]
-"data/zip_to_neighbourhood_2023.parquet" = "data/zip_to_neighbourhood_2023.parquet"
+"data/zip_to_neighbourhood_2024.parquet" = "data/zip_to_neighbourhood_2024.parquet"
 
 [tool.hatch.build.targets.wheel.force-include]
-"data/zip_to_neighbourhood_2023.parquet" = "data/zip_to_neighbourhood_2023.parquet"
+"data/zip_to_neighbourhood_2024.parquet" = "data/zip_to_neighbourhood_2024.parquet"
 
 [project.scripts]
 hcp = "hcp.cli:start"

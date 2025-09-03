@@ -41,36 +41,51 @@ def start():
     if not neighbourhood_file.exists():
         raise RuntimeError("Could not find specified or bundled neighbourhood file!")
 
-    with ZipFile(args.data_source, "r") as outer_zipfile:
-        # Find and extract the .eml.xml and .odt file
-        odt_zipinfo = next(
-            f for f in outer_zipfile.filelist if f.filename.endswith(".odt")
-        )
-        inner_zipinfo = next(
-            f for f in outer_zipfile.filelist if f.filename.endswith(".zip")
-        )
-        with ZipFile(outer_zipfile.open(inner_zipinfo), "r") as inner_zipfile:
-            eml_zipinfo = next(
-                f for f in inner_zipfile.filelist if f.filename.endswith(".eml.xml")
+    file_suffix = Path(args.data_source).suffix
+    # If we were supplied a zip file we unpack it and use the supplied odt
+    if file_suffix == ".zip":
+        with ZipFile(args.data_source, "r") as outer_zipfile:
+            # Find and extract the .eml.xml and .odt file
+            odt_zipinfo = next(
+                f for f in outer_zipfile.filelist if f.filename.endswith(".odt")
             )
-            inner_zipfile.extract(eml_zipinfo, extract_path)
-        outer_zipfile.extract(odt_zipinfo, extract_path)
+            inner_zipinfo = next(
+                f for f in outer_zipfile.filelist if f.filename.endswith(".zip")
+            )
+            with ZipFile(outer_zipfile.open(inner_zipinfo), "r") as inner_zipfile:
+                eml_zipinfo = next(
+                    f for f in inner_zipfile.filelist if f.filename.endswith(".eml.xml")
+                )
+                inner_zipfile.extract(eml_zipinfo, extract_path)
+            outer_zipfile.extract(odt_zipinfo, extract_path)
 
-        # Run HCP
+            # Run HCP
+            create_csv_files(
+                path_to_xml=str(extract_path / eml_zipinfo.filename),
+                path_to_odt=str(extract_path / odt_zipinfo.filename),
+                path_to_neighbourhood_data=str(neighbourhood_file),
+                dest_a="a.csv",
+                dest_b="b.csv",
+                dest_c="c.csv",
+            )
+
+            # Clean up after ourselves
+            remove(extract_path / eml_zipinfo.filename)
+            remove(extract_path / odt_zipinfo.filename)
+            try:
+                rmdir(extract_path)
+            except OSError as error:
+                print(error)
+                print(f"Not deleting {extract_path}, could not clean up")
+    # If we are given an eml file we have nothing to unpack and don't use the odt
+    elif file_suffix == ".xml":
         create_csv_files(
-            path_to_xml=str(extract_path / eml_zipinfo.filename),
-            path_to_odt=str(extract_path / odt_zipinfo.filename),
+            path_to_xml=args.data_source,
+            path_to_odt=None,
             path_to_neighbourhood_data=str(neighbourhood_file),
             dest_a="a.csv",
             dest_b="b.csv",
             dest_c="c.csv",
         )
-
-        # Clean up after ourselves
-        remove(extract_path / eml_zipinfo.filename)
-        remove(extract_path / odt_zipinfo.filename)
-        try:
-            rmdir(extract_path)
-        except OSError as error:
-            print(error)
-            print(f"Not deleting {extract_path}, could not clean up")
+    else:
+        raise RuntimeError("Please specify either a .zip file or .eml.xml file!")
