@@ -18,6 +18,16 @@ expected_polling_stations_1ru_ep = [
     PollingStation(id=1, name="Park Sallandse", zip="(postcode: 7451 BB)")
 ]
 
+expected_polling_stations_3ru_tk25 = [
+    PollingStation(id=1, name="Hoornes West", zip="(postcode: 2221 LA)"),
+    PollingStation(id=2, name="Hoge Mors", zip="(postcode: 2222 LB)"),
+    PollingStation(id=3, name="Valkenburg", zip="(postcode: 2222 LC)"),
+]
+
+expected_polling_stations_1ru_tk25 = [
+    PollingStation(id=1, name="Tera Korá", zip="(postcode: 0000 BQ)")
+]
+
 test_cases_3ru = [
     ("./test/data/odts/3ru/Model_Na31-1.odt", expected_polling_stations_3ru),
     ("./test/data/odts/3ru/Model_Na31-2.odt", expected_polling_stations_3ru),
@@ -37,6 +47,11 @@ test_cases_1ru_ep = [
     ("./test/data/odts/1ru_ep/Model_Na31-2.odt", expected_polling_stations_1ru_ep),
 ]
 
+test_cases_tk25 = [
+    ("./test/data/odts/tk25/Model_Na31-1.odt", expected_polling_stations_1ru_tk25),
+    ("./test/data/odts/tk25/Model_Na31-2.odt", expected_polling_stations_3ru_tk25),
+]
+
 test_cases_invalid = [
     "./test/data/odts/THIS_FILE_DOES_NOT_EXIST.odt",
     "./test/data/odts/THIS_FOLDER_DOES_NOT_EXIST/Model_Na31-1.odt",
@@ -44,7 +59,9 @@ test_cases_invalid = [
 ]
 
 
-@pytest.mark.parametrize("odt_path, expected", test_cases_3ru + test_cases_1ru_ep)
+@pytest.mark.parametrize(
+    "odt_path, expected", test_cases_3ru + test_cases_1ru_ep + test_cases_tk25
+)
 def test_na31_3ru(odt_path, expected) -> None:
     odt_object = ODT.from_path(odt_path)
     assert odt_object is not None
