@@ -1,5 +1,5 @@
 # HCP (Hulpmiddel ControleProtocol)
-[![Status checks](https://github.com/kiesraad/HCP/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/kiesraad/HCP/actions/workflows/checks.yml?query=branch%3Amain)
+[![Status checks](https://github.com/kiesraad/HCP/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/kiesraad/HCP/actions/workflows/test.yml?query=branch%3Amain)
 
 Deze repository bevat scripts die als hulpmiddel dienen voor het uitvoeren van Onderdeel A van het [Controleprotocol Centraal Stembureau](https://www.kiesraad.nl/binaries/kiesraad/documenten/publicaties/2025/08/21/controleprotocol-centraal-stembureau/Controleprotocol_Centraal_Stembureau.pdf). De scripts worden door Wonderbit op het platform teluitslagen uitgevoerd, waarbij een geüploadde `.zip` met tellingsbestanden (`.eml`) en proces verbalen in `.odt` formaat de trigger zijn.
 
