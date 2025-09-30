@@ -1,9 +1,9 @@
 from typing import Optional
 
-import csv_write
-from eml import EML
-from neighbourhood import NeighbourhoodData
-from odt import ODT
+from . import csv_write
+from .eml import EML
+from .neighbourhood import NeighbourhoodData
+from .odt import ODT
 
 
 def create_csv_files(
@@ -68,6 +68,8 @@ def create_csv_files(
             ):
                 check_results[full_id].already_recounted = True
 
-    csv_write.write_csv_a(check_results, eml_metadata, dest_a)
-    csv_write.write_csv_b(check_results, eml_metadata, dest_b)
+    csv_write.write_csv_a(check_results, eml_metadata, odt is not None, dest_a)
+    csv_write.write_csv_b(
+        check_results, eml_metadata, neighbourhood_data is not None, dest_b
+    )
     csv_write.write_csv_c(check_results, eml_metadata, dest_c)

@@ -2,16 +2,15 @@ import re
 from dataclasses import dataclass
 from typing import ClassVar, Dict, Optional
 
-import protocol_checks
-import xml_parser
-from eml_types import (
+from . import protocol_checks, xml_parser
+from .eml_types import (
     CheckResult,
     EmlMetadata,
     InvalidEmlException,
     ReportingUnitInfo,
     SwitchedCandidateConfig,
 )
-from neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
+from .neighbourhood import NeighbourhoodData, ReportingNeighbourhoods
 
 
 @dataclass
@@ -39,8 +38,8 @@ class EML:
         SwitchedCandidateConfig(
             minimum_reporting_units_municipality=2,
             minimum_reporting_units_neighbourhood=5,
-            minimum_deviation_factor=10,
-            minimum_votes=20,
+            minimum_deviation_factor=5,
+            minimum_votes=15,
         )
     )
     # ---

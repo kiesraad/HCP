@@ -3,7 +3,8 @@ from typing import IO, Dict, List, Optional, Tuple, Union
 from xml.etree.ElementTree import Element as XmlElement
 
 from defusedxml import ElementTree as ET
-from eml_types import (
+
+from .eml_types import (
     CandidateIdentifier,
     EmlMetadata,
     InvalidEmlException,
@@ -33,6 +34,9 @@ def parse_xml(file_name: Union[str, IO[bytes]]) -> XmlElement:
     tree = ET.parse(file_name)
     tree_root = tree.getroot()
 
+    if tree_root is None:
+        raise InvalidEmlException(f"{file_name} could not be parsed as XML")
+
     return tree_root
 
 
@@ -46,7 +50,7 @@ def get_eml_type(root: XmlElement) -> Optional[str]:
         The ID of the EML file (e.g. `"510b"` for municipality counts).
     """
     root_element = root.find(".")
-    if root_element and root_element.tag == f"{{{NAMESPACE.get('eml')}}}EML":
+    if root_element is not None and root_element.tag == f"{{{NAMESPACE.get('eml')}}}EML":
         return _get_attrib(root_element, "Id")
 
     return None

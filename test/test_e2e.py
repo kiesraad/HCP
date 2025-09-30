@@ -1,6 +1,6 @@
 import os
 
-from main import create_csv_files
+from hcp.main import create_csv_files
 
 
 def test_create_csv_files_a_b():
@@ -50,7 +50,7 @@ def test_create_csv_files_a_b():
             "Gemeentenummer;0505\n"
             "\n"
             "Verkiezingnummer;Type;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Stembureau met nul stemmen;Stembureau >=3.0% ongeldig;Stembureau >=3.0% blanco;Stembureau >=15 of >=2.0% verschil tussen toegelaten kiezers en uitgebrachte stemmen;Stembureau met lijst >=50.0% afwijking;Mogelijk verwisselde kandidaten;Al herteld;Samenvatting\n"
-            "TK2023;B;14;0505;Dordrecht;1;Binnenstad;;;;ja (28);;;ja;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28). Er is wel herteld.\n"
+            "TK2023;B;14;0505;Dordrecht;1;Binnenstad;;;;ja (28);;;ja;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (28).\n"
         )
         assert content == expected
 
@@ -107,10 +107,10 @@ def test_create_csv_files_a_b_2():
             "Gemeentenummer;1708\n"
             "\n"
             "Verkiezingnummer;Type;Kieskringnummer;Gemeentenummer;Gemeentenaam;Stembureaunummer;Stembureaunaam;Stembureau met nul stemmen;Stembureau >=3.0% ongeldig;Stembureau >=3.0% blanco;Stembureau >=15 of >=2.0% verschil tussen toegelaten kiezers en uitgebrachte stemmen;Stembureau met lijst >=50.0% afwijking;Mogelijk verwisselde kandidaten;Al herteld;Samenvatting\n"
-            "EP2024;B;alle;1708;Steenwijkerland;1;Holterberg;;;;ja (417);Kleurenpartij (51.7%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (417). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (51.7%). Er is niet herteld.\n"
-            "EP2024;B;alle;1708;Steenwijkerland;2;Lege boel;ja;;;;Kleurenpartij (-51.7%);;;Er is een aantal uitgebrachte stemmen van 0. Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (-51.7%). Er is niet herteld.\n"
-            'EP2024;B;alle;1708;Steenwijkerland;3;"""De Waarschuwing""";;ja (3.7%);ja (3.7%);ja (108);;;;Er is een hoog percentage ongeldige stemmen (3.7%). Daarnaast is er een hoog percentage blanco stemmen (3.7%). Ook is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (108). Er is niet herteld.\n'
-            "EP2024;B;alle;1708;Steenwijkerland;4;Schoolstraat;;;;ja (20.0%);Het Verschil (61.7%), Kleurenpartij (-51.7%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (20.0%). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Het Verschil (61.7%), Kleurenpartij (-51.7%). Er is niet herteld.\n"
+            "EP2024;B;alle;1708;Steenwijkerland;1;Holterberg;;;;ja (417);Kleurenpartij (51.7%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (417). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (51.7%).\n"
+            "EP2024;B;alle;1708;Steenwijkerland;2;Lege boel;ja;;;;Kleurenpartij (-51.7%);;;Er is een aantal uitgebrachte stemmen van 0. Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Kleurenpartij (-51.7%).\n"
+            'EP2024;B;alle;1708;Steenwijkerland;3;"""De Waarschuwing""";;ja (3.7%);ja (3.7%);ja (108);;;;Er is een hoog percentage ongeldige stemmen (3.7%). Daarnaast is er een hoog percentage blanco stemmen (3.7%). Ook is er een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (108).\n'
+            "EP2024;B;alle;1708;Steenwijkerland;4;Schoolstraat;;;;ja (20.0%);Het Verschil (61.7%), Kleurenpartij (-51.7%);;;Er is een groot verschil tussen het aantal toegelaten kiezers en het aantal uitgebrachte stemmen (20.0%). Daarnaast is er een opmerkelijk grote afwijking ten opzichte van het gemeentegemiddelde bij de volgende partijen: Het Verschil (61.7%), Kleurenpartij (-51.7%).\n"
         )
         assert content == expected
 

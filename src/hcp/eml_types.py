@@ -156,10 +156,16 @@ class CheckResult:
                 self.content += f"{prefix(self.n_findings)}{text}."
                 self.n_findings += 1
 
-            def render(self, recounted: bool) -> str:
+            def render(self, recounted: bool, summary_type: SummaryType) -> str:
                 if self.n_findings == 0:
                     return "Er zijn geen bevindingen."
-                return f"{''.join(self.content)} Er is {'wel' if recounted else 'niet'} herteld."
+
+                result = "".join(self.content)
+                # Only add if we've recounted for type A (differences)
+                if summary_type == SummaryType.A:
+                    result += f" Er is {'wel' if recounted else 'niet'} herteld."
+
+                return result
 
         sentence = Sentence()
 
@@ -208,7 +214,7 @@ class CheckResult:
                     f"een mogelijke verwisseling bij de volgende kandidaten: {', '.join((str(switch) for switch in self.potentially_switched_candidates))}"
                 )
 
-        return sentence.render(self.already_recounted)
+        return sentence.render(self.already_recounted, summary_type)
 
 
 class InvalidEmlException(Exception):

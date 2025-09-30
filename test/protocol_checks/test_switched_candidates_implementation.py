@@ -1,9 +1,10 @@
 from itertools import repeat
 from typing import Dict, List, Optional
 
-import protocol_checks
 import pytest
-from eml_types import (
+
+from hcp import protocol_checks
+from hcp.eml_types import (
     CandidateIdentifier,
     PartyIdentifier,
     ReportingUnitInfo,

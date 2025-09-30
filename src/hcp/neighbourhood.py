@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Dict, Optional, Set, TypeVar
 
 import polars as pl
-from eml_types import ReportingUnitInfo
+
+from .eml_types import ReportingUnitInfo
 
 T = TypeVar("T")
 REGEX_NON_NEIGHBOURHOOD_NAME = re.compile(
