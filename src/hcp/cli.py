@@ -13,6 +13,7 @@ p.add_argument("--neighbourhoods", required=False)
 
 
 def start():
+    """Helper CLI tool to run HCP on either a .zip file as output by OSV-2020U"""
     args = p.parse_args()
     extract_path = Path() / "tmp"
 
@@ -39,25 +40,43 @@ def start():
 
     # Path to the neighbourhood file should exist
     if not neighbourhood_file.exists():
-        raise RuntimeError("Could not find specified or bundled neighbourhood file!")
+        print("Could not find specified or bundled neighbourhood file!")
+        return
+
+    # Path to specified file should exist
+    if not Path(args.data_source).exists():
+        print("Could not find specified data file!")
+        return
 
     file_suffix = Path(args.data_source).suffix
     # If we were supplied a zip file we unpack it and use the supplied odt
     if file_suffix == ".zip":
         with ZipFile(args.data_source, "r") as outer_zipfile:
-            # Find and extract the .eml.xml and .odt file
-            odt_zipinfo = next(
-                f for f in outer_zipfile.filelist if f.filename.endswith(".odt")
-            )
-            inner_zipinfo = next(
-                f for f in outer_zipfile.filelist if f.filename.endswith(".zip")
-            )
-            with ZipFile(outer_zipfile.open(inner_zipinfo), "r") as inner_zipfile:
-                eml_zipinfo = next(
-                    f for f in inner_zipfile.filelist if f.filename.endswith(".eml.xml")
+            try:
+                # Find and extract the .eml.xml and .odt file
+                odt_zipinfo = next(
+                    f for f in outer_zipfile.filelist if f.filename.endswith(".odt")
                 )
-                inner_zipfile.extract(eml_zipinfo, extract_path)
-            outer_zipfile.extract(odt_zipinfo, extract_path)
+                inner_zipinfo = next(
+                    f for f in outer_zipfile.filelist if f.filename.endswith(".zip")
+                )
+                with ZipFile(outer_zipfile.open(inner_zipinfo), "r") as inner_zipfile:
+                    eml_zipinfo = next(
+                        f
+                        for f in inner_zipfile.filelist
+                        if f.filename.endswith(".eml.xml")
+                    )
+                    inner_zipfile.extract(eml_zipinfo, extract_path)
+                outer_zipfile.extract(odt_zipinfo, extract_path)
+            except StopIteration:
+                print(
+                    """Zip file did not contain expected files! Make sure to specify the direct OSV-2020U output.
+Don't try to extract or modify the .zip file"""
+                )
+                return
+            except Exception:
+                print("Could not extract files!")
+                return
 
             # Run HCP
             create_csv_files(
@@ -77,6 +96,8 @@ def start():
             except OSError as error:
                 print(error)
                 print(f"Not deleting {extract_path}, could not clean up")
+                return
+
     # If we are given an eml file we have nothing to unpack and don't use the odt
     elif file_suffix == ".xml":
         create_csv_files(
@@ -88,4 +109,5 @@ def start():
             dest_c="c.csv",
         )
     else:
-        raise RuntimeError("Please specify either a .zip file or .eml.xml file!")
+        print("Please specify either a .zip file or .eml.xml file!")
+        return
