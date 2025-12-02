@@ -1,5 +1,6 @@
 from itertools import product as cartesian_product
 from typing import Dict, List, Literal, Optional, TypeVar
+from math import sqrt
 
 from .eml_types import (
     CandidateIdentifier,
@@ -336,6 +337,7 @@ def _get_potentially_switched_candidates(
     minimum_reporting_units: int,
     minimum_deviation_factor: int,
     minimum_votes: int,
+    max_rmse: Optional[float] = None
 ) -> Optional[List[SwitchedCandidate]]:
     # Not enough reporting units to do a good check
     if amount_of_reporting_units < minimum_reporting_units:
@@ -369,6 +371,20 @@ def _get_potentially_switched_candidates(
         cands_with_more_votes, cands_with_less_votes
     ):
         if cand_with_more.party == cand_with_less.party:
+            if max_rmse is not None:
+                # Do RMSE calculation to see if reporting unit is sufficiently 'non-noisy'
+                # to do a proper check.
+                se = 0
+                exclude = [cand_with_less, cand_with_more]
+                for cand_id in received_votes.keys():
+                    # Do not use the suspected switch in calculating the RMSE, since this
+                    # is 'expected noise'.
+                    if cand_id not in exclude:
+                        se += (received_votes[cand_id] - expected_votes[cand_id])**2
+                # RMSE exceeds threshold, do not add candidate pair to result
+                if sqrt(se/(len(received_votes) - len(exclude))) > max_rmse:
+                    continue
+
             result.append(
                 SwitchedCandidate(
                     candidate_with_fewer=cand_with_less,

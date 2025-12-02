@@ -106,12 +106,12 @@ switched_test_cases = list(
         [1, 5, 5, 5],
         [4, 4, 5, 4],
         [4, 4, 4, 5],
+        [None, None, None, None]
     )
 )
 
-
 @pytest.mark.parametrize(
-    "main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes",
+    "main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes, max_rmse",
     switched_test_cases,
 )
 def test_get_switched_candidate(
@@ -122,6 +122,7 @@ def test_get_switched_candidate(
     minimum_reporting_units,
     minimum_deviation_factor,
     minimum_votes,
+    max_rmse
 ) -> None:
     assert (
         protocol_checks._get_potentially_switched_candidates(
@@ -131,10 +132,80 @@ def test_get_switched_candidate(
             minimum_reporting_units,
             minimum_deviation_factor,
             minimum_votes,
+            max_rmse
         )
         == expected
     )
 
+#### High RMSE test case
+high_rmse_switched_main_unit = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=0,
+    rejected_votes={},
+    uncounted_votes={},
+    votes_per_party={PartyIdentifier(1, None): 2350},
+    votes_per_candidate={
+        CandidateIdentifier(PartyIdentifier(1, None), 1): 1000,
+        CandidateIdentifier(PartyIdentifier(1, None), 2): 200,
+        CandidateIdentifier(PartyIdentifier(1, None), 3): 50,
+        CandidateIdentifier(PartyIdentifier(1, None), 4): 300,
+        CandidateIdentifier(PartyIdentifier(1, None), 5): 800,
+    },
+)
+
+high_rmse_switched_reporting_unit = ReportingUnitInfo(
+    reporting_unit_id=None,
+    reporting_unit_name=None,
+    cast=0,
+    total_counted=0,
+    rejected_votes={},
+    uncounted_votes={},
+    votes_per_party={PartyIdentifier(1, None): 233},
+    votes_per_candidate={
+        CandidateIdentifier(PartyIdentifier(1, None), 1): 95,
+        CandidateIdentifier(PartyIdentifier(1, None), 2): 80,
+        CandidateIdentifier(PartyIdentifier(1, None), 3): 6,
+        CandidateIdentifier(PartyIdentifier(1, None), 4): 32,
+        CandidateIdentifier(PartyIdentifier(1, None), 5): 20,
+    },
+)
+
+def test_high_rmse_switched_candidate():
+    no_rmse_filter = protocol_checks._get_potentially_switched_candidates(
+        high_rmse_switched_main_unit,
+        high_rmse_switched_reporting_unit,
+        20,
+        10,
+        4,
+        20,
+        None
+    )
+    assert no_rmse_filter == [SwitchedCandidate(
+        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 5),
+        candidate_with_fewer_expected=86,
+        candidate_with_fewer_received=20,
+        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 2),
+        candidate_with_more_expected=13,
+        candidate_with_more_received=80,
+    )]
+
+    rmse_filter = protocol_checks._get_potentially_switched_candidates(
+        high_rmse_switched_main_unit,
+        high_rmse_switched_reporting_unit,
+        20,
+        10,
+        4,
+        20,
+        3.0
+    )
+
+    # Actual RMSE of this test case is 3.1, so the check did run, but returned no results
+    # since we set an upper limit of 3.0.
+    assert(rmse_filter == [])
+
+###
 
 combine_switched_testcases = [
     (
