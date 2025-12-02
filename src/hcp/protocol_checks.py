@@ -336,10 +336,10 @@ def _get_potentially_switched_candidates(
     minimum_reporting_units: int,
     minimum_deviation_factor: int,
     minimum_votes: int,
-) -> List[SwitchedCandidate]:
+) -> Optional[List[SwitchedCandidate]]:
     # Not enough reporting units to do a good check
     if amount_of_reporting_units < minimum_reporting_units:
-        return []
+        return None
 
     received_votes = reporting_unit.votes_per_candidate
     expected_votes = _get_expected_candidate_votes(main_unit, reporting_unit)
@@ -413,13 +413,16 @@ def _get_candidate_ratios(
 
 
 def _get_switched_candidate_combination(
-    municipality_switched: List[SwitchedCandidate],
+    municipality_switched: Optional[List[SwitchedCandidate]],
     neighbourhood_switched: Optional[List[SwitchedCandidate]],
 ) -> List[SwitchedCandidate]:
     # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
     # then we just return the municipality results
     if neighbourhood_switched is None:
-        return municipality_switched
+        return municipality_switched if municipality_switched is not None else []
+
+    if municipality_switched is None:
+        return []
 
     # Otherwise, we only return those for which there was a neighbourhood result
     # Construct lookup tables

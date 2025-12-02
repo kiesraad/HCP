@@ -101,7 +101,7 @@ switched_test_cases = list(
     zip(
         repeat(switched_main_unit),
         repeat(switched_reporting_unit),
-        [expected_switched_candidates, [], [], []],
+        [expected_switched_candidates, None, [], []],
         [10, 4, 10, 10],
         [1, 5, 5, 5],
         [4, 4, 5, 4],
