@@ -32,7 +32,7 @@ class EML:
     DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
     DIFF_VOTE_THRESHOLD: ClassVar[int] = 15
 
-    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
+    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 60.0
 
     SWITCHED_CANDIDATE_CONFIG: ClassVar[SwitchedCandidateConfig] = (
         SwitchedCandidateConfig(
@@ -40,7 +40,7 @@ class EML:
             minimum_reporting_units_neighbourhood=5,
             minimum_deviation_factor=5,
             minimum_votes=15,
-            maximum_rmse=4.0
+            maximum_rmse=4.0,
         )
     )
     # ---
