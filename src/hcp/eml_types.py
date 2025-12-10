@@ -114,6 +114,7 @@ class SwitchedCandidateConfig:
     minimum_reporting_units_neighbourhood: int
     minimum_deviation_factor: int
     minimum_votes: int
+    maximum_rmse: Optional[float]
 
 
 class SummaryType(Enum):

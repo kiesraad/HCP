@@ -40,6 +40,7 @@ class EML:
             minimum_reporting_units_neighbourhood=5,
             minimum_deviation_factor=5,
             minimum_votes=15,
+            maximum_rmse=4.0
         )
     )
     # ---

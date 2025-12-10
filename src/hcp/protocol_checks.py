@@ -1,6 +1,6 @@
 from itertools import product as cartesian_product
-from typing import Dict, List, Literal, Optional, TypeVar
 from math import sqrt
+from typing import Dict, List, Literal, Optional, TypeVar
 
 from .eml_types import (
     CandidateIdentifier,
@@ -264,6 +264,7 @@ def check_potentially_switched_candidates(
         minimum_reporting_units=config.minimum_reporting_units_municipality,
         minimum_deviation_factor=config.minimum_deviation_factor,
         minimum_votes=config.minimum_votes,
+        max_rmse=config.maximum_rmse,
     )
 
     potentially_switched_neighbourhood_candidates = (
@@ -276,6 +277,7 @@ def check_potentially_switched_candidates(
             minimum_reporting_units=config.minimum_reporting_units_neighbourhood,
             minimum_deviation_factor=config.minimum_deviation_factor,
             minimum_votes=config.minimum_votes,
+            max_rmse=config.maximum_rmse,
         )
         if neighbourhood_reference_group and reporting_neighbourhoods
         else None
@@ -337,7 +339,7 @@ def _get_potentially_switched_candidates(
     minimum_reporting_units: int,
     minimum_deviation_factor: int,
     minimum_votes: int,
-    max_rmse: Optional[float] = None
+    max_rmse: Optional[float],
 ) -> Optional[List[SwitchedCandidate]]:
     # Not enough reporting units to do a good check
     if amount_of_reporting_units < minimum_reporting_units:
@@ -380,9 +382,9 @@ def _get_potentially_switched_candidates(
                     # Do not use the suspected switch in calculating the RMSE, since this
                     # is 'expected noise'.
                     if cand_id not in exclude:
-                        se += (received_votes[cand_id] - expected_votes[cand_id])**2
+                        se += (received_votes[cand_id] - expected_votes[cand_id]) ** 2
                 # RMSE exceeds threshold, do not add candidate pair to result
-                if sqrt(se/(len(received_votes) - len(exclude))) > max_rmse:
+                if sqrt(se / (len(received_votes) - len(exclude))) > max_rmse:
                     continue
 
             result.append(
