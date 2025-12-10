@@ -104,7 +104,7 @@ class EML:
                     reporting_neighbourhoods,
                     EML.SWITCHED_CANDIDATE_CONFIG,
                 ),
-                already_recounted=False,
+                already_recounted=polling_station.has_recounted,
             )
 
             protocol_results[polling_station_id] = check_result

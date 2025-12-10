@@ -53,6 +53,7 @@ class ReportingUnitInfo:
     uncounted_votes: Dict[str, int]
     votes_per_party: Dict[PartyIdentifier, int]
     votes_per_candidate: Dict[CandidateIdentifier, int]
+    has_recounted: bool = False
 
 
 @dataclass

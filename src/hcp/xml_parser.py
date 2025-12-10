@@ -50,7 +50,10 @@ def get_eml_type(root: XmlElement) -> Optional[str]:
         The ID of the EML file (e.g. `"510b"` for municipality counts).
     """
     root_element = root.find(".")
-    if root_element is not None and root_element.tag == f"{{{NAMESPACE.get('eml')}}}EML":
+    if (
+        root_element is not None
+        and root_element.tag == f"{{{NAMESPACE.get('eml')}}}EML"
+    ):
         return _get_attrib(root_element, "Id")
 
     return None
@@ -207,6 +210,10 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
     # Fetch amount of votes per party
     (votes_per_party, votes_per_candidate) = _get_party_and_candvotes(reporting_unit)
 
+    # Fetch reporting unit investigations (did the reporting unit do a recount
+    # due to unexplained differences)
+    recounted = _get_has_recounted(reporting_unit)
+
     return ReportingUnitInfo(
         reporting_unit_id=reporting_unit_id,
         reporting_unit_name=reporting_unit_name,
@@ -216,6 +223,7 @@ def get_reporting_unit_info(reporting_unit: XmlElement) -> ReportingUnitInfo:
         uncounted_votes=uncounted_votes,
         votes_per_party=votes_per_party,
         votes_per_candidate=votes_per_candidate,
+        has_recounted=recounted,
     )
 
 
@@ -340,3 +348,22 @@ def _get_party_and_candvotes(
             raise InvalidEmlException
 
     return (party_votes_dict, cand_votes_dict)
+
+
+def _get_has_recounted(reporting_unit: XmlElement) -> bool:
+    investigations = reporting_unit.find("./kr:ReportingUnitInvestigations", NAMESPACE)
+    if investigations is not None:
+        for investigation in investigations.findall("./kr:Investigation", NAMESPACE):
+            reason_code = _get_attrib(investigation, "ReasonCode")
+            if (
+                reason_code
+                in [
+                    # DSO reason code
+                    "onderzocht vanwege onverklaard verschil",
+                    # CSO reason code
+                    "toegelaten kiezers opnieuw vastgesteld",
+                ]
+                and _get_text(investigation) == "true"
+            ):
+                return True
+    return False
