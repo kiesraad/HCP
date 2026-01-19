@@ -217,6 +217,7 @@ expected_emls = [
                         party=PartyIdentifier(4, "Sportpartij"), cand_id=3
                     ): 1200,
                 },
+                has_recounted=True,
             )
         },
         metadata=EmlMetadata(

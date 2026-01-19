@@ -100,7 +100,6 @@ def _id_cols(
 def write_csv_a(
     check_results: Dict[str, CheckResult],
     eml_metadata: EmlMetadata,
-    odt_used: bool,
     csv_destination,
 ) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
@@ -108,7 +107,7 @@ def write_csv_a(
         _write_header(
             writer,
             eml_metadata,
-            f"Stembureaus met geen verklaring voor telverschillen (odt {("gebruikt" if odt_used else "niet gebruikt")})",
+            "Stembureaus met geen verklaring voor telverschillen",
         )
 
         writer.writerow(

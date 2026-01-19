@@ -395,6 +395,9 @@
                         <UncountedVotes ReasonCode="te veel uitgereikte stembiljetten">0</UncountedVotes>
                         <UncountedVotes ReasonCode="geen verklaring">2</UncountedVotes>
                         <UncountedVotes ReasonCode="andere verklaring">0</UncountedVotes>
+                        <kr:ReportingUnitInvestigations>
+                            <kr:Investigation ReasonCode="onderzocht vanwege onverklaard verschil">true</kr:Investigation>
+                        </kr:ReportingUnitInvestigations>
                     </ReportingUnitVotes>
                 </Contest>
             </Contests>
