@@ -10,7 +10,6 @@ def create_csv_files(
     dest_a: str,
     dest_b: str,
     dest_c: str,
-    path_to_odt: Optional[str] = None,
     path_to_neighbourhood_data: Optional[str] = None,
 ) -> None:
     """Main entry point for running HCP on a given .eml.xml file. We can optionally specify

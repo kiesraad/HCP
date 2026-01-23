@@ -8,12 +8,16 @@ from .main import create_csv_files
 CURRENT_NEIGHBOURHOOD_FILE = "zip_to_neighbourhood_2024.parquet"
 
 p = argparse.ArgumentParser()
-p.add_argument("data_source", help="The election result to run HCP on.")
+p.add_argument(
+    "data_source",
+    help="The election result to run HCP on. Can be a path to either a .zip file as output by OSV-2020U/Abacus or directly to a .eml.xml file.",
+)
 p.add_argument("--neighbourhoods", required=False)
 
 
 def start():
-    """Helper CLI tool to run HCP on either a .zip file as output by OSV-2020U"""
+    """Helper CLI tool to run HCP on either a .zip file as output by OSV-2020U/Abacus
+    or directly on an .eml.xml file"""
     args = p.parse_args()
     extract_path = Path() / "tmp"
 
@@ -49,14 +53,11 @@ def start():
         return
 
     file_suffix = Path(args.data_source).suffix
-    # If we were supplied a zip file we unpack it and use the supplied odt
+    # If we were supplied a zip file we unpack it so we can access the xml
     if file_suffix == ".zip":
         with ZipFile(args.data_source, "r") as outer_zipfile:
             try:
                 # Find and extract the .eml.xml and .odt file
-                odt_zipinfo = next(
-                    f for f in outer_zipfile.filelist if f.filename.endswith(".odt")
-                )
                 inner_zipinfo = next(
                     f for f in outer_zipfile.filelist if f.filename.endswith(".zip")
                 )
@@ -67,7 +68,6 @@ def start():
                         if f.filename.endswith(".eml.xml")
                     )
                     inner_zipfile.extract(eml_zipinfo, extract_path)
-                outer_zipfile.extract(odt_zipinfo, extract_path)
             except StopIteration:
                 print(
                     """Zip file did not contain expected files! Make sure to specify the direct OSV-2020U output.
@@ -81,7 +81,6 @@ Don't try to extract or modify the .zip file"""
             # Run HCP
             create_csv_files(
                 path_to_xml=str(extract_path / eml_zipinfo.filename),
-                path_to_odt=str(extract_path / odt_zipinfo.filename),
                 path_to_neighbourhood_data=str(neighbourhood_file),
                 dest_a="a.csv",
                 dest_b="b.csv",
@@ -90,7 +89,6 @@ Don't try to extract or modify the .zip file"""
 
             # Clean up after ourselves
             remove(extract_path / eml_zipinfo.filename)
-            remove(extract_path / odt_zipinfo.filename)
             try:
                 rmdir(extract_path)
             except OSError as error:
@@ -102,7 +100,6 @@ Don't try to extract or modify the .zip file"""
     elif file_suffix == ".xml":
         create_csv_files(
             path_to_xml=args.data_source,
-            path_to_odt=None,
             path_to_neighbourhood_data=str(neighbourhood_file),
             dest_a="a.csv",
             dest_b="b.csv",
