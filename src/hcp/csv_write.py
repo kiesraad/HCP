@@ -107,32 +107,27 @@ def write_csv_a(
         _write_header(
             writer,
             eml_metadata,
-            "Stembureaus met geen verklaring voor telverschillen",
+            "Stembureaus met niet onderzochte telverschillen",
         )
 
         writer.writerow(
             HEADER_COLS
             + [
-                "Aantal geen verklaring voor verschil",
-                "Aantal ontbrekende verklaringen voor verschil",
+                "Niet onderzocht telverschil",
                 "Al herteld",
                 "Samenvatting",
             ]
         )
 
         for id, results in check_results.items():
-            inexplicable_difference = results.inexplicable_difference or None
-            explanation_sum_difference = results.explanation_sum_difference or None
+            difference = results.vote_difference
             already_recounted = "ja" if results.already_recounted else None
 
-            if (
-                inexplicable_difference or explanation_sum_difference
-            ) and not results.already_recounted:
+            if (difference > 0) and not results.already_recounted:
                 writer.writerow(
                     _id_cols(eml_metadata, id, "A")
                     + [
-                        inexplicable_difference,
-                        explanation_sum_difference,
+                        difference,
                         already_recounted,
                         results.summarise(SummaryType.A),
                     ]

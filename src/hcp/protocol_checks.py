@@ -30,57 +30,8 @@ def check_zero_votes(reporting_unit: ReportingUnitInfo) -> bool:
     return _get_total_votes(reporting_unit) == 0
 
 
-def check_inexplicable_difference(reporting_unit: ReportingUnitInfo) -> int:
-    """Returns the amount of **specified** inexplicable differences.
-
-    Args:
-        reporting_unit: The reporting unit to check.
-
-    Returns:
-        Integer representing the amount of specified inexplicable differences.
-    """
-    return reporting_unit.uncounted_votes["geen verklaring"]
-
-
-def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
-    """Calculates the difference between the total valid votes and the
-    admitted voters. If the specified explanations do not sum up to this
-    difference between amount of votes and admitted voters, then these are
-    seen as inexplicable differences as well.
-
-    Args:
-        reporting_unit: The reporting unit to check.
-
-    Returns:
-        Integer representing the implicit inexplicable votes.
-    """
-    vote_metadata = reporting_unit.uncounted_votes
-
-    vote_difference = (
-        _get_total_votes(reporting_unit) - vote_metadata["toegelaten kiezers"]
-    )
-
-    if vote_difference > 0:
-        return abs(
-            vote_difference
-            - (vote_metadata.get("te veel uitgereikte stembiljetten") or 0)
-            - (vote_metadata.get("te veel briefstembiljetten") or 0)
-            - (vote_metadata.get("geen verklaring") or 0)
-            - (vote_metadata.get("andere verklaring") or 0)
-        )
-
-    if vote_difference < 0:
-        return abs(
-            vote_difference
-            + (vote_metadata.get("meegenomen stembiljetten") or 0)
-            + (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)
-            + (vote_metadata.get("geen briefstembiljetten") or 0)
-            + (vote_metadata.get("kwijtgeraakte stembiljetten") or 0)
-            + (vote_metadata.get("geen verklaring") or 0)
-            + (vote_metadata.get("andere verklaring") or 0)
-        )
-
-    return 0
+def check_vote_difference(reporting_unit: ReportingUnitInfo) -> int:
+    return _get_differences(reporting_unit)
 
 
 def check_too_many_rejected_votes(

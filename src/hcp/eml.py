@@ -71,12 +71,7 @@ class EML:
         for polling_station_id, polling_station in self.reporting_units_info.items():
             check_result = CheckResult(
                 zero_votes=protocol_checks.check_zero_votes(polling_station),
-                inexplicable_difference=protocol_checks.check_inexplicable_difference(
-                    polling_station
-                ),
-                explanation_sum_difference=protocol_checks.check_explanation_sum_difference(
-                    polling_station
-                ),
+                vote_difference=protocol_checks.check_vote_difference(polling_station),
                 high_invalid_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "ongeldig", EML.INVALID_VOTE_THRESHOLD_PCT
                 ),
