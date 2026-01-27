@@ -3914,8 +3914,8 @@
                         </Selection>
                         <Cast>9500</Cast>
                         <TotalCounted>6000</TotalCounted>
-                        <RejectedVotes ReasonCode="ongeldig">20</RejectedVotes>
-                        <RejectedVotes ReasonCode="blanco">35</RejectedVotes>
+                        <RejectedVotes ReasonCode="ongeldig">200</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">350</RejectedVotes>
                         <UncountedVotes ReasonCode="geldige stempassen">5650</UncountedVotes>
                         <UncountedVotes ReasonCode="geldige volmachtbewijzen">355</UncountedVotes>
                         <UncountedVotes ReasonCode="toegelaten kiezers">6005</UncountedVotes>
@@ -5868,14 +5868,14 @@
                             <ValidVotes>0</ValidVotes>
                         </Selection>
                         <Cast>5500</Cast>
-                        <TotalCounted>3600</TotalCounted>
-                        <RejectedVotes ReasonCode="ongeldig">12</RejectedVotes>
-                        <RejectedVotes ReasonCode="blanco">28</RejectedVotes>
+                        <TotalCounted>0</TotalCounted>
+                        <RejectedVotes ReasonCode="ongeldig">0</RejectedVotes>
+                        <RejectedVotes ReasonCode="blanco">0</RejectedVotes>
                         <UncountedVotes ReasonCode="geldige stempassen">4250</UncountedVotes>
                         <UncountedVotes ReasonCode="geldige volmachtbewijzen">355</UncountedVotes>
                         <UncountedVotes ReasonCode="toegelaten kiezers">4605</UncountedVotes>
                         <UncountedVotes ReasonCode="meer getelde stembiljetten">0</UncountedVotes>
-                        <UncountedVotes ReasonCode="minder getelde stembiljetten">965</UncountedVotes>
+                        <UncountedVotes ReasonCode="minder getelde stembiljetten">4605</UncountedVotes>
                         <kr:ReportingUnitInvestigations>
                             <kr:Investigation ReasonCode="onderzocht vanwege onverklaard verschil">true</kr:Investigation>
                             <kr:Investigation ReasonCode="onderzocht vanwege andere fout">true</kr:Investigation>
@@ -5888,7 +5888,7 @@
                             <AffiliationIdentifier Id="1">
                                 <RegisteredName>Het Verschil</RegisteredName>
                             </AffiliationIdentifier>
-                            <ValidVotes>300</ValidVotes>
+                            <ValidVotes>3000</ValidVotes>
                         </Selection>
                         <Selection>
                             <Candidate>
