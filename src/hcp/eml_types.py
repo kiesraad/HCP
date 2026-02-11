@@ -53,6 +53,7 @@ class ReportingUnitInfo:
     uncounted_votes: Dict[str, int]
     votes_per_party: Dict[PartyIdentifier, int]
     votes_per_candidate: Dict[CandidateIdentifier, int]
+    has_recounted: bool = False
 
 
 @dataclass
@@ -114,6 +115,7 @@ class SwitchedCandidateConfig:
     minimum_reporting_units_neighbourhood: int
     minimum_deviation_factor: int
     minimum_votes: int
+    maximum_rmse: Optional[float]
 
 
 class SummaryType(Enum):
@@ -128,8 +130,7 @@ class CheckResult:
     """
 
     zero_votes: bool
-    inexplicable_difference: int
-    explanation_sum_difference: int
+    vote_difference: int
     high_invalid_vote_percentage: Optional[float]
     high_blank_vote_percentage: Optional[float]
     high_vote_difference: Optional[VoteDifference]
@@ -162,33 +163,18 @@ class CheckResult:
 
                 result = "".join(self.content)
                 # Only add if we've recounted for type A (differences)
-                if summary_type == SummaryType.A:
-                    result += f" Er is {'wel' if recounted else 'niet'} herteld."
+                if summary_type == SummaryType.A and not recounted:
+                    result += """ Volgens het GSB is dit niet herteld of onderzocht."""
 
                 return result
 
         sentence = Sentence()
 
         if summary_type == SummaryType.A:
-            if self.inexplicable_difference and not self.explanation_sum_difference:
-                sentence.add(
-                    "een onverklaard verschil tussen het aantal toegelaten kiezers en "
-                    f"het aantal getelde stembiljetten van {self.inexplicable_difference}"
-                )
-            elif self.explanation_sum_difference and not self.inexplicable_difference:
-                sentence.add(
-                    "een onverklaard verschil tussen het aantal toegelaten kiezers en het "
-                    f"aantal getelde stembiljetten van {self.explanation_sum_difference}. "
-                    "In het proces-verbaal tellen de verklaringen die gegeven zijn niet op tot "
-                    "het verschil tussen het aantal toegelaten kiezers en het aantal getelde stembiljetten"
-                )
-            elif self.explanation_sum_difference and self.inexplicable_difference:
-                sentence.add(
-                    "een onverklaard verschil tussen het aantal toegelaten kiezers en het aantal "
-                    f"getelde stembiljetten van {self.inexplicable_difference + self.explanation_sum_difference}. "
-                    f"In het proces-verbaal is ingevuld dat er {self.inexplicable_difference} keer geen verklaring "
-                    "is voor het verschil. De verklaringen die gegeven zijn tellen niet op tot het totale verschil"
-                )
+            sentence.add(
+                "een verschil tussen het aantal toegelaten kiezers en "
+                f"het aantal getelde stembiljetten van {self.vote_difference}"
+            )
 
         elif summary_type == SummaryType.B:
             if self.zero_votes:

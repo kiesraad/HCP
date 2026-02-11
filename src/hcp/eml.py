@@ -32,7 +32,7 @@ class EML:
     DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
     DIFF_VOTE_THRESHOLD: ClassVar[int] = 15
 
-    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 50.0
+    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 60.0
 
     SWITCHED_CANDIDATE_CONFIG: ClassVar[SwitchedCandidateConfig] = (
         SwitchedCandidateConfig(
@@ -40,6 +40,7 @@ class EML:
             minimum_reporting_units_neighbourhood=5,
             minimum_deviation_factor=5,
             minimum_votes=15,
+            maximum_rmse=4.0,
         )
     )
     # ---
@@ -70,12 +71,7 @@ class EML:
         for polling_station_id, polling_station in self.reporting_units_info.items():
             check_result = CheckResult(
                 zero_votes=protocol_checks.check_zero_votes(polling_station),
-                inexplicable_difference=protocol_checks.check_inexplicable_difference(
-                    polling_station
-                ),
-                explanation_sum_difference=protocol_checks.check_explanation_sum_difference(
-                    polling_station
-                ),
+                vote_difference=protocol_checks.check_vote_difference(polling_station),
                 high_invalid_vote_percentage=protocol_checks.check_too_many_rejected_votes(
                     polling_station, "ongeldig", EML.INVALID_VOTE_THRESHOLD_PCT
                 ),
@@ -103,7 +99,7 @@ class EML:
                     reporting_neighbourhoods,
                     EML.SWITCHED_CANDIDATE_CONFIG,
                 ),
-                already_recounted=False,
+                already_recounted=polling_station.has_recounted,
             )
 
             protocol_results[polling_station_id] = check_result

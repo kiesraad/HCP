@@ -3,7 +3,6 @@ from typing import Optional
 from . import csv_write
 from .eml import EML
 from .neighbourhood import NeighbourhoodData
-from .odt import ODT
 
 
 def create_csv_files(
@@ -11,7 +10,6 @@ def create_csv_files(
     dest_a: str,
     dest_b: str,
     dest_c: str,
-    path_to_odt: Optional[str] = None,
     path_to_neighbourhood_data: Optional[str] = None,
 ) -> None:
     """Main entry point for running HCP on a given .eml.xml file. We can optionally specify
@@ -41,34 +39,7 @@ def create_csv_files(
     check_results = eml.run_protocol(neighbourhood_data=neighbourhood_data)
     eml_metadata = eml.metadata
 
-    # If odt_path is specified we try to read the file and extract the relevant
-    # parts, as a precaution we will not fail if anything goes wrong here, but
-    # simply return 'None' for the odt object and then the empty list for the
-    # already recounted variable
-    odt = ODT.from_path(path_to_odt)
-    if odt:
-        recounted_polling_stations = odt.get_already_recounted_polling_stations()
-        for polling_station in recounted_polling_stations:
-            # Reconstruct the full polling station identifier
-            full_id = f"{eml_metadata.authority_id}::SB{polling_station.id}"
-
-            # Make sure that the name of the polling station matches so that
-            # we are absolutely sure that the polling station in the eml
-            # matches with the one in the odt.
-            polling_station_name_eml = eml_metadata.reporting_unit_names.get(full_id)
-            polling_station_name_odt = (
-                f"Stembureau {polling_station.name} {polling_station.zip}"
-                if polling_station.zip
-                else f"Stembureau {polling_station.name}"
-            )
-
-            if (
-                full_id in check_results.keys()
-                and polling_station_name_eml == polling_station_name_odt
-            ):
-                check_results[full_id].already_recounted = True
-
-    csv_write.write_csv_a(check_results, eml_metadata, odt is not None, dest_a)
+    csv_write.write_csv_a(check_results, eml_metadata, dest_a)
     csv_write.write_csv_b(
         check_results, eml_metadata, neighbourhood_data is not None, dest_b
     )

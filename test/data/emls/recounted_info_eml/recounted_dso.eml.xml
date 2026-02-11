@@ -6,7 +6,7 @@
     xmlns:xnl="urn:oasis:names:tc:ciq:xsdschema:xNL:2.0" Id="510b" SchemaVersion="5">
     <TransactionId>1</TransactionId>
     <ManagingAuthority>
-        <AuthorityIdentifier Id="0505">Dordrecht</AuthorityIdentifier>
+        <AuthorityIdentifier Id="9999">Juinen</AuthorityIdentifier>
         <AuthorityAddress></AuthorityAddress>
     </ManagingAuthority>
     <kr:CreationDateTime>2023-08-28T13:53:27.193</kr:CreationDateTime>
@@ -14,16 +14,16 @@
     <Count>
         <EventIdentifier></EventIdentifier>
         <Election>
-            <ElectionIdentifier Id="TK2023">
-                <ElectionName>Tweede Kamer der Staten-Generaal 2023</ElectionName>
+            <ElectionIdentifier Id="TK1980">
+                <ElectionName>Tweede Kamer der Staten-Generaal 1980</ElectionName>
                 <ElectionCategory>TK</ElectionCategory>
                 <kr:ElectionSubcategory>TK</kr:ElectionSubcategory>
-                <kr:ElectionDate>2023-11-22</kr:ElectionDate>
+                <kr:ElectionDate>1980-01-01</kr:ElectionDate>
             </ElectionIdentifier>
             <Contests>
                 <Contest>
-                    <ContestIdentifier Id="14">
-                        <ContestName>Dordrecht</ContestName>
+                    <ContestIdentifier Id="1">
+                        <ContestName>Juinen</ContestName>
                     </ContestIdentifier>
                     <TotalVotes>
                         <Selection>
@@ -397,6 +397,8 @@
                         <UncountedVotes ReasonCode="andere verklaring">0</UncountedVotes>
                         <kr:ReportingUnitInvestigations>
                             <kr:Investigation ReasonCode="onderzocht vanwege onverklaard verschil">true</kr:Investigation>
+                            <kr:Investigation ReasonCode="onderzocht vanwege andere fout">false</kr:Investigation>
+                            <kr:Investigation ReasonCode="uitslag gecorrigeerd">true</kr:Investigation>
                         </kr:ReportingUnitInvestigations>
                     </ReportingUnitVotes>
                 </Contest>

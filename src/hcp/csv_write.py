@@ -21,7 +21,7 @@ HEADER_COLS = [
     "Stembureaunummer",
     "Stembureaunaam",
 ]
-PROTOCOL_VERSION = "TK2025"
+PROTOCOL_VERSION = "GR2026"
 
 ZIP_CODE_PATTERN = re.compile(r"\(\s*postcode:\s*\d{4}\s*[A-Z]{2}\s*\)")
 STEMBUREAU_PREFIX_PATTERN = re.compile(r"^(Stembureau\s)+")
@@ -100,7 +100,6 @@ def _id_cols(
 def write_csv_a(
     check_results: Dict[str, CheckResult],
     eml_metadata: EmlMetadata,
-    odt_used: bool,
     csv_destination,
 ) -> None:
     with open(csv_destination, "w", newline="", encoding="utf-8") as csvfile:
@@ -108,32 +107,27 @@ def write_csv_a(
         _write_header(
             writer,
             eml_metadata,
-            f"Stembureaus met geen verklaring voor telverschillen (odt {("gebruikt" if odt_used else "niet gebruikt")})",
+            "Stembureaus met niet onderzochte telverschillen",
         )
 
         writer.writerow(
             HEADER_COLS
             + [
-                "Aantal geen verklaring voor verschil",
-                "Aantal ontbrekende verklaringen voor verschil",
+                "Niet onderzocht telverschil",
                 "Al herteld",
                 "Samenvatting",
             ]
         )
 
         for id, results in check_results.items():
-            inexplicable_difference = results.inexplicable_difference or None
-            explanation_sum_difference = results.explanation_sum_difference or None
+            difference = results.vote_difference
             already_recounted = "ja" if results.already_recounted else None
 
-            if (
-                inexplicable_difference or explanation_sum_difference
-            ) and not results.already_recounted:
+            if (difference > 0) and not results.already_recounted:
                 writer.writerow(
                     _id_cols(eml_metadata, id, "A")
                     + [
-                        inexplicable_difference,
-                        explanation_sum_difference,
+                        difference,
                         already_recounted,
                         results.summarise(SummaryType.A),
                     ]

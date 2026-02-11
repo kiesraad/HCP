@@ -30,7 +30,7 @@ def _create_candidate_votes(
 
 
 def _create_party_votes(
-    cand_votes: Dict[CandidateIdentifier, int]
+    cand_votes: Dict[CandidateIdentifier, int],
 ) -> Dict[PartyIdentifier, int]:
     result = defaultdict(int)
     for cand_id, votes in cand_votes.items():
@@ -86,6 +86,7 @@ case_1_config = SwitchedCandidateConfig(
     minimum_reporting_units_neighbourhood=1,
     minimum_deviation_factor=2,
     minimum_votes=5,
+    maximum_rmse=None,
 )
 case_1_expected = [
     SwitchedCandidate(
@@ -129,6 +130,7 @@ case_2_config = SwitchedCandidateConfig(
     minimum_reporting_units_neighbourhood=1,
     minimum_deviation_factor=2,
     minimum_votes=5,
+    maximum_rmse=None,
 )
 
 reporting_neighbourhoods = ReportingNeighbourhoods(
@@ -187,3 +189,67 @@ def test_case_2():
             candidate_with_more_expected=10,
         )
     ]
+
+
+### Check if the max rmse works as intended. This test case is slightly
+### changed from case 1 where we added some noise adding up to an RMSE
+### of 1.333
+case_3_1_ru = [
+    _create_ru("1", [1, 1, 2, 2], [20, 10, 9, 22]),
+    _create_ru("2", [1, 1, 2, 2], [11, 19, 10, 20]),
+    _create_ru("3", [1, 1, 2, 2], [9, 24, 10, 20]),
+    _create_ru("4", [1, 1, 2, 2], [120, 250, 10, 20]),
+]
+case_3_1_mu = _create_mu(case_3_1_ru)
+case_3_1_config = SwitchedCandidateConfig(
+    minimum_reporting_units_municipality=4,
+    minimum_reporting_units_neighbourhood=1,
+    minimum_deviation_factor=2,
+    minimum_votes=5,
+    maximum_rmse=1.35,
+)
+case_3_1_expected = [
+    SwitchedCandidate(
+        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 2),
+        candidate_with_fewer_expected=20,
+        candidate_with_fewer_received=10,
+        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 1),
+        candidate_with_more_expected=10,
+        candidate_with_more_received=20,
+    )
+]
+
+
+def test_case_3():
+    assert (
+        protocol_checks.check_potentially_switched_candidates(
+            polling_station_id="1",
+            main_unit=case_3_1_mu,
+            polling_station=case_3_1_ru[0],
+            reporting_unit_amount=len(case_3_1_ru),
+            reporting_neighbourhoods=None,
+            config=case_3_1_config,
+        )
+        == case_3_1_expected
+    )
+
+    # Now we lower the RMSE threshold, no longer consider this a switch
+    case_3_2_config = SwitchedCandidateConfig(
+        minimum_reporting_units_municipality=4,
+        minimum_reporting_units_neighbourhood=1,
+        minimum_deviation_factor=2,
+        minimum_votes=5,
+        maximum_rmse=1.2,
+    )
+
+    assert (
+        protocol_checks.check_potentially_switched_candidates(
+            polling_station_id="1",
+            main_unit=case_3_1_mu,
+            polling_station=case_3_1_ru[0],
+            reporting_unit_amount=len(case_3_1_ru),
+            reporting_neighbourhoods=None,
+            config=case_3_2_config,
+        )
+        == []
+    )

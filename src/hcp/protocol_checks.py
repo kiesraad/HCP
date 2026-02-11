@@ -1,4 +1,5 @@
 from itertools import product as cartesian_product
+from math import sqrt
 from typing import Dict, List, Literal, Optional, TypeVar
 
 from .eml_types import (
@@ -29,57 +30,8 @@ def check_zero_votes(reporting_unit: ReportingUnitInfo) -> bool:
     return _get_total_votes(reporting_unit) == 0
 
 
-def check_inexplicable_difference(reporting_unit: ReportingUnitInfo) -> int:
-    """Returns the amount of **specified** inexplicable differences.
-
-    Args:
-        reporting_unit: The reporting unit to check.
-
-    Returns:
-        Integer representing the amount of specified inexplicable differences.
-    """
-    return reporting_unit.uncounted_votes["geen verklaring"]
-
-
-def check_explanation_sum_difference(reporting_unit: ReportingUnitInfo) -> int:
-    """Calculates the difference between the total valid votes and the
-    admitted voters. If the specified explanations do not sum up to this
-    difference between amount of votes and admitted voters, then these are
-    seen as inexplicable differences as well.
-
-    Args:
-        reporting_unit: The reporting unit to check.
-
-    Returns:
-        Integer representing the implicit inexplicable votes.
-    """
-    vote_metadata = reporting_unit.uncounted_votes
-
-    vote_difference = (
-        _get_total_votes(reporting_unit) - vote_metadata["toegelaten kiezers"]
-    )
-
-    if vote_difference > 0:
-        return abs(
-            vote_difference
-            - (vote_metadata.get("te veel uitgereikte stembiljetten") or 0)
-            - (vote_metadata.get("te veel briefstembiljetten") or 0)
-            - (vote_metadata.get("geen verklaring") or 0)
-            - (vote_metadata.get("andere verklaring") or 0)
-        )
-
-    if vote_difference < 0:
-        return abs(
-            vote_difference
-            + (vote_metadata.get("meegenomen stembiljetten") or 0)
-            + (vote_metadata.get("te weinig uitgereikte stembiljetten") or 0)
-            + (vote_metadata.get("geen briefstembiljetten") or 0)
-            + (vote_metadata.get("kwijtgeraakte stembiljetten") or 0)
-            + (vote_metadata.get("geen verklaring") or 0)
-            + (vote_metadata.get("andere verklaring") or 0)
-        )
-
-    return 0
+def check_vote_difference(reporting_unit: ReportingUnitInfo) -> int:
+    return _get_differences(reporting_unit)
 
 
 def check_too_many_rejected_votes(
@@ -263,6 +215,7 @@ def check_potentially_switched_candidates(
         minimum_reporting_units=config.minimum_reporting_units_municipality,
         minimum_deviation_factor=config.minimum_deviation_factor,
         minimum_votes=config.minimum_votes,
+        max_rmse=config.maximum_rmse,
     )
 
     potentially_switched_neighbourhood_candidates = (
@@ -275,6 +228,7 @@ def check_potentially_switched_candidates(
             minimum_reporting_units=config.minimum_reporting_units_neighbourhood,
             minimum_deviation_factor=config.minimum_deviation_factor,
             minimum_votes=config.minimum_votes,
+            max_rmse=config.maximum_rmse,
         )
         if neighbourhood_reference_group and reporting_neighbourhoods
         else None
@@ -336,10 +290,11 @@ def _get_potentially_switched_candidates(
     minimum_reporting_units: int,
     minimum_deviation_factor: int,
     minimum_votes: int,
-) -> List[SwitchedCandidate]:
+    max_rmse: Optional[float],
+) -> Optional[List[SwitchedCandidate]]:
     # Not enough reporting units to do a good check
     if amount_of_reporting_units < minimum_reporting_units:
-        return []
+        return None
 
     received_votes = reporting_unit.votes_per_candidate
     expected_votes = _get_expected_candidate_votes(main_unit, reporting_unit)
@@ -369,6 +324,20 @@ def _get_potentially_switched_candidates(
         cands_with_more_votes, cands_with_less_votes
     ):
         if cand_with_more.party == cand_with_less.party:
+            if max_rmse is not None:
+                # Do RMSE calculation to see if reporting unit is sufficiently 'non-noisy'
+                # to do a proper check.
+                se = 0
+                exclude = [cand_with_less, cand_with_more]
+                for cand_id in received_votes.keys():
+                    # Do not use the suspected switch in calculating the RMSE, since this
+                    # is 'expected noise'.
+                    if cand_id not in exclude:
+                        se += (received_votes[cand_id] - expected_votes[cand_id]) ** 2
+                # RMSE exceeds threshold, do not add candidate pair to result
+                if sqrt(se / (len(received_votes) - len(exclude))) > max_rmse:
+                    continue
+
             result.append(
                 SwitchedCandidate(
                     candidate_with_fewer=cand_with_less,
@@ -413,13 +382,16 @@ def _get_candidate_ratios(
 
 
 def _get_switched_candidate_combination(
-    municipality_switched: List[SwitchedCandidate],
+    municipality_switched: Optional[List[SwitchedCandidate]],
     neighbourhood_switched: Optional[List[SwitchedCandidate]],
 ) -> List[SwitchedCandidate]:
     # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
     # then we just return the municipality results
     if neighbourhood_switched is None:
-        return municipality_switched
+        return municipality_switched if municipality_switched is not None else []
+
+    if municipality_switched is None:
+        return []
 
     # Otherwise, we only return those for which there was a neighbourhood result
     # Construct lookup tables
