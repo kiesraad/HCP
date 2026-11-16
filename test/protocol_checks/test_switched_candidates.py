@@ -4,10 +4,12 @@ from typing import Dict, List
 from hcp import protocol_checks
 from hcp.eml_types import (
     CandidateIdentifier,
+    FinalizedSwitchedCandidate,
     PartyIdentifier,
     ReportingUnitInfo,
     SwitchedCandidate,
     SwitchedCandidateConfig,
+    SwitchedCandidateLevel,
 )
 from hcp.neighbourhood import ReportingNeighbourhoods
 
@@ -89,13 +91,16 @@ case_1_config = SwitchedCandidateConfig(
     maximum_rmse=None,
 )
 case_1_expected = [
-    SwitchedCandidate(
-        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 2),
-        candidate_with_fewer_expected=20,
-        candidate_with_fewer_received=10,
-        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 1),
-        candidate_with_more_expected=10,
-        candidate_with_more_received=20,
+    FinalizedSwitchedCandidate(
+        level=SwitchedCandidateLevel.MUNICIPALITY_NO_NEIGHBOURHOOD,
+        switch=SwitchedCandidate(
+            candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 2),
+            candidate_with_fewer_expected=20,
+            candidate_with_fewer_received=10,
+            candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 1),
+            candidate_with_more_expected=10,
+            candidate_with_more_received=20,
+        ),
     )
 ]
 
@@ -115,7 +120,7 @@ def test_case_1():
 
 
 ## Special case with neighbourhood info and two reporting units, both reporting units contain a switch,
-## since they are only compared to the other. If we did not use neighbourhood info, only report unit
+## since they are only compared to the other. If we did not use neighbourhood info, only reporting unit
 ## with id "2" would have contained a switch.
 
 case_2_ru = [
@@ -153,17 +158,20 @@ def test_case_2():
         config=case_2_config,
     )
     assert result == [
-        SwitchedCandidate(
-            candidate_with_fewer=CandidateIdentifier(
-                party=PartyIdentifier(id=1, name=None), cand_id=1
+        FinalizedSwitchedCandidate(
+            level=SwitchedCandidateLevel.ONLY_NEIGHBOURHOOD,
+            switch=SwitchedCandidate(
+                candidate_with_fewer=CandidateIdentifier(
+                    party=PartyIdentifier(id=1, name=None), cand_id=1
+                ),
+                candidate_with_fewer_received=100,
+                candidate_with_fewer_expected=210,
+                candidate_with_more=CandidateIdentifier(
+                    party=PartyIdentifier(id=1, name=None), cand_id=2
+                ),
+                candidate_with_more_received=200,
+                candidate_with_more_expected=90,
             ),
-            candidate_with_fewer_received=100,
-            candidate_with_fewer_expected=210,
-            candidate_with_more=CandidateIdentifier(
-                party=PartyIdentifier(id=1, name=None), cand_id=2
-            ),
-            candidate_with_more_received=200,
-            candidate_with_more_expected=90,
         )
     ]
 
@@ -176,17 +184,20 @@ def test_case_2():
         config=case_2_config,
     )
     assert result == [
-        SwitchedCandidate(
-            candidate_with_fewer=CandidateIdentifier(
-                party=PartyIdentifier(id=1, name=None), cand_id=2
+        FinalizedSwitchedCandidate(
+            level=SwitchedCandidateLevel.MUNICIPALITY_AND_NEIGHBOURHOOD,
+            switch=SwitchedCandidate(
+                candidate_with_fewer=CandidateIdentifier(
+                    party=PartyIdentifier(id=1, name=None), cand_id=2
+                ),
+                candidate_with_fewer_received=9,
+                candidate_with_fewer_expected=20,
+                candidate_with_more=CandidateIdentifier(
+                    party=PartyIdentifier(id=1, name=None), cand_id=1
+                ),
+                candidate_with_more_received=21,
+                candidate_with_more_expected=10,
             ),
-            candidate_with_fewer_received=9,
-            candidate_with_fewer_expected=20,
-            candidate_with_more=CandidateIdentifier(
-                party=PartyIdentifier(id=1, name=None), cand_id=1
-            ),
-            candidate_with_more_received=21,
-            candidate_with_more_expected=10,
         )
     ]
 
@@ -209,13 +220,16 @@ case_3_1_config = SwitchedCandidateConfig(
     maximum_rmse=1.35,
 )
 case_3_1_expected = [
-    SwitchedCandidate(
-        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 2),
-        candidate_with_fewer_expected=20,
-        candidate_with_fewer_received=10,
-        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 1),
-        candidate_with_more_expected=10,
-        candidate_with_more_received=20,
+    FinalizedSwitchedCandidate(
+        level=SwitchedCandidateLevel.MUNICIPALITY_NO_NEIGHBOURHOOD,
+        switch=SwitchedCandidate(
+            candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 2),
+            candidate_with_fewer_expected=20,
+            candidate_with_fewer_received=10,
+            candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 1),
+            candidate_with_more_expected=10,
+            candidate_with_more_received=20,
+        ),
     )
 ]
 

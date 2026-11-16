@@ -6,9 +6,13 @@ import pytest
 from hcp import protocol_checks
 from hcp.eml_types import (
     CandidateIdentifier,
+    FinalizedSwitchedCandidate,
     PartyIdentifier,
+    PotentialSwitchedCandidate,
+    PotentialSwitchedCandidateLevel,
     ReportingUnitInfo,
     SwitchedCandidate,
+    SwitchedCandidateLevel,
 )
 
 switched_main_unit = ReportingUnitInfo(
@@ -87,18 +91,22 @@ switched_reporting_unit = ReportingUnitInfo(
 )
 
 expected_switched_candidates = [
-    SwitchedCandidate(
-        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 1),
-        candidate_with_fewer_expected=4,
-        candidate_with_fewer_received=1,
-        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 4),
-        candidate_with_more_expected=1,
-        candidate_with_more_received=4,
+    PotentialSwitchedCandidate(
+        level=PotentialSwitchedCandidateLevel.MUNICIPALITY,
+        switch=SwitchedCandidate(
+            candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 1),
+            candidate_with_fewer_expected=4,
+            candidate_with_fewer_received=1,
+            candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 4),
+            candidate_with_more_expected=1,
+            candidate_with_more_received=4,
+        ),
     )
 ]
 
 switched_test_cases = list(
     zip(
+        repeat(PotentialSwitchedCandidateLevel.MUNICIPALITY),
         repeat(switched_main_unit),
         repeat(switched_reporting_unit),
         [expected_switched_candidates, None, [], []],
@@ -106,15 +114,17 @@ switched_test_cases = list(
         [1, 5, 5, 5],
         [4, 4, 5, 4],
         [4, 4, 4, 5],
-        [None, None, None, None]
+        [None, None, None, None],
     )
 )
 
+
 @pytest.mark.parametrize(
-    "main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes, max_rmse",
+    "level, main_unit, reporting_unit, expected, amount_of_reporting_units, minimum_reporting_units, minimum_deviation_factor, minimum_votes, max_rmse",
     switched_test_cases,
 )
 def test_get_switched_candidate(
+    level,
     main_unit,
     reporting_unit,
     expected,
@@ -122,20 +132,22 @@ def test_get_switched_candidate(
     minimum_reporting_units,
     minimum_deviation_factor,
     minimum_votes,
-    max_rmse
+    max_rmse,
 ) -> None:
     assert (
         protocol_checks._get_potentially_switched_candidates(
+            level,
             main_unit,
             reporting_unit,
             amount_of_reporting_units,
             minimum_reporting_units,
             minimum_deviation_factor,
             minimum_votes,
-            max_rmse
+            max_rmse,
         )
         == expected
     )
+
 
 #### High RMSE test case
 high_rmse_switched_main_unit = ReportingUnitInfo(
@@ -172,110 +184,140 @@ high_rmse_switched_reporting_unit = ReportingUnitInfo(
     },
 )
 
+
 def test_high_rmse_switched_candidate():
     no_rmse_filter = protocol_checks._get_potentially_switched_candidates(
+        PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
         high_rmse_switched_main_unit,
         high_rmse_switched_reporting_unit,
         20,
         10,
         4,
         20,
-        None
+        None,
     )
-    assert no_rmse_filter == [SwitchedCandidate(
-        candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 5),
-        candidate_with_fewer_expected=86,
-        candidate_with_fewer_received=20,
-        candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 2),
-        candidate_with_more_expected=13,
-        candidate_with_more_received=80,
-    )]
+    assert no_rmse_filter == [
+        PotentialSwitchedCandidate(
+            level=PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
+            switch=SwitchedCandidate(
+                candidate_with_fewer=CandidateIdentifier(PartyIdentifier(1, None), 5),
+                candidate_with_fewer_expected=86,
+                candidate_with_fewer_received=20,
+                candidate_with_more=CandidateIdentifier(PartyIdentifier(1, None), 2),
+                candidate_with_more_expected=13,
+                candidate_with_more_received=80,
+            ),
+        )
+    ]
 
     rmse_filter = protocol_checks._get_potentially_switched_candidates(
+        PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
         high_rmse_switched_main_unit,
         high_rmse_switched_reporting_unit,
         20,
         10,
         4,
         20,
-        3.0
+        3.0,
     )
 
     # Actual RMSE of this test case is 3.1, so the check did run, but returned no results
     # since we set an upper limit of 3.0.
-    assert(rmse_filter == [])
+    assert rmse_filter == []
+
 
 ###
 
 combine_switched_testcases = [
     (
         [
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
-                0,
-                10,
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
-                10,
-                0,
+            PotentialSwitchedCandidate(
+                level=PotentialSwitchedCandidateLevel.MUNICIPALITY,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                    0,
+                    10,
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                    10,
+                    0,
+                ),
             )
         ],
         [
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
-                0,
-                2,
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
-                3,
-                0,
+            PotentialSwitchedCandidate(
+                level=PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                    0,
+                    2,
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                    3,
+                    0,
+                ),
             ),
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(5, None), 10),
-                1,
-                101,
-                CandidateIdentifier(PartyIdentifier(5, None), 8),
-                108,
-                1,
+            PotentialSwitchedCandidate(
+                level=PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(5, None), 10),
+                    1,
+                    101,
+                    CandidateIdentifier(PartyIdentifier(5, None), 8),
+                    108,
+                    1,
+                ),
             ),
         ],
         [
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
-                0,
-                10,
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
-                10,
-                0,
+            FinalizedSwitchedCandidate(
+                level=SwitchedCandidateLevel.MUNICIPALITY_AND_NEIGHBOURHOOD,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                    0,
+                    10,
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                    10,
+                    0,
+                ),
             ),
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(5, None), 10),
-                1,
-                101,
-                CandidateIdentifier(PartyIdentifier(5, None), 8),
-                108,
-                1,
+            FinalizedSwitchedCandidate(
+                level=SwitchedCandidateLevel.ONLY_NEIGHBOURHOOD,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(5, None), 10),
+                    1,
+                    101,
+                    CandidateIdentifier(PartyIdentifier(5, None), 8),
+                    108,
+                    1,
+                ),
             ),
         ],
     ),
     (
         [
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
-                0,
-                10,
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
-                10,
-                0,
+            PotentialSwitchedCandidate(
+                level=PotentialSwitchedCandidateLevel.MUNICIPALITY,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                    0,
+                    10,
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                    10,
+                    0,
+                ),
             )
         ],
         None,
         [
-            SwitchedCandidate(
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
-                0,
-                10,
-                CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
-                10,
-                0,
+            FinalizedSwitchedCandidate(
+                level=SwitchedCandidateLevel.MUNICIPALITY_NO_NEIGHBOURHOOD,
+                switch=SwitchedCandidate(
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 1),
+                    0,
+                    10,
+                    CandidateIdentifier(PartyIdentifier(1, "Lijst 1"), 2),
+                    10,
+                    0,
+                ),
             )
         ],
     ),
@@ -287,9 +329,9 @@ combine_switched_testcases = [
     combine_switched_testcases,
 )
 def test_get_switched_candidate_combination(
-    switched_municipality: List[SwitchedCandidate],
-    switched_neighbourhood: Optional[List[SwitchedCandidate]],
-    expected: List[SwitchedCandidate],
+    switched_municipality: List[PotentialSwitchedCandidate],
+    switched_neighbourhood: Optional[List[PotentialSwitchedCandidate]],
+    expected: List[FinalizedSwitchedCandidate],
 ) -> None:
     assert (
         protocol_checks._get_switched_candidate_combination(
