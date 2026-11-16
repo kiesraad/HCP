@@ -4,10 +4,14 @@ from typing import Dict, List, Literal, Optional, TypeVar
 
 from .eml_types import (
     CandidateIdentifier,
+    FinalizedSwitchedCandidate,
     PartyIdentifier,
+    PotentialSwitchedCandidate,
+    PotentialSwitchedCandidateLevel,
     ReportingUnitInfo,
     SwitchedCandidate,
     SwitchedCandidateConfig,
+    SwitchedCandidateLevel,
     VoteDifference,
     VoteDifferenceAmount,
     VoteDifferencePercentage,
@@ -165,7 +169,7 @@ def check_potentially_switched_candidates(
     reporting_unit_amount: int,
     reporting_neighbourhoods: Optional[ReportingNeighbourhoods],
     config: SwitchedCandidateConfig,
-) -> List[SwitchedCandidate]:
+) -> List[FinalizedSwitchedCandidate]:
     """Checks if there are potential switched candidates in the given reporting unit.
     Usually called from within an instance of EML, but can also be called without.
     For a formal definition of this check, see [here](https://www.kiesraad.nl/binaries/kiesraad/documenten/publicaties/2024/02/15/toetsingskader-voor-controles-verkiezingsuitslagen-op-stembureauniveau/CBS+Onderzoek+Toetsingskader+voor+controles+verkiezingsuitslagen+op+stembureauniveau.pdf)
@@ -209,6 +213,7 @@ def check_potentially_switched_candidates(
     )
 
     potentially_switched_municipality_candidates = _get_potentially_switched_candidates(
+        PotentialSwitchedCandidateLevel.MUNICIPALITY,
         main_unit,
         polling_station,
         amount_of_reporting_units=reporting_unit_amount,
@@ -220,6 +225,7 @@ def check_potentially_switched_candidates(
 
     potentially_switched_neighbourhood_candidates = (
         _get_potentially_switched_candidates(
+            PotentialSwitchedCandidateLevel.NEIGHBOURHOOD,
             neighbourhood_reference_group,
             polling_station,
             amount_of_reporting_units=reporting_neighbourhoods.get_reference_size(
@@ -284,6 +290,7 @@ def _subtract_part_dictionary(
 
 
 def _get_potentially_switched_candidates(
+    level: PotentialSwitchedCandidateLevel,
     main_unit: ReportingUnitInfo,
     reporting_unit: ReportingUnitInfo,
     amount_of_reporting_units: int,
@@ -291,7 +298,7 @@ def _get_potentially_switched_candidates(
     minimum_deviation_factor: int,
     minimum_votes: int,
     max_rmse: Optional[float],
-) -> Optional[List[SwitchedCandidate]]:
+) -> Optional[List[PotentialSwitchedCandidate]]:
     # Not enough reporting units to do a good check
     if amount_of_reporting_units < minimum_reporting_units:
         return None
@@ -318,7 +325,7 @@ def _get_potentially_switched_candidates(
         ):
             cands_with_less_votes.append(cand_id)
 
-    result: List[SwitchedCandidate] = []
+    result: List[PotentialSwitchedCandidate] = []
 
     for cand_with_more, cand_with_less in cartesian_product(
         cands_with_more_votes, cands_with_less_votes
@@ -339,13 +346,20 @@ def _get_potentially_switched_candidates(
                     continue
 
             result.append(
-                SwitchedCandidate(
-                    candidate_with_fewer=cand_with_less,
-                    candidate_with_fewer_received=received_votes[cand_with_less],
-                    candidate_with_fewer_expected=round(expected_votes[cand_with_less]),
-                    candidate_with_more=cand_with_more,
-                    candidate_with_more_received=received_votes[cand_with_more],
-                    candidate_with_more_expected=round(expected_votes[cand_with_more]),
+                PotentialSwitchedCandidate(
+                    level=level,
+                    switch=SwitchedCandidate(
+                        candidate_with_fewer=cand_with_less,
+                        candidate_with_fewer_received=received_votes[cand_with_less],
+                        candidate_with_fewer_expected=round(
+                            expected_votes[cand_with_less]
+                        ),
+                        candidate_with_more=cand_with_more,
+                        candidate_with_more_received=received_votes[cand_with_more],
+                        candidate_with_more_expected=round(
+                            expected_votes[cand_with_more]
+                        ),
+                    ),
                 )
             )
 
@@ -382,38 +396,62 @@ def _get_candidate_ratios(
 
 
 def _get_switched_candidate_combination(
-    municipality_switched: Optional[List[SwitchedCandidate]],
-    neighbourhood_switched: Optional[List[SwitchedCandidate]],
-) -> List[SwitchedCandidate]:
+    municipality_switched: Optional[List[PotentialSwitchedCandidate]],
+    neighbourhood_switched: Optional[List[PotentialSwitchedCandidate]],
+) -> List[FinalizedSwitchedCandidate]:
     # If there are no neighbourhood results (i.e. the neighbourhood check did not run)
     # then we just return the municipality results
     if neighbourhood_switched is None:
-        return municipality_switched if municipality_switched is not None else []
+        return (
+            [
+                switch.finalize(SwitchedCandidateLevel.MUNICIPALITY_NO_NEIGHBOURHOOD)
+                for switch in municipality_switched
+            ]
+            if municipality_switched is not None
+            else []
+        )
 
+    # If the municipality check returned None then there were not enough
+    # reporting units to run a switched candidate check so we return
+    # an empty list.
     if municipality_switched is None:
         return []
 
     # Otherwise, we only return those for which there was a neighbourhood result
-    # Construct lookup tables
+    # Since any check which is found at municipality level but *rejected* at neighbourhood
+    # level should be excluded from the results.
     municpality_lookup = {
-        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        (cand.switch.candidate_with_fewer, cand.switch.candidate_with_more): cand
         for cand in municipality_switched
     }
     neighbourhood_lookup = {
-        (cand.candidate_with_fewer, cand.candidate_with_more): cand
+        (cand.switch.candidate_with_fewer, cand.switch.candidate_with_more): cand
         for cand in neighbourhood_switched
     }
 
     # For each switch which occurs *at least* at neighbourhood level, check if it also
     # occurs at municipality level. If so, return those expected values, otherwise we
-    # return the neighbourhood values
-    result: List[SwitchedCandidate] = []
+    # return the neighbourhood values. Note that this automatically *excludes*
+    # switches which were found at the municipality level but *not* at the
+    # neighbourhood level.
+    result: List[FinalizedSwitchedCandidate] = []
 
     for cand_id, neighbourhood_switched_obj in neighbourhood_lookup.items():
         municipality_switched_obj = municpality_lookup.get(cand_id)
+
+        # The neighbourhood switch was also found at the municipality level
         if municipality_switched_obj is not None:
-            result.append(municipality_switched_obj)
+            result.append(
+                municipality_switched_obj.finalize(
+                    SwitchedCandidateLevel.MUNICIPALITY_AND_NEIGHBOURHOOD
+                )
+            )
+        # Otherwise the switch was only found at the neighbourhood level
         else:
-            result.append(neighbourhood_switched_obj)
+            result.append(
+                neighbourhood_switched_obj.finalize(
+                    SwitchedCandidateLevel.ONLY_NEIGHBOURHOOD
+                )
+            )
 
     return result

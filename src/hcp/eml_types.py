@@ -79,6 +79,17 @@ class VoteDifferencePercentage:
 VoteDifference = Union[VoteDifferenceAmount, VoteDifferencePercentage]
 
 
+class PotentialSwitchedCandidateLevel(Enum):
+    MUNICIPALITY = "Gemeente"
+    NEIGHBOURHOOD = "Wijk"
+
+
+class SwitchedCandidateLevel(Enum):
+    MUNICIPALITY_NO_NEIGHBOURHOOD = "Gemeenteniveau, geen wijkvergelijking mogelijk"
+    MUNICIPALITY_AND_NEIGHBOURHOOD = "Op zowel gemeente- als wijkniveau"
+    ONLY_NEIGHBOURHOOD = "Op wijkniveau maar niet op gemeenteniveau"
+
+
 @dataclass
 class SwitchedCandidate:
     """Container representing a potentially switched candidate."""
@@ -103,6 +114,21 @@ class SwitchedCandidate:
             f"Kandidaat {self.candidate_with_fewer.cand_id} had {self.candidate_with_fewer_received} stemmen "
             f"maar verwachting was {self.candidate_with_fewer_expected}"
         )
+
+
+@dataclass
+class FinalizedSwitchedCandidate:
+    level: SwitchedCandidateLevel
+    switch: SwitchedCandidate
+
+
+@dataclass
+class PotentialSwitchedCandidate:
+    level: PotentialSwitchedCandidateLevel
+    switch: SwitchedCandidate
+
+    def finalize(self, level: SwitchedCandidateLevel) -> FinalizedSwitchedCandidate:
+        return FinalizedSwitchedCandidate(level=level, switch=self.switch)
 
 
 @dataclass
