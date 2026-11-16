@@ -121,6 +121,9 @@ class FinalizedSwitchedCandidate:
     level: SwitchedCandidateLevel
     switch: SwitchedCandidate
 
+    def __str__(self) -> str:
+        return f"{str(self.switch)} ({self.level.value})"
+
 
 @dataclass
 class PotentialSwitchedCandidate:
@@ -162,7 +165,7 @@ class CheckResult:
     high_vote_difference: Optional[VoteDifference]
     parties_with_high_difference_percentage: List[str]
     party_difference_percentages: Dict[PartyIdentifier, float]
-    potentially_switched_candidates: List[SwitchedCandidate]
+    potentially_switched_candidates: List[FinalizedSwitchedCandidate]
     already_recounted: bool
 
     def summarise(self, summary_type: SummaryType) -> str:

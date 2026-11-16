@@ -5,8 +5,8 @@ from typing import Dict, List, Literal, Optional
 from .eml import EML, CheckResult
 from .eml_types import (
     EmlMetadata,
+    FinalizedSwitchedCandidate,
     SummaryType,
-    SwitchedCandidate,
     VoteDifference,
     VoteDifferenceAmount,
     VoteDifferencePercentage,
@@ -60,7 +60,7 @@ def _format_vote_difference(vote_difference: Optional[VoteDifference]) -> Option
 
 
 def _format_potentially_switched_candidates(
-    potentially_switched_candidates: List[SwitchedCandidate],
+    potentially_switched_candidates: List[FinalizedSwitchedCandidate],
 ) -> Optional[str]:
     if len(potentially_switched_candidates) == 0:
         return None
