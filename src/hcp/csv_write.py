@@ -148,7 +148,7 @@ def write_csv_b(
             (
                 f"Spreadsheet afwijkende percentages blanco en ongeldige stemmen, "
                 "stembureaus met nul stemmen, "
-                f"afwijkingen van het lijstgemiddelde >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% "
+                f"afwijkingen van het lijstgemiddelde >={EML.PARTY_DIFFERENCE_CONFIG.percentage_value}% "
                 f"en mogelijk verwisselde kandidaten (wijkdata {"gebruikt" if neighbourhoods_used else "niet_gebruikt"})"
             ),
         )
@@ -163,7 +163,7 @@ def write_csv_b(
                     f"Stembureau >={EML.DIFF_VOTE_THRESHOLD} of >={EML.DIFF_VOTE_THRESHOLD_PCT}% verschil "
                     "tussen toegelaten kiezers en uitgebrachte stemmen"
                 ),
-                f"Stembureau met lijst >={EML.PARTY_DIFFERENCE_THRESHOLD_PCT}% afwijking",
+                f"Stembureau met lijst >={EML.PARTY_DIFFERENCE_CONFIG.percentage_value}% afwijking",
                 "Mogelijk verwisselde kandidaten",
                 "Al herteld",
                 "Samenvatting",

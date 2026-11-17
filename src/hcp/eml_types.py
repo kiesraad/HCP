@@ -147,6 +147,17 @@ class SwitchedCandidateConfig:
     maximum_rmse: Optional[float]
 
 
+@dataclass
+class PartyDifferenceConfig:
+    """Container for configuration parameters for the party percentage
+    difference check
+    """
+
+    percentage_value: float
+    minimum_party_votes: Optional[int]
+    minimum_municipality_votes: Optional[int]
+
+
 class SummaryType(Enum):
     A = "A"
     B = "B"

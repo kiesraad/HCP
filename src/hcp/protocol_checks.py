@@ -5,6 +5,7 @@ from typing import Dict, List, Literal, Optional, TypeVar
 from .eml_types import (
     CandidateIdentifier,
     FinalizedSwitchedCandidate,
+    PartyDifferenceConfig,
     PartyIdentifier,
     PotentialSwitchedCandidate,
     PotentialSwitchedCandidateLevel,
@@ -132,17 +133,21 @@ def get_party_difference_percentages(
 def check_parties_with_large_percentage_difference(
     main_unit: ReportingUnitInfo,
     reporting_unit: ReportingUnitInfo,
-    threshold_pct: float,
+    party_difference_config: PartyDifferenceConfig,
 ) -> List[str]:
     """Checks which parties have a percentage point difference compared to the main
     unit which exceeds the threshold value. Note that the vote count of the reporting
     unit we are checking are subtracted from the main unit for calculating the main unit
-    percentage.
+    percentage. The config object optionally allows for a minimum amount of valid votes required
+    for a party or in the whole municipality to prevent false positives in cases where there
+    are only a few votes. (For example 2 votes instead of 1 would otherwise result in 100%
+    difference).
 
     Args:
         main_unit: The main unit to check against. This is usually the municipality total.
         reporting_unit: The reporting unit to check.
-        threshold_pct: The threshold percentage to check against.
+        party_difference_config: The threshold percentage and optionally the minimum
+        amount of votes to check against.
 
     Returns:
         A list of names of the parties which exceed this threshold, along with the given percentage.
@@ -157,7 +162,19 @@ def check_parties_with_large_percentage_difference(
                 else f"{identifier.id}. blanco ({round(difference, 1)}%)"
             )
             for (identifier, difference) in differences.items()
-            if abs(difference) >= threshold_pct
+            if (
+                abs(difference) >= party_difference_config.percentage_value
+                and (
+                    not party_difference_config.minimum_party_votes
+                    or reporting_unit.votes_per_party[identifier]
+                    >= party_difference_config.minimum_party_votes
+                )
+                and (
+                    not party_difference_config.minimum_municipality_votes
+                    or main_unit.total_counted
+                    >= party_difference_config.minimum_municipality_votes
+                )
+            )
         ]
     )
 

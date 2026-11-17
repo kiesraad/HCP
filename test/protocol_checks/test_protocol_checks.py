@@ -4,6 +4,7 @@ import pytest
 
 from hcp import protocol_checks
 from hcp.eml_types import (
+    PartyDifferenceConfig,
     PartyIdentifier,
     ReportingUnitInfo,
     VoteDifferenceAmount,
@@ -254,21 +255,117 @@ ru_46_pct_difference = ReportingUnitInfo(
 
 
 @pytest.mark.parametrize(
-    "main_unit, reporting_unit, threshold_pct, expected",
+    "main_unit, reporting_unit, config, expected",
     [
-        (mu_50_pct_difference, ru_50_pct_difference, 50.0, ["1. blanco (-50.1%)"]),
-        (mu_50_pct_difference, ru_46_pct_difference, 50.0, []),
+        (
+            mu_50_pct_difference,
+            ru_50_pct_difference,
+            PartyDifferenceConfig(
+                percentage_value=50.0,
+                minimum_party_votes=None,
+                minimum_municipality_votes=None,
+            ),
+            ["1. blanco (-50.1%)"],
+        ),
+        (
+            mu_50_pct_difference,
+            ru_46_pct_difference,
+            PartyDifferenceConfig(
+                percentage_value=50.0,
+                minimum_party_votes=None,
+                minimum_municipality_votes=None,
+            ),
+            [],
+        ),
     ],
 )
 def test_check_parties_with_large_percentage_difference(
     main_unit: ReportingUnitInfo,
     reporting_unit: ReportingUnitInfo,
-    threshold_pct: float,
+    config: PartyDifferenceConfig,
     expected: List[str],
 ) -> None:
     assert (
         protocol_checks.check_parties_with_large_percentage_difference(
-            main_unit, reporting_unit, threshold_pct
+            main_unit, reporting_unit, config
         )
         == expected
     )
+
+
+def test_check_large_percentage_few_votes() -> None:
+    mu = ReportingUnitInfo(
+        reporting_unit_id=None,
+        reporting_unit_name=None,
+        cast=0,
+        total_counted=5,
+        rejected_votes={"ongeldig": 1, "blanco": 1},
+        uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 1},
+        votes_per_party={
+            PartyIdentifier(1, None): 4,
+            PartyIdentifier(2, "B"): 2,
+        },
+        votes_per_candidate={},
+    )
+
+    ru1 = ReportingUnitInfo(
+        reporting_unit_id=None,
+        reporting_unit_name=None,
+        cast=0,
+        total_counted=4,
+        rejected_votes={"ongeldig": 1, "blanco": 1},
+        uncounted_votes={"meegenomen stembiljetten": 1, "andere verklaring": 1},
+        votes_per_party={
+            PartyIdentifier(1, None): 4,
+            PartyIdentifier(2, "B"): 0,
+        },
+        votes_per_candidate={},
+    )
+
+    # Without any filtering on minimum votes list 1 will be a large percentage difference (4 compared to (4-4) in the MU, +100%)
+    # and list 2 will also be a large percentage difference (0 compared to 2 in the MU, -200%)
+    assert protocol_checks.check_parties_with_large_percentage_difference(
+        mu,
+        ru1,
+        PartyDifferenceConfig(
+            percentage_value=50.0,
+            minimum_party_votes=None,
+            minimum_municipality_votes=None,
+        ),
+    ) == ["1. blanco (100.0%)", "B (-200.0%)"]
+
+    # Setting the minimum party votes to 4 removes 'B' from the results
+    assert protocol_checks.check_parties_with_large_percentage_difference(
+        mu,
+        ru1,
+        PartyDifferenceConfig(
+            percentage_value=50.0,
+            minimum_party_votes=4,
+            minimum_municipality_votes=None,
+        ),
+    ) == ["1. blanco (100.0%)"]
+
+    # And also setting the municipality votes to 7 makes both disappear
+    assert (
+        protocol_checks.check_parties_with_large_percentage_difference(
+            mu,
+            ru1,
+            PartyDifferenceConfig(
+                percentage_value=50.0,
+                minimum_party_votes=4,
+                minimum_municipality_votes=7,
+            ),
+        )
+        == []
+    )
+
+    # While smaller values keep both results
+    assert protocol_checks.check_parties_with_large_percentage_difference(
+        mu,
+        ru1,
+        PartyDifferenceConfig(
+            percentage_value=50.0,
+            minimum_party_votes=0,
+            minimum_municipality_votes=1,
+        ),
+    ) == ["1. blanco (100.0%)", "B (-200.0%)"]

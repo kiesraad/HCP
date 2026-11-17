@@ -7,6 +7,7 @@ from .eml_types import (
     CheckResult,
     EmlMetadata,
     InvalidEmlException,
+    PartyDifferenceConfig,
     ReportingUnitInfo,
     SwitchedCandidateConfig,
 )
@@ -32,7 +33,9 @@ class EML:
     DIFF_VOTE_THRESHOLD_PCT: ClassVar[float] = 2.0
     DIFF_VOTE_THRESHOLD: ClassVar[int] = 15
 
-    PARTY_DIFFERENCE_THRESHOLD_PCT: ClassVar[float] = 60.0
+    PARTY_DIFFERENCE_CONFIG: ClassVar[PartyDifferenceConfig] = PartyDifferenceConfig(
+        percentage_value=50.0, minimum_party_votes=15, minimum_municipality_votes=30
+    )
 
     SWITCHED_CANDIDATE_CONFIG: ClassVar[SwitchedCandidateConfig] = (
         SwitchedCandidateConfig(
@@ -86,7 +89,7 @@ class EML:
                 parties_with_high_difference_percentage=protocol_checks.check_parties_with_large_percentage_difference(
                     self.main_unit_info,
                     polling_station,
-                    EML.PARTY_DIFFERENCE_THRESHOLD_PCT,
+                    EML.PARTY_DIFFERENCE_CONFIG,
                 ),
                 party_difference_percentages=protocol_checks.get_party_difference_percentages(
                     self.main_unit_info, polling_station
