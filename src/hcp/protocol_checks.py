@@ -159,7 +159,7 @@ def check_parties_with_large_percentage_difference(
             (
                 f"{identifier.name} ({round(difference, 1)}%)"
                 if identifier.name
-                else f"{identifier.id}. blanco ({round(difference, 1)}%)"
+                else f"Lijst {identifier.id} ({round(difference, 1)}%)"
             )
             for (identifier, difference) in differences.items()
             if (
@@ -358,9 +358,13 @@ def _get_potentially_switched_candidates(
                     # is 'expected noise'.
                     if cand_id not in exclude:
                         se += (received_votes[cand_id] - expected_votes[cand_id]) ** 2
+
                 # RMSE exceeds threshold, do not add candidate pair to result
-                if sqrt(se / (len(received_votes) - len(exclude))) > max_rmse:
-                    continue
+                try:
+                    if sqrt(se / (len(received_votes) - len(exclude))) > max_rmse:
+                        continue
+                except ZeroDivisionError:
+                    pass
 
             result.append(
                 PotentialSwitchedCandidate(
